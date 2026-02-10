@@ -1,15 +1,20 @@
 import { create } from 'zustand';
+import { z } from 'zod';
 
-export interface CartItem {
-  variantId: string;
-  productId: string;
-  productName: string;
-  variantName: string;
-  imageUrl: string;
-  unitPriceCents: number;
-  quantity: number;
-  attributes: Record<string, string>;
-}
+const CartItemSchema = z.object({
+  variantId: z.string().min(1),
+  productId: z.string().min(1),
+  productName: z.string().min(1).max(200),
+  variantName: z.string().min(1).max(100),
+  imageUrl: z.string().max(2000),
+  unitPriceCents: z.number().int().nonnegative(),
+  quantity: z.number().int().positive().max(100),
+  attributes: z.record(z.string()),
+});
+
+const CartSchema = z.array(CartItemSchema);
+
+export type CartItem = z.infer<typeof CartItemSchema>;
 
 interface CartState {
   items: CartItem[];
@@ -21,8 +26,20 @@ interface CartState {
   itemCount: () => number;
 }
 
+function loadCartFromStorage(): CartItem[] {
+  try {
+    const stored = localStorage.getItem('magna-cart');
+    if (!stored) return [];
+    const parsed = JSON.parse(stored);
+    const validated = CartSchema.safeParse(parsed);
+    return validated.success ? validated.data : [];
+  } catch {
+    return [];
+  }
+}
+
 export const useCart = create<CartState>((set, get) => ({
-  items: JSON.parse(localStorage.getItem('magna-cart') || '[]'),
+  items: loadCartFromStorage(),
 
   addItem: (item) => {
     set((state) => {
