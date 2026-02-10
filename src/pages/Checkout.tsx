@@ -179,7 +179,7 @@ export default function Checkout() {
           <div className="border-t border-border pt-4 space-y-2">
             <div className="flex justify-between text-sm text-muted-foreground">
               <span>Envío</span>
-              <span className="text-gold">Gratis</span>
+              <span>$0 (incluido en el precio)</span>
             </div>
             <div className="flex justify-between font-display text-lg text-foreground">
               <span>Total</span>
