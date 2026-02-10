@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="border-t border-border bg-primary text-primary-foreground">
       <div className="container py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           <div>
             <h3 className="font-display text-xl tracking-wider mb-4">
               MAGNA <span className="text-gold">ARTE</span>
@@ -21,15 +21,25 @@ export default function Footer() {
               <Link to="/productos?categoria=anillos" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Anillos</Link>
               <Link to="/productos?categoria=aretes" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Aretes</Link>
               <Link to="/productos?categoria=dijes" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Dijes</Link>
+              <Link to="/productos?categoria=elaboracion-personalizada-de-joyas" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Joyas Personalizadas</Link>
+            </nav>
+          </div>
+
+          <div>
+            <h4 className="font-display text-sm tracking-widest uppercase mb-4">Información</h4>
+            <nav className="flex flex-col gap-2">
+              <Link to="/politicas" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Políticas de Envío</Link>
+              <Link to="/politicas" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Devoluciones</Link>
+              <Link to="/politicas" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Garantía</Link>
+              <Link to="/politicas" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Privacidad</Link>
             </nav>
           </div>
 
           <div>
             <h4 className="font-display text-sm tracking-widest uppercase mb-4">Contacto</h4>
             <nav className="flex flex-col gap-2">
-              <Link to="/productos?categoria=elaboracion-personalizada-de-joyas" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">
-                Joyas Personalizadas
-              </Link>
+              <Link to="/contacto" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Contáctanos</Link>
+              <Link to="/solicitud-personalizada" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Joya Personalizada</Link>
             </nav>
           </div>
         </div>

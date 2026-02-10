@@ -1,8 +1,9 @@
-import { useSearchParams, Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import ProductCard from "@/components/products/ProductCard";
 import { motion } from "framer-motion";
+import { Search, X } from "lucide-react";
 
 interface Product {
   id: string;
@@ -26,6 +27,7 @@ export default function Products() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -65,7 +67,17 @@ export default function Products() {
     }
   }, [categorySlug, categories]);
 
+  const filteredProducts = useMemo(() => {
+    if (!searchQuery.trim()) return products;
+    const q = searchQuery.toLowerCase();
+    return products.filter((p) => p.name.toLowerCase().includes(q));
+  }, [products, searchQuery]);
+
   const currentCategory = categories.find((c) => c.slug === categorySlug);
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+  };
 
   return (
     <div className="min-h-screen">
@@ -81,6 +93,26 @@ export default function Products() {
           </h1>
           <div className="w-12 h-px bg-gold mt-3" />
         </motion.div>
+
+        {/* Search */}
+        <div className="relative mb-6">
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar joyas..."
+            className="w-full pl-10 pr-10 py-3 bg-background border border-border text-foreground text-sm focus:outline-none focus:border-gold transition-colors placeholder:text-muted-foreground"
+          />
+          {searchQuery && (
+            <button
+              onClick={handleClearSearch}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X size={16} />
+            </button>
+          )}
+        </div>
 
         {/* Category filter */}
         <div className="flex flex-wrap gap-2 mb-8">
@@ -109,6 +141,13 @@ export default function Products() {
           ))}
         </div>
 
+        {/* Results count */}
+        {searchQuery && (
+          <p className="text-sm text-muted-foreground mb-4">
+            {filteredProducts.length} resultado{filteredProducts.length !== 1 ? "s" : ""} para "{searchQuery}"
+          </p>
+        )}
+
         {/* Products grid */}
         {loading ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
@@ -120,13 +159,17 @@ export default function Products() {
               </div>
             ))}
           </div>
-        ) : products.length === 0 ? (
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-16">
-            <p className="text-muted-foreground">No hay productos disponibles en esta categoría.</p>
+            <p className="text-muted-foreground">
+              {searchQuery
+                ? "No se encontraron productos para tu búsqueda."
+                : "No hay productos disponibles en esta categoría."}
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <ProductCard
                 key={product.id}
                 id={product.id}
