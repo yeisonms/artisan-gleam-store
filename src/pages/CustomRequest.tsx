@@ -11,7 +11,19 @@ const requestSchema = z.object({
   categoryHint: z.string().trim().max(100).optional(),
   budgetCents: z.number().nullable().optional(),
   details: z.string().trim().min(10, "Describe tu idea con más detalle").max(2000),
-  referenceLinks: z.string().max(1000).optional(),
+  referenceLinks: z.string().max(1000).optional()
+    .refine((val) => {
+      if (!val) return true;
+      const urls = val.split('\n').filter(Boolean);
+      return urls.every(url => {
+        try {
+          const parsed = new URL(url.trim());
+          return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+        } catch {
+          return false;
+        }
+      });
+    }, { message: 'Todos los enlaces deben ser URLs válidas (http/https)' }),
 });
 
 export default function CustomRequest() {
@@ -122,6 +134,7 @@ export default function CustomRequest() {
 
         <div>
           <textarea className={`${inputClass} resize-none h-20`} placeholder="Enlaces de referencia (uno por línea, opcional)" value={form.referenceLinks} onChange={(e) => handleChange("referenceLinks", e.target.value)} />
+          {errors.referenceLinks && <p className="text-destructive text-xs mt-1">{errors.referenceLinks}</p>}
         </div>
 
         <button

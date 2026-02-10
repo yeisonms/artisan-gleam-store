@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart, formatCOP } from "@/lib/cart";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -54,11 +55,63 @@ export default function Checkout() {
     }
 
     setSubmitting(true);
-    // TODO: Create order in DB and redirect to Wompi payment
-    toast.info("Sistema de pago próximamente. Tu pedido ha sido registrado.");
-    clearCart();
-    navigate("/");
-    setSubmitting(false);
+    try {
+      const total = totalCents();
+      const { data: order, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          status: "pending_payment" as const,
+          customer_name: result.data.fullName,
+          customer_email: result.data.email,
+          customer_phone: result.data.phone,
+          shipping_address: {
+            address: result.data.address,
+            city: result.data.city,
+            department: result.data.department,
+            notes: result.data.notes || "",
+          },
+          subtotal_cents: total,
+          shipping_cents: 0,
+          tax_cents: 0,
+          total_cents: total,
+          currency: "COP",
+        })
+        .select("id")
+        .single();
+
+      if (orderError || !order) {
+        toast.error("Error al crear el pedido. Intenta de nuevo.");
+        setSubmitting(false);
+        return;
+      }
+
+      const orderItems = items.map((item) => ({
+        order_id: order.id,
+        variant_id: item.variantId,
+        product_name_snapshot: item.productName,
+        variant_snapshot: { name: item.variantName, attributes: item.attributes },
+        quantity: item.quantity,
+        unit_price_cents: item.unitPriceCents,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(orderItems);
+
+      if (itemsError) {
+        toast.error("Error al registrar los productos del pedido.");
+        setSubmitting(false);
+        return;
+      }
+
+      toast.success("¡Pedido registrado! Sistema de pago próximamente.");
+      clearCart();
+      navigate("/");
+    } catch {
+      toast.error("Error inesperado. Intenta de nuevo.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const inputClass = "w-full px-4 py-3 bg-background border border-border text-foreground text-sm focus:outline-none focus:border-gold transition-colors placeholder:text-muted-foreground";
