@@ -104,9 +104,9 @@ export default function Checkout() {
         return;
       }
 
-      toast.success("¡Pedido registrado! Sistema de pago próximamente.");
+      toast.success("¡Pedido registrado!");
       clearCart();
-      navigate("/");
+      navigate(`/pedido-exitoso?pedido=${order.id}`);
     } catch {
       toast.error("Error inesperado. Intenta de nuevo.");
     } finally {

@@ -8,7 +8,10 @@ import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import OrderSuccess from "./pages/OrderSuccess";
 import CustomRequest from "./pages/CustomRequest";
+import Policies from "./pages/Policies";
+import Contact from "./pages/Contact";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -40,7 +43,10 @@ const App = () => (
           <Route path="/producto/:slug" element={<PublicLayout><ProductDetail /></PublicLayout>} />
           <Route path="/carrito" element={<PublicLayout><Cart /></PublicLayout>} />
           <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
+          <Route path="/pedido-exitoso" element={<PublicLayout><OrderSuccess /></PublicLayout>} />
           <Route path="/solicitud-personalizada" element={<PublicLayout><CustomRequest /></PublicLayout>} />
+          <Route path="/politicas" element={<PublicLayout><Policies /></PublicLayout>} />
+          <Route path="/contacto" element={<PublicLayout><Contact /></PublicLayout>} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />

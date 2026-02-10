@@ -1,5 +1,8 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+import ProductCard from "@/components/products/ProductCard";
 import heroImage from "@/assets/hero-jewelry.jpg";
 
 const categories = [
@@ -10,7 +13,32 @@ const categories = [
   { name: "Joyas Personalizadas", slug: "elaboracion-personalizada-de-joyas" },
 ];
 
+interface FeaturedProduct {
+  id: string;
+  name: string;
+  slug: string;
+  price_cents: number;
+  is_custom_request: boolean;
+  product_images: { url: string; sort_order: number }[];
+}
+
 export default function Index() {
+  const [featured, setFeatured] = useState<FeaturedProduct[]>([]);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      const { data } = await supabase
+        .from("products")
+        .select("id, name, slug, price_cents, is_custom_request, product_images(url, sort_order)")
+        .eq("is_active", true)
+        .eq("featured", true)
+        .order("created_at", { ascending: false })
+        .limit(8);
+      if (data) setFeatured(data as any);
+    };
+    fetchFeatured();
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
@@ -88,6 +116,45 @@ export default function Index() {
           ))}
         </div>
       </section>
+
+      {/* Featured Products */}
+      {featured.length > 0 && (
+        <section className="container pb-16 md:pb-24">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h2 className="font-display text-2xl md:text-4xl text-foreground">Piezas Destacadas</h2>
+            <div className="w-12 h-px bg-gold mx-auto mt-4" />
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {featured.map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                name={product.name}
+                slug={product.slug}
+                priceCents={product.price_cents}
+                imageUrl={product.product_images?.[0]?.url}
+                isCustomRequest={product.is_custom_request}
+              />
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link
+              to="/productos"
+              className="inline-flex items-center px-8 py-3 border border-border text-foreground text-sm tracking-widest uppercase hover:bg-secondary transition-colors"
+            >
+              Ver Toda la Colección
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Brand statement */}
       <section className="bg-primary text-primary-foreground py-16 md:py-24">
