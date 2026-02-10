@@ -22,13 +22,9 @@ export default function AdminLayout() {
         navigate("/admin/login");
         return;
       }
-      // Check admin role
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .eq("role", "admin");
-      if (!roles || roles.length === 0) {
+      // Server-side admin verification
+      const { data, error } = await supabase.functions.invoke("verify-admin");
+      if (error || !data?.isAdmin) {
         navigate("/admin/login");
         return;
       }
