@@ -16,6 +16,9 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./components/admin/AdminLayout";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminSolicitudes from "./pages/admin/AdminSolicitudes";
+import AdminProducts from "./pages/admin/AdminProducts";
+import AdminCategories from "./pages/admin/AdminCategories";
+import AdminOrders from "./pages/admin/AdminOrders";
 import NotFound from "./pages/NotFound";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
@@ -51,6 +54,9 @@ const App = () => (
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
+            <Route path="productos" element={<AdminProducts />} />
+            <Route path="categorias" element={<AdminCategories />} />
+            <Route path="pedidos" element={<AdminOrders />} />
             <Route path="solicitudes" element={<AdminSolicitudes />} />
           </Route>
           <Route path="*" element={<NotFound />} />
