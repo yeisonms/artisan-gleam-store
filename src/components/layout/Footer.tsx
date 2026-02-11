@@ -39,7 +39,7 @@ export default function Footer() {
             <h4 className="font-display text-sm tracking-widest uppercase mb-4">Contacto</h4>
             <nav className="flex flex-col gap-2">
               <Link to="/contacto" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Contáctanos</Link>
-              <Link to="/productos?categoria=elaboracion-personalizada-de-joyas" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Joya Personalizada</Link>
+              <Link to="/solicitud-personalizada" className="text-sm text-primary-foreground/70 hover:text-gold transition-colors">Joya Personalizada</Link>
             </nav>
           </div>
         </div>
