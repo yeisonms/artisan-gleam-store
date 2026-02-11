@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatCOP } from "@/lib/cart";
-import { Plus, Pencil, Trash2, ChevronLeft, X, Check, Image as ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronLeft, X, Check, Image as ImageIcon, Upload } from "lucide-react";
 
 interface Product {
   id: string;
@@ -158,6 +158,8 @@ export default function AdminProducts() {
     fetchProductDetails(editingId);
   };
 
+  const [uploadingImage, setUploadingImage] = useState(false);
+
   // Image helpers
   const addImage = async () => {
     if (!editingId || !newImageUrl.trim()) return;
@@ -168,6 +170,24 @@ export default function AdminProducts() {
     });
     if (error) toast.error("Error al agregar imagen");
     else { toast.success("Imagen agregada"); setNewImageUrl(""); fetchProductDetails(editingId); }
+  };
+
+  const uploadImage = async (file: File) => {
+    if (!editingId) { toast.error("Guarda el producto primero"); return; }
+    setUploadingImage(true);
+    const ext = file.name.split(".").pop();
+    const path = `${editingId}/${crypto.randomUUID()}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("product-images").upload(path, file);
+    if (uploadError) { toast.error("Error al subir imagen"); setUploadingImage(false); return; }
+    const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(path);
+    const { error } = await supabase.from("product_images").insert({
+      product_id: editingId,
+      url: urlData.publicUrl,
+      sort_order: images.length,
+    });
+    if (error) toast.error("Error al guardar imagen");
+    else { toast.success("Imagen subida"); fetchProductDetails(editingId); }
+    setUploadingImage(false);
   };
 
   const deleteImage = async (imgId: string) => {
@@ -296,12 +316,20 @@ export default function AdminProducts() {
                 ))}
               </div>
             )}
-            <div className="flex gap-2">
-              <input placeholder="URL de imagen" className="flex-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} />
-              <button onClick={addImage} className="inline-flex items-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90">
-                <ImageIcon size={14} /> Agregar
-              </button>
+            <div className="space-y-3">
+              <div className="flex gap-2">
+                <label className={`inline-flex items-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90 cursor-pointer ${uploadingImage ? "opacity-50 pointer-events-none" : ""}`}>
+                  <Upload size={14} /> {uploadingImage ? "Subiendo..." : "Subir imagen"}
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.target.value = ""; }} />
+                </label>
+              </div>
+              <div className="flex gap-2">
+                <input placeholder="O pegar URL de imagen" className="flex-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} />
+                <button onClick={addImage} className="inline-flex items-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90">
+                  <ImageIcon size={14} /> Agregar URL
+                </button>
+              </div>
             </div>
           </div>
         )}
