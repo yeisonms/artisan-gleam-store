@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { Upload, X } from "lucide-react";
 
 const requestSchema = z.object({
   fullName: z.string().trim().min(2, "Nombre requerido").max(100),
@@ -29,6 +30,7 @@ const requestSchema = z.object({
 export default function CustomRequest() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
@@ -40,10 +42,37 @@ export default function CustomRequest() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
+  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; url: string }[]>([]);
+  const [uploading, setUploading] = useState(false);
 
   const handleChange = (field: string, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    if (uploadedFiles.length + files.length > 5) {
+      toast.error("Máximo 5 imágenes permitidas.");
+      return;
+    }
+    setUploading(true);
+    for (const file of Array.from(files)) {
+      if (!file.type.startsWith("image/")) { toast.error(`${file.name} no es una imagen.`); continue; }
+      if (file.size > 5 * 1024 * 1024) { toast.error(`${file.name} excede 5 MB.`); continue; }
+      const path = `${crypto.randomUUID()}.${file.name.split(".").pop()}`;
+      const { error } = await supabase.storage.from("custom-request-images").upload(path, file);
+      if (error) { toast.error(`Error subiendo ${file.name}`); continue; }
+      const { data: urlData } = supabase.storage.from("custom-request-images").getPublicUrl(path);
+      setUploadedFiles((prev) => [...prev, { name: file.name, url: urlData.publicUrl }]);
+    }
+    setUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const removeFile = (index: number) => {
+    setUploadedFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -69,6 +98,12 @@ export default function CustomRequest() {
       return;
     }
 
+    // Combine uploaded image URLs with reference links
+    const allImages = [
+      ...uploadedFiles.map((f) => f.url),
+      ...(form.referenceLinks ? form.referenceLinks.split("\n").filter(Boolean) : []),
+    ];
+
     setSubmitting(true);
     const { error } = await supabase.from("custom_requests").insert({
       full_name: form.fullName,
@@ -77,9 +112,7 @@ export default function CustomRequest() {
       category_hint: form.categoryHint || null,
       budget_cents: budgetCents,
       details: form.details,
-      reference_images: form.referenceLinks
-        ? form.referenceLinks.split("\n").filter(Boolean)
-        : [],
+      reference_images: allImages,
       status: "new",
     });
 
@@ -130,6 +163,44 @@ export default function CustomRequest() {
         <div>
           <textarea className={`${inputClass} resize-none h-32`} placeholder="Describe tu idea con detalle *" value={form.details} onChange={(e) => handleChange("details", e.target.value)} />
           {errors.details && <p className="text-destructive text-xs mt-1">{errors.details}</p>}
+        </div>
+
+        {/* Image upload */}
+        <div>
+          <label className="block text-sm text-muted-foreground mb-2">Imágenes de referencia (máx. 5, hasta 5 MB c/u)</label>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileUpload}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={uploading || uploadedFiles.length >= 5}
+            className={`${inputClass} flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            <Upload className="w-4 h-4" />
+            {uploading ? "Subiendo..." : "Seleccionar imágenes"}
+          </button>
+          {uploadedFiles.length > 0 && (
+            <div className="flex flex-wrap gap-3 mt-3">
+              {uploadedFiles.map((file, i) => (
+                <div key={i} className="relative group">
+                  <img src={file.url} alt={file.name} className="w-20 h-20 object-cover rounded border border-border" />
+                  <button
+                    type="button"
+                    onClick={() => removeFile(i)}
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div>
