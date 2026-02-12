@@ -10,7 +10,6 @@ const categories = [
   { name: "Anillos", slug: "anillos" },
   { name: "Aretes", slug: "aretes" },
   { name: "Dijes", slug: "dijes" },
-  { name: "Joyas Personalizadas", slug: "elaboracion-personalizada-de-joyas" },
 ];
 
 interface FeaturedProduct {
@@ -69,7 +68,7 @@ export default function Index() {
                 Explorar Colección
               </Link>
               <Link
-                to="/productos?categoria=elaboracion-personalizada-de-joyas"
+                to="/solicitud-personalizada"
                 className="inline-flex items-center px-8 py-3 border border-primary-foreground/40 text-primary-foreground font-sans text-sm tracking-widest uppercase hover:bg-primary-foreground/10 transition-colors"
               >
                 Diseño Personalizado
