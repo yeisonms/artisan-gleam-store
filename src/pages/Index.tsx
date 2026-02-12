@@ -5,12 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import ProductCard from "@/components/products/ProductCard";
 import heroImage from "@/assets/hero-jewelry.jpg";
 
-const categories = [
-  { name: "Pulseras", slug: "pulseras" },
-  { name: "Anillos", slug: "anillos" },
-  { name: "Aretes", slug: "aretes" },
-  { name: "Dijes", slug: "dijes" },
-];
+interface CategoryItem {
+  name: string;
+  slug: string;
+  image_url: string | null;
+}
 
 interface FeaturedProduct {
   id: string;
@@ -23,6 +22,7 @@ interface FeaturedProduct {
 
 export default function Index() {
   const [featured, setFeatured] = useState<FeaturedProduct[]>([]);
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -35,7 +35,16 @@ export default function Index() {
         .limit(8);
       if (data) setFeatured(data as any);
     };
+    const fetchCategories = async () => {
+      const { data } = await supabase
+        .from("categories")
+        .select("name, slug, image_url")
+        .eq("is_active", true)
+        .order("sort_order");
+      if (data) setCategories(data);
+    };
     fetchFeatured();
+    fetchCategories();
   }, []);
 
   return (
@@ -104,9 +113,17 @@ export default function Index() {
                 to={`/productos?categoria=${cat.slug}`}
                 className="block group aspect-[3/4] bg-secondary relative overflow-hidden"
               >
-                <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors" />
+                {cat.image_url && (
+                  <img
+                    src={cat.image_url}
+                    alt={cat.name}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    loading="lazy"
+                  />
+                )}
+                <div className="absolute inset-0 bg-primary/30 group-hover:bg-primary/40 transition-colors" />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-sm md:text-base tracking-widest uppercase text-foreground group-hover:text-gold transition-colors text-center px-4">
+                  <span className="font-display text-sm md:text-base tracking-widest uppercase text-primary-foreground group-hover:text-gold transition-colors text-center px-4 drop-shadow-md">
                     {cat.name}
                   </span>
                 </div>

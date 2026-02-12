@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, X, Check } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, Upload, ImageIcon } from "lucide-react";
 
 interface Category {
   id: string;
@@ -10,10 +10,11 @@ interface Category {
   description: string | null;
   is_active: boolean;
   sort_order: number;
+  image_url: string | null;
   created_at: string;
 }
 
-const emptyForm = { name: "", slug: "", description: "", is_active: true, sort_order: 0 };
+const emptyForm = { name: "", slug: "", description: "", is_active: true, sort_order: 0, image_url: "" };
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -22,6 +23,7 @@ export default function AdminCategories() {
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [saving, setSaving] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   const fetch = async () => {
     setLoading(true);
@@ -44,6 +46,7 @@ export default function AdminCategories() {
       description: form.description.trim() || null,
       is_active: form.is_active,
       sort_order: form.sort_order,
+      image_url: form.image_url.trim() || null,
     });
     if (error) toast.error("Error al crear categoría");
     else { toast.success("Categoría creada"); setCreating(false); setForm(emptyForm); fetch(); }
@@ -59,6 +62,7 @@ export default function AdminCategories() {
       description: form.description.trim() || null,
       is_active: form.is_active,
       sort_order: form.sort_order,
+      image_url: form.image_url.trim() || null,
     }).eq("id", id);
     if (error) toast.error("Error al actualizar");
     else { toast.success("Categoría actualizada"); setEditing(null); fetch(); }
@@ -75,7 +79,7 @@ export default function AdminCategories() {
   const startEdit = (c: Category) => {
     setEditing(c.id);
     setCreating(false);
-    setForm({ name: c.name, slug: c.slug, description: c.description || "", is_active: c.is_active, sort_order: c.sort_order });
+    setForm({ name: c.name, slug: c.slug, description: c.description || "", is_active: c.is_active, sort_order: c.sort_order, image_url: c.image_url || "" });
   };
 
   const startCreate = () => {
@@ -117,6 +121,37 @@ export default function AdminCategories() {
           value={form.description}
           onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
         />
+      </div>
+      <div>
+        <label className="text-xs text-muted-foreground uppercase tracking-wider">Imagen de categoría</label>
+        <div className="flex items-center gap-3 mt-1">
+          {form.image_url && (
+            <img src={form.image_url} alt="Preview" className="w-16 h-16 object-cover border border-border" />
+          )}
+          <label className="inline-flex items-center gap-1 px-3 py-2 text-sm border border-border text-muted-foreground hover:text-foreground cursor-pointer">
+            <Upload size={14} />
+            {uploadingImage ? "Subiendo..." : "Subir imagen"}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              disabled={uploadingImage}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                if (file.size > 5 * 1024 * 1024) { toast.error("Máximo 5MB"); return; }
+                setUploadingImage(true);
+                const ext = file.name.split(".").pop();
+                const path = `categories/${crypto.randomUUID()}.${ext}`;
+                const { error } = await supabase.storage.from("product-images").upload(path, file);
+                if (error) { toast.error("Error al subir imagen"); setUploadingImage(false); return; }
+                const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(path);
+                setForm((f) => ({ ...f, image_url: urlData.publicUrl }));
+                setUploadingImage(false);
+              }}
+            />
+          </label>
+        </div>
       </div>
       <div className="flex items-center gap-6">
         <label className="flex items-center gap-2 text-sm">
