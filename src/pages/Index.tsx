@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import ProductCard from "@/components/products/ProductCard";
 import heroImage from "@/assets/hero-jewelry.jpg";
 import marbleTexture from "@/assets/marble-texture.jpg";
+import logoTransparent from "@/assets/logo-transparent.png";
 
 interface CategoryItem {
   name: string;
@@ -66,7 +67,7 @@ export default function Index() {
             transition={{ duration: 1, delay: 0.3 }}
             className="max-w-3xl"
           >
-            <div className="w-16 h-px bg-gold mx-auto mb-8" />
+            <img src={logoTransparent} alt="Magna Arte" className="h-24 md:h-36 w-auto mx-auto mb-6" />
             <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-gold leading-tight">
               El Arte de la <span className="italic">Joyería</span>
             </h1>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logoBlackBg from "@/assets/logo-black-bg.png";
 
 export default function Footer() {
   return (
@@ -6,9 +7,7 @@ export default function Footer() {
       <div className="container py-14 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           <div>
-            <h3 className="font-display text-xl tracking-[0.2em] mb-4 text-gold">
-              MAGNA <span className="font-light">ARTE</span>
-            </h3>
+            <img src={logoBlackBg} alt="Magna Arte" className="h-20 w-auto mb-4" />
             <p className="text-sm text-ivory/60 leading-relaxed max-w-xs font-sans">
               Joyería artesanal de alta calidad. Cada pieza cuenta una historia única, elaborada con pasión y dedicación.
             </p>

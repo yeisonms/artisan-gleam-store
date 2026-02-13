@@ -3,6 +3,7 @@ import { ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import logoTransparent from "@/assets/logo-transparent.png";
 
 const navLinks = [
   { label: "Inicio", href: "/" },
@@ -31,8 +32,8 @@ export default function Header() {
         </button>
 
         {/* Logo */}
-        <Link to="/" className="font-display text-xl md:text-2xl tracking-[0.2em] text-gold">
-          MAGNA <span className="font-light">ARTE</span>
+        <Link to="/" className="flex items-center">
+          <img src={logoTransparent} alt="Magna Arte" className="h-10 md:h-14 w-auto" />
         </Link>
 
         {/* Desktop nav */}
