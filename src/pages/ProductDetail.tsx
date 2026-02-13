@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart, formatCOP } from "@/lib/cart";
-import { ShoppingBag, ChevronLeft } from "lucide-react";
+import { ShoppingBag, Minus, Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 
@@ -33,6 +33,7 @@ interface ProductDetail {
   category_id: string;
   product_images: ProductImage[];
   product_variants: Variant[];
+  categories?: { name: string; slug: string } | null;
 }
 
 export default function ProductDetailPage() {
@@ -41,13 +42,14 @@ export default function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
+  const [quantity, setQuantity] = useState(1);
   const addItem = useCart((s) => s.addItem);
 
   useEffect(() => {
     const fetch = async () => {
       const { data } = await supabase
         .from("products")
-        .select("*, product_images(*), product_variants(*)")
+        .select("*, product_images(*), product_variants(*), categories(name, slug)")
         .eq("slug", slug)
         .eq("is_active", true)
         .maybeSingle();
@@ -88,6 +90,7 @@ export default function ProductDetailPage() {
 
   const images = product.product_images?.sort((a, b) => a.sort_order - b.sort_order) || [];
   const currentPrice = selectedVariant?.price_cents ?? product.price_cents;
+  const categoryName = (product as any).categories?.name;
 
   const handleAddToCart = () => {
     if (!selectedVariant) {
@@ -98,75 +101,104 @@ export default function ProductDetailPage() {
       toast.error("Sin stock disponible");
       return;
     }
-    addItem({
-      variantId: selectedVariant.id,
-      productId: product.id,
-      productName: product.name,
-      variantName: selectedVariant.variant_name,
-      imageUrl: images[0]?.url || "",
-      unitPriceCents: currentPrice,
-      attributes: selectedVariant.attributes as Record<string, string>,
-    });
-    toast.success("Agregado al carrito");
+    for (let i = 0; i < quantity; i++) {
+      addItem({
+        variantId: selectedVariant.id,
+        productId: product.id,
+        productName: product.name,
+        variantName: selectedVariant.variant_name,
+        imageUrl: images[0]?.url || "",
+        unitPriceCents: currentPrice,
+        attributes: selectedVariant.attributes as Record<string, string>,
+      });
+    }
+    toast.success(`${quantity > 1 ? quantity + " unidades agregadas" : "Agregado"} al carrito`);
+    setQuantity(1);
   };
 
   return (
     <div className="min-h-screen">
-      <div className="container py-6 md:py-12">
-        <Link to="/productos" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ChevronLeft size={16} /> Volver
-        </Link>
+      <div className="container py-6 md:py-10">
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8">
+          <Link to="/" className="hover:text-foreground transition-colors">Inicio</Link>
+          <span>»</span>
+          <Link to="/productos" className="hover:text-foreground transition-colors">Tienda</Link>
+          {categoryName && (
+            <>
+              <span>»</span>
+              <span className="hover:text-foreground transition-colors">{categoryName}</span>
+            </>
+          )}
+          <span>»</span>
+          <span className="text-foreground truncate max-w-[200px] md:max-w-none">{product.name}</span>
+        </nav>
 
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-          {/* Gallery */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="aspect-square bg-secondary overflow-hidden">
-              {images.length > 0 ? (
-                <img src={images[selectedImage]?.url} alt={product.name} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground font-display text-2xl">MA</div>
-              )}
-            </div>
+        <div className="grid md:grid-cols-[1fr_1.2fr] gap-8 md:gap-14">
+          {/* Gallery: thumbnails left + main image */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-4">
+            {/* Vertical thumbnails */}
             {images.length > 1 && (
-              <div className="flex gap-2 mt-3">
+              <div className="flex flex-col gap-3 w-20 shrink-0">
                 {images.map((img, i) => (
                   <button
                     key={img.id}
                     onClick={() => setSelectedImage(i)}
-                    className={`w-16 h-16 overflow-hidden border-2 transition-colors ${i === selectedImage ? "border-gold" : "border-transparent"}`}
+                    className={`w-20 h-20 overflow-hidden border-2 transition-all ${
+                      i === selectedImage ? "border-gold shadow-md" : "border-border/50 hover:border-foreground/30"
+                    }`}
                   >
                     <img src={img.url} alt={img.alt || product.name} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
             )}
+
+            {/* Main image */}
+            <div className="flex-1 aspect-square bg-secondary overflow-hidden relative group">
+              {images.length > 0 ? (
+                <img
+                  src={images[selectedImage]?.url}
+                  alt={product.name}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground font-display text-3xl">MA</div>
+              )}
+              {selectedVariant?.sku && (
+                <span className="absolute bottom-3 right-3 text-xs text-muted-foreground bg-background/80 px-2 py-1 backdrop-blur-sm">
+                  {selectedVariant.sku}
+                </span>
+              )}
+            </div>
           </motion.div>
 
-          {/* Info */}
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-            <h1 className="font-display text-2xl md:text-3xl text-foreground">{product.name}</h1>
-            <p className="text-xl text-gold font-display mt-2">
-              {product.is_custom_request ? "Cotización personalizada" : formatCOP(currentPrice)}
+          {/* Product Info */}
+          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }} className="flex flex-col">
+            <h1 className="font-display text-2xl md:text-4xl text-foreground leading-tight">{product.name}</h1>
+
+            <p className="text-2xl text-gold font-display mt-4">
+              {product.is_custom_request ? "Cotización personalizada" : `Desde ${formatCOP(currentPrice)}`}
             </p>
 
             {product.description && (
-              <p className="text-muted-foreground mt-6 leading-relaxed">{product.description}</p>
+              <p className="text-muted-foreground mt-6 leading-relaxed text-[15px]">{product.description}</p>
             )}
 
             {/* Variants */}
             {!product.is_custom_request && product.product_variants.length > 0 && (
-              <div className="mt-6">
-                <p className="text-sm font-medium text-foreground mb-3 uppercase tracking-wider">Variante</p>
+              <div className="mt-8">
+                <p className="text-sm font-semibold text-foreground mb-3 tracking-wide">Variante:</p>
                 <div className="flex flex-wrap gap-2">
                   {product.product_variants.map((v) => (
                     <button
                       key={v.id}
                       onClick={() => setSelectedVariant(v)}
-                      className={`px-4 py-2 text-sm border transition-colors ${
+                      className={`px-5 py-2.5 text-sm border transition-all ${
                         selectedVariant?.id === v.id
                           ? "border-gold text-foreground bg-gold/10"
                           : "border-border text-muted-foreground hover:border-foreground"
-                      } ${v.stock <= 0 ? "opacity-40 cursor-not-allowed" : ""}`}
+                      } ${v.stock <= 0 ? "opacity-40 cursor-not-allowed line-through" : ""}`}
                       disabled={v.stock <= 0}
                     >
                       {v.variant_name}
@@ -181,24 +213,52 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* CTA */}
-            <div className="mt-8">
+            {/* Quantity + CTA */}
+            <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
               {product.is_custom_request ? (
                 <Link
                   to={`/solicitud-personalizada?producto=${product.slug}`}
-                  className="inline-flex items-center gap-2 px-8 py-3 bg-gold text-accent-foreground text-sm tracking-widest uppercase hover:bg-gold-dark transition-colors w-full md:w-auto justify-center"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 bg-gold text-accent-foreground text-sm tracking-widest uppercase hover:bg-gold-dark transition-colors justify-center font-medium"
                 >
                   Solicitar Cotización
                 </Link>
               ) : (
-                <button
-                  onClick={handleAddToCart}
-                  disabled={!selectedVariant || selectedVariant.stock <= 0}
-                  className="inline-flex items-center gap-2 px-8 py-3 bg-gold text-accent-foreground text-sm tracking-widest uppercase hover:bg-gold-dark transition-colors w-full md:w-auto justify-center disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <ShoppingBag size={16} /> Agregar al Carrito
-                </button>
+                <>
+                  {/* Quantity selector */}
+                  <div className="flex items-center border border-border">
+                    <button
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="w-11 h-11 flex items-center justify-center hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                    >
+                      <Minus size={14} />
+                    </button>
+                    <span className="w-12 h-11 flex items-center justify-center text-sm font-medium border-x border-border">
+                      {quantity}
+                    </span>
+                    <button
+                      onClick={() => setQuantity((q) => Math.min(selectedVariant?.stock || 10, q + 1))}
+                      className="w-11 h-11 flex items-center justify-center hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"
+                    >
+                      <Plus size={14} />
+                    </button>
+                  </div>
+
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={!selectedVariant || selectedVariant.stock <= 0}
+                    className="inline-flex items-center gap-2 px-8 py-3.5 bg-gold text-accent-foreground text-sm tracking-widest uppercase hover:bg-gold-dark transition-colors justify-center disabled:opacity-40 disabled:cursor-not-allowed font-medium flex-1 sm:flex-initial"
+                  >
+                    <ShoppingBag size={16} /> AÑADIR AL CARRITO
+                  </button>
+                </>
               )}
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-border mt-10 pt-6">
+              <p className="text-xs text-muted-foreground uppercase tracking-widest">
+                Imagen protegida por derechos de autor. Prohibida su reproducción sin autorización.
+              </p>
             </div>
           </motion.div>
         </div>
