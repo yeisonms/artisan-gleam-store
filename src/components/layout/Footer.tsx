@@ -1,17 +1,9 @@
 import { Link } from "react-router-dom";
-import marbleTexture from "@/assets/marble-texture.jpg";
 
 export default function Footer() {
   return (
-    <footer className="relative overflow-hidden">
-      <img
-        src={marbleTexture}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover"
-        aria-hidden="true"
-      />
-      <div className="absolute inset-0 bg-black/70" />
-      <div className="relative container py-14 md:py-20">
+    <footer className="bg-black">
+      <div className="container py-14 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           <div>
             <h3 className="font-display text-xl tracking-[0.2em] mb-4 text-gold">
@@ -53,7 +45,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-14 pt-6 border-t border-gold/20 text-center">
-          <p className="text-xs text-ivory/40 font-sans tracking-wide">
+          <p className="text-xs text-ivory/40 font-sans tracking-wide max-w-md mx-auto">
             © {new Date().getFullYear()} Magna Arte. Todos los derechos reservados.
           </p>
         </div>
