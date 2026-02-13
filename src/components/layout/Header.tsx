@@ -56,7 +56,7 @@ export default function Header() {
 
         {/* Center: Logo */}
         <Link to="/" className="flex items-center absolute left-1/2 -translate-x-1/2">
-          <img src={logoHeader} alt="Magna Arte" className="h-16 md:h-20 w-auto" />
+          <img src={logoHeader} alt="Magna Arte" className="h-12 md:h-16 w-auto" />
         </Link>
 
         {/* Right: Actions */}
