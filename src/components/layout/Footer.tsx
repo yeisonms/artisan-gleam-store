@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import marbleTexture from "@/assets/marble-texture.jpg";
-import logoImage from "@/assets/logo-magna-arte.png";
 
 export default function Footer() {
   return (
@@ -15,9 +14,9 @@ export default function Footer() {
       <div className="relative container py-14 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
           <div>
-          <div className="h-10 mb-2">
-            <img src={logoImage} alt="Magna Arte" className="h-full object-contain" />
-          </div>
+            <h3 className="font-display text-xl tracking-[0.2em] mb-4 text-gold">
+              MAGNA <span className="font-light">ARTE</span>
+            </h3>
             <p className="text-sm text-ivory/60 leading-relaxed max-w-xs font-sans">
               Joyería artesanal de alta calidad. Cada pieza cuenta una historia única, elaborada con pasión y dedicación.
             </p>
