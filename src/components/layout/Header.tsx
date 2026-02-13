@@ -3,7 +3,7 @@ import { ShoppingBag, Menu, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import logoTransparent from "@/assets/logo-transparent.png";
+import logoHeader from "@/assets/logo-header.png";
 
 const navLinks = [
   { label: "Inicio", href: "/" },
@@ -33,7 +33,7 @@ export default function Header() {
 
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <img src={logoTransparent} alt="Magna Arte" className="h-20 md:h-28 w-auto" />
+          <img src={logoHeader} alt="Magna Arte" className="h-16 md:h-20 w-auto" />
         </Link>
 
         {/* Desktop nav */}
