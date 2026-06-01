@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { ShoppingBag, Menu, X, Search } from "lucide-react";
 import { useCart } from "@/lib/cart";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import logoHeader from "@/assets/logo-header.png";
 
@@ -16,58 +16,53 @@ const navLinks = [
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const itemCount = useCart((s) => s.itemCount());
   const location = useLocation();
 
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
-    <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'glassmorphism shadow-sm py-2' : 'bg-transparent py-4'}`}>
-      <div className="container flex items-center justify-between">
-        {/* Mobile menu toggle */}
-        <button
-          className={`md:hidden p-2 transition-colors ${scrolled ? 'text-foreground' : 'text-foreground mix-blend-difference text-white'}`}
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Menu"
-        >
-          {mobileOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
-        </button>
+    <header className="absolute top-0 w-full z-50 bg-[#FDFCF6] shadow-sm">
+      <div className="container flex flex-col items-center">
+        {/* Top row: Logo and Icons */}
+        <div className="w-full relative flex justify-center items-center py-6">
+          <button
+            className="md:hidden absolute left-4 p-2 text-gold hover:text-gold-dark transition-colors"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Menu"
+          >
+            {mobileOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
+          </button>
 
-        {/* Logo */}
-        <Link to="/" className={`transition-opacity duration-300 hover:opacity-80 ${scrolled ? '' : 'mix-blend-difference'}`}>
-          <img src={logoHeader} alt="Magna Arte" className="h-10 md:h-12 w-auto object-contain" />
-        </Link>
+          <Link to="/" className="transition-opacity duration-300 hover:opacity-80">
+            <img src={logoHeader} alt="Magna Arte" className="h-12 md:h-16 w-auto object-contain" />
+          </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-10">
+          <div className="absolute right-4 flex items-center gap-4">
+            <button className="p-2 text-gold hover:text-gold-dark transition-colors" aria-label="Buscar">
+              <Search size={20} strokeWidth={1.5} />
+            </button>
+            <Link to="/carrito" className="relative p-2 text-gold hover:text-gold-dark transition-colors" aria-label="Carrito">
+              <ShoppingBag size={20} strokeWidth={1.5} />
+              {itemCount > 0 && (
+                <span className="absolute top-0 right-0 bg-charcoal text-gold text-[10px] font-medium rounded-full w-4 h-4 flex items-center justify-center shadow-sm border border-gold/30">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
+          </div>
+        </div>
+
+        {/* Bottom row: Navigation */}
+        <nav className="hidden md:flex items-center gap-8 pb-6">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               to={link.href}
-              className={`text-xs md:text-sm tracking-[0.15em] transition-all duration-300 uppercase hover:text-gold relative group ${scrolled ? 'text-muted-foreground hover:text-foreground' : 'text-white/80 hover:text-white mix-blend-difference'}`}
+              className="text-xs md:text-sm tracking-[0.2em] font-medium text-gold hover:text-gold-dark uppercase transition-colors"
             >
               {link.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-gold transition-all duration-300 group-hover:w-full" />
             </Link>
           ))}
         </nav>
-
-        {/* Actions */}
-        <div className="flex items-center gap-6">
-          <Link to="/carrito" className={`relative p-2 transition-colors hover:text-gold ${scrolled ? 'text-foreground' : 'text-white mix-blend-difference'}`}>
-            <ShoppingBag size={22} strokeWidth={1.5} />
-            {itemCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-gold text-white text-[10px] font-medium rounded-full w-4 h-4 flex items-center justify-center shadow-sm">
-                {itemCount}
-              </span>
-            )}
-          </Link>
-        </div>
       </div>
 
       {/* Mobile nav */}
@@ -77,14 +72,14 @@ export default function Header() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden border-t border-border/50 bg-background/95 backdrop-blur-xl absolute top-full w-full shadow-lg"
+            className="md:hidden overflow-hidden border-t border-gold/20 bg-[#FDFCF6] absolute top-full w-full shadow-lg"
           >
             <div className="container py-6 flex flex-col gap-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
-                  className="text-sm tracking-[0.2em] text-foreground hover:text-gold uppercase py-2 border-b border-border/30"
+                  className="text-sm tracking-[0.2em] text-gold hover:text-gold-dark uppercase py-2 border-b border-gold/10"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
@@ -97,3 +92,4 @@ export default function Header() {
     </header>
   );
 }
+

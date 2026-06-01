@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import ProductCard from "@/components/products/ProductCard";
 import heroImage from "@/assets/hero-jewelry.jpg";
-import logoBanner from "@/assets/logo-banner.png";
+import marbleTexture from "@/assets/marble-texture.jpg";
 
 interface CategoryItem {
   name: string;
@@ -52,7 +52,7 @@ export default function Index() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative h-[80vh] md:h-[95vh] overflow-hidden bg-charcoal">
+      <section className="relative h-[80vh] md:h-[95vh] overflow-hidden bg-charcoal pt-24 md:pt-32">
         <img
           src={heroImage}
           alt="Joyería artesanal de lujo"
@@ -65,7 +65,7 @@ export default function Index() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
-            className="max-w-4xl px-4"
+            className="max-w-4xl px-4 flex flex-col items-center"
           >
             <motion.div 
               initial={{ scaleX: 0 }}
@@ -73,23 +73,25 @@ export default function Index() {
               transition={{ duration: 1, delay: 1 }}
               className="w-24 h-[1px] bg-gold mx-auto mb-8 origin-center" 
             />
-            <div className="flex justify-center mb-8">
-              <img src={logoBanner} alt="Magna Arte" className="h-28 md:h-40 lg:h-52 w-auto object-contain drop-shadow-2xl" />
-            </div>
+            
+            <h1 className="text-5xl md:text-7xl lg:text-8xl text-gold font-display mb-6 tracking-wide drop-shadow-lg">
+              El Arte de la <span className="italic font-light">Joyería</span>
+            </h1>
+
             <p className="mt-4 text-white/90 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-sans font-light tracking-wide">
-              Piezas únicas elaboradas a mano con los más finos materiales. 
-              Donde cada joya cuenta tu propia historia.
+              Piezas únicas elaboradas a mano con los más finos materiales.<br/>
+              Cada joya cuenta tu historia.
             </p>
             <div className="mt-12 flex flex-wrap justify-center gap-6">
               <Link
                 to="/productos"
-                className="inline-flex items-center justify-center px-10 py-4 bg-gold text-white font-sans text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold-light transition-all duration-500 rounded-sm hover:-translate-y-1 hover:shadow-2xl hover:shadow-gold/20"
+                className="inline-flex items-center justify-center px-10 py-4 bg-gold text-[#1a1a1a] font-sans font-medium text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold-light transition-all duration-500 rounded-sm hover:-translate-y-1 hover:shadow-2xl hover:shadow-gold/20"
               >
                 Explorar Colección
               </Link>
               <Link
                 to="/solicitud-personalizada"
-                className="inline-flex items-center justify-center px-10 py-4 glassmorphism text-white font-sans text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-white/10 transition-all duration-500 rounded-sm hover:-translate-y-1"
+                className="inline-flex items-center justify-center px-10 py-4 border border-gold text-gold font-sans text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold/10 transition-all duration-500 rounded-sm hover:-translate-y-1"
               >
                 Diseño Personalizado
               </Link>
@@ -209,25 +211,31 @@ export default function Index() {
       )}
 
       {/* Brand statement */}
-      <section className="relative py-32 md:py-48 overflow-hidden bg-charcoal text-white">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gold/10 via-charcoal to-charcoal" />
-        <div className="relative container text-center max-w-4xl mx-auto px-4">
+      <section className="relative py-32 md:py-48 overflow-hidden bg-black text-white">
+        <img
+          src={marbleTexture}
+          alt="Marble Texture"
+          className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black" />
+        <div className="relative container text-center max-w-4xl mx-auto px-4 flex flex-col items-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 1.2, ease: "easeOut" }}
+            className="flex flex-col items-center"
           >
-            <div className="w-16 h-[1px] bg-gold mx-auto mb-12" />
-            <p className="font-display text-2xl md:text-4xl lg:text-5xl italic leading-relaxed text-white/90 font-light">
-              "La excelencia no es un acto, es un hábito. Cada pieza que forjamos en Magna Arte es un testamento eterno a la elegancia."
+            <div className="w-16 h-[1px] bg-gold mx-auto mb-10" />
+            <p className="font-display text-2xl md:text-4xl lg:text-5xl italic leading-relaxed text-gold font-light">
+              "Cada pieza de Magna Arte es una obra maestra artesanal, diseñada para trascender el tiempo y celebrar los momentos más preciados de tu vida."
             </p>
-            <div className="w-16 h-[1px] bg-gold mx-auto mt-12 mb-16" />
+            <div className="w-16 h-[1px] bg-gold mx-auto mt-10 mb-14" />
             <Link
-              to="/contacto"
-              className="inline-flex items-center px-10 py-4 bg-gold text-white text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold-light transition-all duration-500 rounded-sm"
+              to="/productos"
+              className="inline-flex items-center px-10 py-4 border border-gold text-gold text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold/10 transition-all duration-500 rounded-sm"
             >
-              Agendar Asesoría
+              Ver Toda la Colección
             </Link>
           </motion.div>
         </div>

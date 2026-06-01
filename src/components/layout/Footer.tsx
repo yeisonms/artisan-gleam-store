@@ -3,13 +3,12 @@ import logoTransparent from "@/assets/logo-transparent.png";
 
 export default function Footer() {
   return (
-    <footer className="bg-charcoal text-white pt-24 pb-12 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
+    <footer className="bg-black text-white pt-24 pb-12 relative overflow-hidden">
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-16">
           <div className="md:col-span-1">
             <Link to="/" className="inline-block mb-6 transition-opacity hover:opacity-80">
-              <img src={logoTransparent} alt="Magna Arte" className="h-10 md:h-12 w-auto object-contain" />
+              <img src={logoTransparent} alt="Magna Arte" className="h-20 md:h-28 w-auto object-contain" />
             </Link>
             <p className="text-sm text-white/60 leading-relaxed font-light">
               Joyería artesanal de alta calidad. Cada pieza cuenta una historia única, elaborada con pasión y dedicación.
