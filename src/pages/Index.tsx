@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import ProductCard from "@/components/products/ProductCard";
 import heroImage from "@/assets/hero-jewelry.jpg";
+import logoBanner from "@/assets/logo-banner.png";
 
 interface CategoryItem {
   name: string;
@@ -70,12 +71,12 @@ export default function Index() {
               initial={{ scaleX: 0 }}
               animate={{ scaleX: 1 }}
               transition={{ duration: 1, delay: 1 }}
-              className="w-24 h-[1px] bg-gold mx-auto mb-10 origin-center" 
+              className="w-24 h-[1px] bg-gold mx-auto mb-8 origin-center" 
             />
-            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-tight drop-shadow-2xl font-medium tracking-tight">
-              MAGNA <span className="text-gold italic font-light">ARTE</span>
-            </h1>
-            <p className="mt-8 text-white/90 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-sans font-light tracking-wide">
+            <div className="flex justify-center mb-8">
+              <img src={logoBanner} alt="Magna Arte" className="h-28 md:h-40 lg:h-52 w-auto object-contain drop-shadow-2xl" />
+            </div>
+            <p className="mt-4 text-white/90 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-sans font-light tracking-wide">
               Piezas únicas elaboradas a mano con los más finos materiales. 
               Donde cada joya cuenta tu propia historia.
             </p>

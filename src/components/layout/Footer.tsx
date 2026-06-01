@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import logoTransparent from "@/assets/logo-transparent.png";
 
 export default function Footer() {
   return (
@@ -7,9 +8,9 @@ export default function Footer() {
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-16">
           <div className="md:col-span-1">
-            <h3 className="font-display text-2xl tracking-[0.2em] mb-6">
-              MAGNA <span className="text-gold italic font-light">ARTE</span>
-            </h3>
+            <Link to="/" className="inline-block mb-6 transition-opacity hover:opacity-80">
+              <img src={logoTransparent} alt="Magna Arte" className="h-10 md:h-12 w-auto object-contain" />
+            </Link>
             <p className="text-sm text-white/60 leading-relaxed font-light">
               Joyería artesanal de alta calidad. Cada pieza cuenta una historia única, elaborada con pasión y dedicación.
             </p>
