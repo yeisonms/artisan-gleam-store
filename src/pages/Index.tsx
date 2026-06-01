@@ -5,13 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import ProductCard from "@/components/products/ProductCard";
 import heroImage from "@/assets/hero-jewelry.jpg";
 
-const categories = [
-  { name: "Pulseras", slug: "pulseras" },
-  { name: "Anillos", slug: "anillos" },
-  { name: "Aretes", slug: "aretes" },
-  { name: "Dijes", slug: "dijes" },
-  { name: "Joyas Personalizadas", slug: "elaboracion-personalizada-de-joyas" },
-];
+interface CategoryItem {
+  name: string;
+  slug: string;
+  image_url: string | null;
+}
 
 interface FeaturedProduct {
   id: string;
@@ -19,157 +17,217 @@ interface FeaturedProduct {
   slug: string;
   price_cents: number;
   is_custom_request: boolean;
+  description: string | null;
   product_images: { url: string; sort_order: number }[];
 }
 
 export default function Index() {
   const [featured, setFeatured] = useState<FeaturedProduct[]>([]);
+  const [categories, setCategories] = useState<CategoryItem[]>([]);
 
   useEffect(() => {
     const fetchFeatured = async () => {
       const { data } = await supabase
         .from("products")
-        .select("id, name, slug, price_cents, is_custom_request, product_images(url, sort_order)")
+        .select("id, name, slug, price_cents, is_custom_request, description, product_images(url, sort_order)")
         .eq("is_active", true)
         .eq("featured", true)
         .order("created_at", { ascending: false })
         .limit(8);
       if (data) setFeatured(data as any);
     };
+    const fetchCategories = async () => {
+      const { data } = await supabase
+        .from("categories")
+        .select("name, slug, image_url")
+        .eq("is_active", true)
+        .order("sort_order");
+      if (data) setCategories(data);
+    };
     fetchFeatured();
+    fetchCategories();
   }, []);
 
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative h-[70vh] md:h-[85vh] overflow-hidden">
+      <section className="relative h-[80vh] md:h-[95vh] overflow-hidden bg-charcoal">
         <img
           src={heroImage}
           alt="Joyería artesanal de lujo"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay"
+          loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent" />
-        <div className="relative h-full container flex flex-col justify-end pb-16 md:pb-24">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-background" />
+        <div className="relative h-full container flex flex-col justify-center items-center text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+            className="max-w-4xl px-4"
           >
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-primary-foreground leading-tight max-w-2xl">
-              El Arte de la <span className="text-gold italic">Joyería</span>
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 1, delay: 1 }}
+              className="w-24 h-[1px] bg-gold mx-auto mb-10 origin-center" 
+            />
+            <h1 className="font-display text-5xl md:text-7xl lg:text-8xl text-white leading-tight drop-shadow-2xl font-medium tracking-tight">
+              MAGNA <span className="text-gold italic font-light">ARTE</span>
             </h1>
-            <p className="mt-4 text-primary-foreground/80 text-base md:text-lg max-w-md leading-relaxed">
-              Piezas únicas elaboradas a mano con los más finos materiales. Cada joya cuenta tu historia.
+            <p className="mt-8 text-white/90 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-sans font-light tracking-wide">
+              Piezas únicas elaboradas a mano con los más finos materiales. 
+              Donde cada joya cuenta tu propia historia.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-12 flex flex-wrap justify-center gap-6">
               <Link
                 to="/productos"
-                className="inline-flex items-center px-8 py-3 bg-gold text-accent-foreground font-sans text-sm tracking-widest uppercase hover:bg-gold-dark transition-colors"
+                className="inline-flex items-center justify-center px-10 py-4 bg-gold text-white font-sans text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold-light transition-all duration-500 rounded-sm hover:-translate-y-1 hover:shadow-2xl hover:shadow-gold/20"
               >
                 Explorar Colección
               </Link>
               <Link
-                to="/productos?categoria=elaboracion-personalizada-de-joyas"
-                className="inline-flex items-center px-8 py-3 border border-primary-foreground/40 text-primary-foreground font-sans text-sm tracking-widest uppercase hover:bg-primary-foreground/10 transition-colors"
+                to="/solicitud-personalizada"
+                className="inline-flex items-center justify-center px-10 py-4 glassmorphism text-white font-sans text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-white/10 transition-all duration-500 rounded-sm hover:-translate-y-1"
               >
                 Diseño Personalizado
               </Link>
             </div>
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 1, delay: 1 }}
+              className="w-24 h-[1px] bg-gold mx-auto mt-12 origin-center" 
+            />
           </motion.div>
         </div>
       </section>
 
       {/* Categories */}
-      <section className="container py-16 md:py-24">
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <h2 className="font-display text-2xl md:text-4xl text-foreground">Nuestras Colecciones</h2>
-          <div className="w-12 h-px bg-gold mx-auto mt-4" />
-        </motion.div>
+      <section className="bg-background py-24 md:py-32">
+        <div className="container">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16 md:mb-24"
+          >
+            <h2 className="font-display text-4xl md:text-5xl text-foreground font-medium">Nuestras Colecciones</h2>
+            <div className="w-16 h-[2px] bg-gold mx-auto mt-6" />
+          </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
-          {categories.map((cat, i) => (
-            <motion.div
-              key={cat.slug}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-            >
-              <Link
-                to={`/productos?categoria=${cat.slug}`}
-                className="block group aspect-[3/4] bg-secondary relative overflow-hidden"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+            {categories.map((cat, i) => (
+              <motion.div
+                key={cat.slug}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7, delay: i * 0.15 }}
               >
-                <div className="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="font-display text-sm md:text-base tracking-widest uppercase text-foreground group-hover:text-gold transition-colors text-center px-4">
-                    {cat.name}
-                  </span>
-                </div>
-              </Link>
-            </motion.div>
-          ))}
+                <Link
+                  to={`/productos?categoria=${cat.slug}`}
+                  className="block group aspect-[4/5] relative overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500"
+                >
+                  {cat.image_url ? (
+                    <img
+                      src={cat.image_url}
+                      alt={cat.name}
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-out"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-secondary" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-end pb-10 px-6 text-center">
+                    <div className="w-8 h-[1px] bg-gold mb-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0" />
+                    <span className="font-display text-lg md:text-xl tracking-[0.15em] uppercase text-white drop-shadow-md">
+                      {cat.name}
+                    </span>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* Featured Products */}
       {featured.length > 0 && (
-        <section className="container pb-16 md:pb-24">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-12"
-          >
-            <h2 className="font-display text-2xl md:text-4xl text-foreground">Piezas Destacadas</h2>
-            <div className="w-12 h-px bg-gold mx-auto mt-4" />
-          </motion.div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {featured.map((product) => (
-              <ProductCard
-                key={product.id}
-                id={product.id}
-                name={product.name}
-                slug={product.slug}
-                priceCents={product.price_cents}
-                imageUrl={product.product_images?.[0]?.url}
-                isCustomRequest={product.is_custom_request}
-              />
-            ))}
-          </div>
-
-          <div className="text-center mt-10">
-            <Link
-              to="/productos"
-              className="inline-flex items-center px-8 py-3 border border-border text-foreground text-sm tracking-widest uppercase hover:bg-secondary transition-colors"
+        <section className="bg-background pb-24 md:pb-32">
+          <div className="container">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16 md:mb-24"
             >
-              Ver Toda la Colección
-            </Link>
+              <h2 className="font-display text-4xl md:text-5xl text-foreground font-medium">Piezas Destacadas</h2>
+              <div className="w-16 h-[2px] bg-gold mx-auto mt-6" />
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              {featured.map((product, i) => (
+                <motion.div
+                  key={product.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: i * 0.1 }}
+                >
+                  <ProductCard
+                    id={product.id}
+                    name={product.name}
+                    slug={product.slug}
+                    priceCents={product.price_cents}
+                    imageUrl={product.product_images?.[0]?.url}
+                    isCustomRequest={product.is_custom_request}
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="text-center mt-20"
+            >
+              <Link
+                to="/productos"
+                className="inline-flex items-center px-12 py-4 border border-foreground/20 text-foreground text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-foreground hover:text-background transition-all duration-500 rounded-sm"
+              >
+                Descubrir Toda la Colección
+              </Link>
+            </motion.div>
           </div>
         </section>
       )}
 
       {/* Brand statement */}
-      <section className="bg-primary text-primary-foreground py-16 md:py-24">
-        <div className="container text-center max-w-2xl mx-auto">
+      <section className="relative py-32 md:py-48 overflow-hidden bg-charcoal text-white">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gold/10 via-charcoal to-charcoal" />
+        <div className="relative container text-center max-w-4xl mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
           >
-            <div className="w-12 h-px bg-gold mx-auto mb-8" />
-            <p className="font-display text-xl md:text-2xl italic leading-relaxed text-primary-foreground/90">
-              "Cada pieza de Magna Arte es una obra maestra artesanal, diseñada para trascender el tiempo y celebrar los momentos más preciados de tu vida."
+            <div className="w-16 h-[1px] bg-gold mx-auto mb-12" />
+            <p className="font-display text-2xl md:text-4xl lg:text-5xl italic leading-relaxed text-white/90 font-light">
+              "La excelencia no es un acto, es un hábito. Cada pieza que forjamos en Magna Arte es un testamento eterno a la elegancia."
             </p>
-            <div className="w-12 h-px bg-gold mx-auto mt-8" />
+            <div className="w-16 h-[1px] bg-gold mx-auto mt-12 mb-16" />
+            <Link
+              to="/contacto"
+              className="inline-flex items-center px-10 py-4 bg-gold text-white text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold-light transition-all duration-500 rounded-sm"
+            >
+              Agendar Asesoría
+            </Link>
           </motion.div>
         </div>
       </section>
