@@ -176,7 +176,8 @@ export default function AdminProducts() {
     if (!editingId) { toast.error("Guarda el producto primero"); return; }
     setUploadingImage(true);
     const ext = file.name.split(".").pop();
-    const path = `${editingId}/${crypto.randomUUID()}.${ext}`;
+    const uuid = Date.now().toString(36) + Math.random().toString(36).substring(2);
+    const path = `${editingId}/${uuid}.${ext}`;
     const { error: uploadError } = await supabase.storage.from("product-images").upload(path, file);
     if (uploadError) { toast.error("Error al subir imagen"); setUploadingImage(false); return; }
     const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(path);
@@ -230,10 +231,10 @@ export default function AdminProducts() {
 
           <div className="grid sm:grid-cols-3 gap-3">
             <div>
-              <label className="text-xs text-muted-foreground uppercase tracking-wider">Precio base (centavos)</label>
+              <label className="text-xs text-muted-foreground uppercase tracking-wider">Precio base (COP)</label>
               <input type="number" className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                value={form.price_cents} onChange={(e) => setForm((f) => ({ ...f, price_cents: parseInt(e.target.value) || 0 }))} />
-              <p className="text-xs text-muted-foreground mt-1">{formatCOP(form.price_cents)}</p>
+                value={form.price_cents ? form.price_cents / 100 : ""} onChange={(e) => setForm((f) => ({ ...f, price_cents: e.target.value ? parseInt(e.target.value) * 100 : 0 }))} />
+              <p className="text-xs text-muted-foreground mt-1 text-gold">Precio guardado: {formatCOP(form.price_cents)}</p>
             </div>
             <div>
               <label className="text-xs text-muted-foreground uppercase tracking-wider">Categoría</label>
@@ -281,8 +282,8 @@ export default function AdminProducts() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 <input placeholder="Nombre (ej: Oro 18k - Talla 7)" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                   value={newVariant.variant_name} onChange={(e) => setNewVariant((v) => ({ ...v, variant_name: e.target.value }))} />
-                <input placeholder="Precio (centavos, vacío=base)" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                  value={newVariant.price_cents} onChange={(e) => setNewVariant((v) => ({ ...v, price_cents: e.target.value }))} />
+                <input placeholder="Precio (COP, vacío=base)" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  value={newVariant.price_cents ? parseInt(newVariant.price_cents) / 100 : ""} onChange={(e) => setNewVariant((v) => ({ ...v, price_cents: e.target.value ? (parseInt(e.target.value) * 100).toString() : "" }))} />
                 <input placeholder="Stock" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                   value={newVariant.stock} onChange={(e) => setNewVariant((v) => ({ ...v, stock: e.target.value }))} />
                 <input placeholder="SKU" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"

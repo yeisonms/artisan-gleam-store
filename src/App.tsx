@@ -22,6 +22,10 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import NotFound from "./pages/NotFound";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
+import PosPage from "./features/pos/PosPage";
+import ClientesPage from "./features/clientes/ClientesPage";
+import CarteraPage from "./features/cartera/CarteraPage";
+import FinanzasPage from "./features/finanzas/FinanzasPage";
 
 const queryClient = new QueryClient();
 
@@ -57,6 +61,10 @@ const App = () => (
             <Route path="productos" element={<AdminProducts />} />
             <Route path="categorias" element={<AdminCategories />} />
             <Route path="pedidos" element={<AdminOrders />} />
+            <Route path="pos" element={<PosPage />} />
+            <Route path="clientes" element={<ClientesPage />} />
+            <Route path="cartera" element={<CarteraPage />} />
+            <Route path="finanzas" element={<FinanzasPage />} />
             <Route path="solicitudes" element={<AdminSolicitudes />} />
           </Route>
           <Route path="*" element={<NotFound />} />
