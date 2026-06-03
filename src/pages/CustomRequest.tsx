@@ -95,7 +95,7 @@ export default function CustomRequest() {
   const inputClass = "w-full px-4 py-3 bg-background border border-border text-foreground text-sm focus:outline-none focus:border-gold transition-colors placeholder:text-muted-foreground";
 
   return (
-    <div className="container py-8 md:py-12 min-h-screen max-w-2xl mx-auto">
+    <div className="container pt-36 pb-8 md:pt-40 md:pb-12 min-h-screen max-w-2xl mx-auto">
       <h1 className="font-display text-3xl text-foreground mb-2">Joya Personalizada</h1>
       <div className="w-12 h-px bg-gold mb-4" />
       <p className="text-muted-foreground mb-8 leading-relaxed">

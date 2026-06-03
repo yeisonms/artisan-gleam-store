@@ -14,12 +14,33 @@ export function useBalanceGeneral() {
 
   const fetchBalance = async () => {
     setLoading(true);
-    const { data, error } = await supabase.rpc('get_balance_general');
-    if (error) {
+    
+    // Fetch balance general and all product variants
+    const [bgRes, variantsRes] = await Promise.all([
+      supabase.rpc('get_balance_general'),
+      supabase.from('product_variants' as any).select('stock, cost_cents')
+    ]);
+
+    if (bgRes.error) {
       toast.error('Error cargando el balance general');
-      console.error(error);
+      console.error(bgRes.error);
     } else {
-      setBalance(data as unknown as BalanceGeneral);
+      const balanceData = bgRes.data as unknown as BalanceGeneral;
+      
+      // Calculate true inventory value based on cost
+      let realInventoryValue = 0;
+      if (variantsRes.data) {
+        realInventoryValue = variantsRes.data.reduce((sum: number, variant: any) => {
+          const cost = variant.cost_cents || 0;
+          const stock = variant.stock || 0;
+          return sum + (cost * stock);
+        }, 0);
+      }
+
+      setBalance({
+        ...balanceData,
+        valor_inventario: realInventoryValue
+      });
     }
     setLoading(false);
   };

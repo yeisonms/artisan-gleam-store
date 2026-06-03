@@ -27,6 +27,7 @@ import ClientesPage from "./features/clientes/ClientesPage";
 import CarteraPage from "./features/cartera/CarteraPage";
 import FinanzasPage from "./features/finanzas/FinanzasPage";
 import DespachosPage from "./features/despachos/DespachosPage";
+import HistorialVentasPage from "./features/historial-ventas/HistorialVentasPage";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="finanzas" element={<FinanzasPage />} />
             <Route path="despachos" element={<DespachosPage />} />
             <Route path="solicitudes" element={<AdminSolicitudes />} />
+            <Route path="historial-ventas" element={<HistorialVentasPage />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
