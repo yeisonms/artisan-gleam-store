@@ -110,7 +110,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen text-charcoal">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-28 pb-10 md:pb-16">
         
         {/* CSS Grid 55/45 Layout */}
         <div className="grid md:grid-cols-[55%_45%] gap-10 md:gap-16 lg:gap-24 items-start">
@@ -121,7 +121,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Columna Derecha: Información y Compra */}
-          <div className="py-2 md:py-6">
+          <div className="flex flex-col justify-start py-2 md:py-6 mt-6 md:mt-0">
             <ProductInfo 
               name={product.name} 
               price_cents={currentPrice} 

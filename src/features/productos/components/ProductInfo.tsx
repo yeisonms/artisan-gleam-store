@@ -26,7 +26,7 @@ export default function ProductInfo({ name, price_cents, is_custom_request, cate
       </nav>
 
       {/* Título Principal */}
-      <h1 className="font-display text-3xl md:text-4xl text-charcoal leading-tight">
+      <h1 className="text-3xl md:text-4xl font-serif text-gray-900 mb-4 mt-2 leading-tight">
         {name}
       </h1>
 
