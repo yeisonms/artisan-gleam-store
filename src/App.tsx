@@ -26,6 +26,7 @@ import PosPage from "./features/pos/PosPage";
 import ClientesPage from "./features/clientes/ClientesPage";
 import CarteraPage from "./features/cartera/CarteraPage";
 import FinanzasPage from "./features/finanzas/FinanzasPage";
+import DespachosPage from "./features/despachos/DespachosPage";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +66,7 @@ const App = () => (
             <Route path="clientes" element={<ClientesPage />} />
             <Route path="cartera" element={<CarteraPage />} />
             <Route path="finanzas" element={<FinanzasPage />} />
+            <Route path="despachos" element={<DespachosPage />} />
             <Route path="solicitudes" element={<AdminSolicitudes />} />
           </Route>
           <Route path="*" element={<NotFound />} />

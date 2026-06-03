@@ -1,26 +1,12 @@
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useCart, formatCOP } from "@/lib/cart";
-import { ShoppingBag, ChevronLeft } from "lucide-react";
-import { motion } from "framer-motion";
+import { useCart } from "@/lib/cart";
 import { toast } from "sonner";
-
-interface ProductImage {
-  id: string;
-  url: string;
-  alt: string;
-  sort_order: number;
-}
-
-interface Variant {
-  id: string;
-  variant_name: string;
-  sku: string;
-  attributes: Record<string, string>;
-  price_cents: number | null;
-  stock: number;
-}
+import ProductGallery, { ProductImage } from "@/features/productos/components/ProductGallery";
+import ProductInfo from "@/features/productos/components/ProductInfo";
+import ProductActions, { Variant } from "@/features/productos/components/ProductActions";
+import ProductDetailsAccordion from "@/features/productos/components/ProductDetailsAccordion";
 
 interface ProductDetail {
   id: string;
@@ -31,6 +17,7 @@ interface ProductDetail {
   is_custom_request: boolean;
   is_active: boolean;
   category_id: string;
+  category?: { name: string };
   product_images: ProductImage[];
   product_variants: Variant[];
 }
@@ -39,20 +26,29 @@ export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const [product, setProduct] = useState<ProductDetail | null>(null);
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const addItem = useCart((s) => s.addItem);
 
   useEffect(() => {
     const fetch = async () => {
+      // Necesitamos cargar la categoría para las migas de pan
       const { data } = await supabase
         .from("products")
         .select("*, product_images(*), product_variants(*)")
         .eq("slug", slug)
         .eq("is_active", true)
         .maybeSingle();
+      
       if (data) {
-        setProduct(data as any);
+        // Fetch category name separadamente si la hay
+        let categoryName = "Colección";
+        if (data.category_id) {
+           const { data: catData } = await supabase.from('categories').select('name').eq('id', data.category_id).maybeSingle();
+           if (catData) categoryName = catData.name;
+        }
+
+        setProduct({ ...data, category: { name: categoryName } } as any);
+        
         if ((data as any).product_variants?.length > 0) {
           setSelectedVariant((data as any).product_variants[0]);
         }
@@ -64,13 +60,13 @@ export default function ProductDetailPage() {
 
   if (loading) {
     return (
-      <div className="container py-12">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="aspect-square bg-secondary animate-pulse" />
-          <div className="space-y-4">
-            <div className="h-8 bg-secondary w-3/4 animate-pulse" />
-            <div className="h-4 bg-secondary w-1/2 animate-pulse" />
-            <div className="h-20 bg-secondary animate-pulse" />
+      <div className="bg-[#FAFAFA] min-h-screen pt-24 pb-12 px-6">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-[55%_45%] gap-12">
+          <div className="aspect-[4/5] bg-secondary animate-pulse" />
+          <div className="space-y-6">
+            <div className="h-10 bg-secondary w-3/4 animate-pulse" />
+            <div className="h-6 bg-secondary w-1/4 animate-pulse" />
+            <div className="h-32 bg-secondary animate-pulse mt-8" />
           </div>
         </div>
       </div>
@@ -79,9 +75,11 @@ export default function ProductDetailPage() {
 
   if (!product) {
     return (
-      <div className="container py-16 text-center">
-        <p className="text-muted-foreground">Producto no encontrado.</p>
-        <Link to="/productos" className="text-gold underline mt-4 inline-block">Volver a productos</Link>
+      <div className="bg-[#FAFAFA] min-h-screen pt-32 pb-16 text-center">
+        <p className="text-muted-foreground font-display text-xl">Pieza no encontrada.</p>
+        <a href="/productos" className="text-charcoal border-b border-charcoal mt-6 inline-block uppercase tracking-widest text-sm hover:text-gold hover:border-gold transition-colors pb-1">
+          Volver a la Galería
+        </a>
       </div>
     );
   }
@@ -95,7 +93,7 @@ export default function ProductDetailPage() {
       return;
     }
     if (selectedVariant.stock <= 0) {
-      toast.error("Sin stock disponible");
+      toast.error("Pieza sin stock disponible");
       return;
     }
     addItem({
@@ -107,100 +105,45 @@ export default function ProductDetailPage() {
       unitPriceCents: currentPrice,
       attributes: selectedVariant.attributes as Record<string, string>,
     });
-    toast.success("Agregado al carrito");
+    toast.success("Pieza añadida a tu bolsa");
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="container py-6 md:py-12">
-        <Link to="/productos" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
-          <ChevronLeft size={16} /> Volver
-        </Link>
+    <div className="bg-[#FAFAFA] min-h-screen text-charcoal">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
+        
+        {/* CSS Grid 55/45 Layout */}
+        <div className="grid md:grid-cols-[55%_45%] gap-10 md:gap-16 lg:gap-24 items-start">
+          
+          {/* Columna Izquierda: Galería */}
+          <div className="sticky top-24">
+            <ProductGallery images={images} productName={product.name} />
+          </div>
 
-        <div className="grid md:grid-cols-2 gap-8 md:gap-12">
-          {/* Gallery */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="aspect-square bg-secondary overflow-hidden">
-              {images.length > 0 ? (
-                <img src={images[selectedImage]?.url} alt={product.name} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground font-display text-2xl">MA</div>
-              )}
-            </div>
-            {images.length > 1 && (
-              <div className="flex gap-2 mt-3">
-                {images.map((img, i) => (
-                  <button
-                    key={img.id}
-                    onClick={() => setSelectedImage(i)}
-                    className={`w-16 h-16 overflow-hidden border-2 transition-colors ${i === selectedImage ? "border-gold" : "border-transparent"}`}
-                  >
-                    <img src={img.url} alt={img.alt || product.name} className="w-full h-full object-cover" />
-                  </button>
-                ))}
-              </div>
-            )}
-          </motion.div>
+          {/* Columna Derecha: Información y Compra */}
+          <div className="py-2 md:py-6">
+            <ProductInfo 
+              name={product.name} 
+              price_cents={currentPrice} 
+              is_custom_request={product.is_custom_request}
+              categoryName={product.category?.name}
+            />
 
-          {/* Info */}
-          <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.2 }}>
-            <h1 className="font-display text-2xl md:text-3xl text-foreground">{product.name}</h1>
-            <p className="text-xl text-gold font-display mt-2">
-              {product.is_custom_request ? "Cotización personalizada" : formatCOP(currentPrice)}
-            </p>
+            <ProductActions 
+              variants={product.product_variants || []}
+              selectedVariant={selectedVariant}
+              onSelectVariant={setSelectedVariant}
+              onAddToCart={handleAddToCart}
+              isCustomRequest={product.is_custom_request}
+              productSlug={product.slug}
+            />
 
-            {product.description && (
-              <p className="text-muted-foreground mt-6 leading-relaxed">{product.description}</p>
-            )}
+            <ProductDetailsAccordion 
+              description={product.description} 
+              attributes={selectedVariant?.attributes} 
+            />
+          </div>
 
-            {/* Variants */}
-            {!product.is_custom_request && product.product_variants.length > 0 && (
-              <div className="mt-6">
-                <p className="text-sm font-medium text-foreground mb-3 uppercase tracking-wider">Variante</p>
-                <div className="flex flex-wrap gap-2">
-                  {product.product_variants.map((v) => (
-                    <button
-                      key={v.id}
-                      onClick={() => setSelectedVariant(v)}
-                      className={`px-4 py-2 text-sm border transition-colors ${
-                        selectedVariant?.id === v.id
-                          ? "border-gold text-foreground bg-gold/10"
-                          : "border-border text-muted-foreground hover:border-foreground"
-                      } ${v.stock <= 0 ? "opacity-40 cursor-not-allowed" : ""}`}
-                      disabled={v.stock <= 0}
-                    >
-                      {v.variant_name}
-                    </button>
-                  ))}
-                </div>
-                {selectedVariant && (
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {selectedVariant.stock > 0 ? `${selectedVariant.stock} disponibles` : "Agotado"}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* CTA */}
-            <div className="mt-8">
-              {product.is_custom_request ? (
-                <Link
-                  to={`/solicitud-personalizada?producto=${product.slug}`}
-                  className="inline-flex items-center gap-2 px-8 py-3 bg-gold text-accent-foreground text-sm tracking-widest uppercase hover:bg-gold-dark transition-colors w-full md:w-auto justify-center"
-                >
-                  Solicitar Cotización
-                </Link>
-              ) : (
-                <button
-                  onClick={handleAddToCart}
-                  disabled={!selectedVariant || selectedVariant.stock <= 0}
-                  className="inline-flex items-center gap-2 px-8 py-3 bg-gold text-accent-foreground text-sm tracking-widest uppercase hover:bg-gold-dark transition-colors w-full md:w-auto justify-center disabled:opacity-40 disabled:cursor-not-allowed"
-                >
-                  <ShoppingBag size={16} /> Agregar al Carrito
-                </button>
-              )}
-            </div>
-          </motion.div>
         </div>
       </div>
     </div>

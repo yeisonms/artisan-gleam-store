@@ -3,10 +3,12 @@ import { LineChart, TrendingUp, TrendingDown, Wallet, Plus } from 'lucide-react'
 import { useFinanzas } from './hooks/useFinanzas';
 import { EgresoModal } from './components/EgresoModal';
 import { formatCOP } from '@/lib/cart';
+import BalanceGeneralTab from './components/BalanceGeneralTab';
 
 export default function FinanzasPage() {
   const { transacciones, loading, kpis, registrarEgreso } = useFinanzas();
   const [isEgresoModalOpen, setIsEgresoModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<'flujo'|'balance'>('balance');
 
   // Helper para pintar de colores los tipos
   const isEgreso = (tipo: string) => ['Egreso', 'Reembolso'].includes(tipo);
@@ -15,15 +17,39 @@ export default function FinanzasPage() {
     <div className="p-6 md:p-8 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="font-display text-2xl text-foreground flex items-center gap-2">
-          <LineChart size={24} /> Flujo de Caja (Mes Actual)
+          Módulo Financiero
         </h1>
-        <button
-          onClick={() => setIsEgresoModalOpen(true)}
-          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm bg-red-600 text-white hover:bg-red-700 transition-colors shadow-sm"
-        >
-          <Plus size={16} /> Nuevo Egreso
-        </button>
+        <div className="flex gap-2 bg-secondary/50 p-1 rounded border border-border">
+          <button
+            onClick={() => setActiveTab('balance')}
+            className={`px-4 py-2 text-sm transition-colors rounded-sm ${activeTab === 'balance' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            Balance Patrimonial
+          </button>
+          <button
+            onClick={() => setActiveTab('flujo')}
+            className={`px-4 py-2 text-sm transition-colors rounded-sm ${activeTab === 'flujo' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+          >
+            Flujo de Caja (Mes)
+          </button>
+        </div>
       </div>
+
+      {activeTab === 'balance' && <BalanceGeneralTab />}
+
+      {activeTab === 'flujo' && (
+        <div className="space-y-6 animate-fade-in">
+          <div className="flex justify-between items-center">
+            <h2 className="font-display text-lg text-foreground flex items-center gap-2">
+              <LineChart size={20} /> Resumen de Caja Chica
+            </h2>
+            <button
+              onClick={() => setIsEgresoModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm bg-red-600 text-white hover:bg-red-700 transition-colors shadow-sm"
+            >
+              <Plus size={16} /> Nuevo Egreso
+            </button>
+          </div>
 
       {/* Tarjetas de KPIs */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -119,7 +145,8 @@ export default function FinanzasPage() {
           </div>
         )}
       </div>
-
+    </div>
+  )}
       <EgresoModal
         isOpen={isEgresoModalOpen}
         onClose={() => setIsEgresoModalOpen(false)}

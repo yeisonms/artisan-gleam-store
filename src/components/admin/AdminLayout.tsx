@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Sparkles, LogOut, Users, BookOpen, PieChart } from "lucide-react";
+import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Sparkles, LogOut, Users, BookOpen, PieChart, Truck } from "lucide-react";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -11,6 +11,7 @@ const sidebarLinks = [
   { label: "Clientes", href: "/admin/clientes", icon: Users },
   { label: "Cartera", href: "/admin/cartera", icon: BookOpen },
   { label: "Finanzas", href: "/admin/finanzas", icon: PieChart },
+  { label: "Despachos", href: "/admin/despachos", icon: Truck },
   { label: "Solicitudes", href: "/admin/solicitudes", icon: Sparkles },
 ];
 

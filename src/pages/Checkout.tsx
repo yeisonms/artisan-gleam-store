@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart, formatCOP } from "@/lib/cart";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
+import { processWebOrder, WebOrderPayload } from "@/services/webhookService";
 
 const checkoutSchema = z.object({
   fullName: z.string().trim().min(2, "Nombre requerido").max(100),
@@ -32,10 +33,13 @@ export default function Checkout() {
   const [errors, setErrors] = useState<Partial<Record<keyof CheckoutForm, string>>>({});
   const [submitting, setSubmitting] = useState(false);
 
-  if (items.length === 0) {
-    navigate("/carrito");
-    return null;
-  }
+  useEffect(() => {
+    if (items.length === 0) {
+      navigate("/carrito");
+    }
+  }, [items.length, navigate]);
+
+  if (items.length === 0) return null;
 
   const handleChange = (field: keyof CheckoutForm, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -57,56 +61,40 @@ export default function Checkout() {
     setSubmitting(true);
     try {
       const total = totalCents();
-      const { data: order, error: orderError } = await supabase
-        .from("orders")
+      
+      // 1. Crear el cliente
+      const { data: newCustomer, error: customerError } = await supabase
+        .from('clientes')
         .insert({
-          status: "pending_payment" as const,
-          customer_name: result.data.fullName,
-          customer_email: result.data.email,
-          customer_phone: result.data.phone,
-          shipping_address: {
-            address: result.data.address,
-            city: result.data.city,
-            department: result.data.department,
-            notes: result.data.notes || "",
-          },
-          subtotal_cents: total,
-          shipping_cents: 0,
-          tax_cents: 0,
-          total_cents: total,
-          currency: "COP",
+          nombre: result.data.fullName,
+          email: result.data.email,
+          telefono: result.data.phone,
         })
-        .select("id")
+        .select('id')
         .single();
 
-      if (orderError || !order) {
-        toast.error("Error al crear el pedido. Intenta de nuevo.");
-        setSubmitting(false);
-        return;
-      }
+      if (customerError) throw new Error("Error registrando datos del cliente");
 
-      const orderItems = items.map((item) => ({
-        order_id: order.id,
-        variant_id: item.variantId,
-        product_name_snapshot: item.productName,
-        variant_snapshot: { name: item.variantName, attributes: item.attributes },
-        quantity: item.quantity,
-        unit_price_cents: item.unitPriceCents,
-      }));
+      // 2. Procesar la orden omnicanal
+      const payload: WebOrderPayload = {
+        cliente_id: newCustomer.id,
+        canal: 'Digital',
+        estado_pago: 'Pagado', // Simulamos pago exitoso para la demo
+        total_cents: total,
+        detalles: items.map((item) => ({
+          variante_id: item.variantId,
+          cantidad: item.quantity,
+          precio_unitario_cents: item.unitPriceCents,
+          subtotal_cents: item.unitPriceCents * item.quantity,
+        })),
+      };
 
-      const { error: itemsError } = await supabase
-        .from("order_items")
-        .insert(orderItems);
-
-      if (itemsError) {
-        toast.error("Error al registrar los productos del pedido.");
-        setSubmitting(false);
-        return;
-      }
+      const res = await processWebOrder(payload);
+      if (!res.success) throw new Error(res.error);
 
       toast.success("¡Pedido registrado!");
       clearCart();
-      navigate(`/pedido-exitoso?pedido=${order.id}`);
+      navigate(`/pedido-exitoso?pedido=${newCustomer.id}`);
     } catch {
       toast.error("Error inesperado. Intenta de nuevo.");
     } finally {

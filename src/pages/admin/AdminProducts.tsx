@@ -10,6 +10,7 @@ interface Product {
   slug: string;
   description: string | null;
   price_cents: number;
+  cost_cents: number;
   currency: string;
   category_id: string | null;
   is_active: boolean;
@@ -24,6 +25,7 @@ interface Variant {
   id: string;
   variant_name: string;
   price_cents: number | null;
+  cost_cents: number | null;
   stock: number;
   sku: string | null;
   attributes: Record<string, string>;
@@ -37,7 +39,7 @@ interface ProductImage {
 }
 
 const emptyProduct = {
-  name: "", slug: "", description: "", price_cents: 0,
+  name: "", slug: "", description: "", price_cents: 0, cost_cents: 0,
   category_id: "", is_active: true, featured: false, is_custom_request: false,
 };
 
@@ -53,7 +55,7 @@ export default function AdminProducts() {
   // Variants & images for detail
   const [variants, setVariants] = useState<Variant[]>([]);
   const [images, setImages] = useState<ProductImage[]>([]);
-  const [newVariant, setNewVariant] = useState({ variant_name: "", price_cents: "", stock: "0", sku: "", attributes: "{}" });
+  const [newVariant, setNewVariant] = useState({ variant_name: "", price_cents: "", cost_cents: "", stock: "0", sku: "", attributes: "{}" });
   const [newImageUrl, setNewImageUrl] = useState("");
 
   const autoSlug = (name: string) =>
@@ -93,7 +95,7 @@ export default function AdminProducts() {
     setEditingId(p.id);
     setForm({
       name: p.name, slug: p.slug, description: p.description || "",
-      price_cents: p.price_cents, category_id: p.category_id || "",
+      price_cents: p.price_cents, cost_cents: p.cost_cents || 0, category_id: p.category_id || "",
       is_active: p.is_active, featured: p.featured, is_custom_request: p.is_custom_request,
     });
     await fetchProductDetails(p.id);
@@ -108,6 +110,7 @@ export default function AdminProducts() {
       slug: form.slug.trim(),
       description: form.description.trim() || null,
       price_cents: form.price_cents,
+      cost_cents: form.cost_cents,
       category_id: form.category_id || null,
       is_active: form.is_active,
       featured: form.featured,
@@ -143,12 +146,13 @@ export default function AdminProducts() {
       product_id: editingId,
       variant_name: newVariant.variant_name.trim(),
       price_cents: newVariant.price_cents ? parseInt(newVariant.price_cents) : null,
+      cost_cents: newVariant.cost_cents ? parseInt(newVariant.cost_cents) : null,
       stock: parseInt(newVariant.stock) || 0,
       sku: newVariant.sku.trim() || null,
       attributes: attrs,
     });
     if (error) toast.error("Error al agregar variante");
-    else { toast.success("Variante agregada"); setNewVariant({ variant_name: "", price_cents: "", stock: "0", sku: "", attributes: "{}" }); fetchProductDetails(editingId); }
+    else { toast.success("Variante agregada"); setNewVariant({ variant_name: "", price_cents: "", cost_cents: "", stock: "0", sku: "", attributes: "{}" }); fetchProductDetails(editingId); }
   };
 
   const deleteVariant = async (vId: string) => {
@@ -234,7 +238,13 @@ export default function AdminProducts() {
               <label className="text-xs text-muted-foreground uppercase tracking-wider">Precio base (COP)</label>
               <input type="number" className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                 value={form.price_cents ? form.price_cents / 100 : ""} onChange={(e) => setForm((f) => ({ ...f, price_cents: e.target.value ? parseInt(e.target.value) * 100 : 0 }))} />
-              <p className="text-xs text-muted-foreground mt-1 text-gold">Precio guardado: {formatCOP(form.price_cents)}</p>
+              <p className="text-xs text-muted-foreground mt-1 text-gold">PVP guardado: {formatCOP(form.price_cents)}</p>
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wider">Costo base (COP)</label>
+              <input type="number" className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                value={form.cost_cents ? form.cost_cents / 100 : ""} onChange={(e) => setForm((f) => ({ ...f, cost_cents: e.target.value ? parseInt(e.target.value) * 100 : 0 }))} />
+              <p className="text-xs text-muted-foreground mt-1 text-blue-500">Costo guardado: {formatCOP(form.cost_cents)}</p>
             </div>
             <div>
               <label className="text-xs text-muted-foreground uppercase tracking-wider">Categoría</label>
@@ -279,11 +289,13 @@ export default function AdminProducts() {
             )}
             <div className="border border-border p-4 space-y-3">
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Agregar variante</p>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
                 <input placeholder="Nombre (ej: Oro 18k - Talla 7)" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                   value={newVariant.variant_name} onChange={(e) => setNewVariant((v) => ({ ...v, variant_name: e.target.value }))} />
                 <input placeholder="Precio (COP, vacío=base)" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                   value={newVariant.price_cents ? parseInt(newVariant.price_cents) / 100 : ""} onChange={(e) => setNewVariant((v) => ({ ...v, price_cents: e.target.value ? (parseInt(e.target.value) * 100).toString() : "" }))} />
+                <input placeholder="Costo (COP, vacío=base)" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  value={newVariant.cost_cents ? parseInt(newVariant.cost_cents) / 100 : ""} onChange={(e) => setNewVariant((v) => ({ ...v, cost_cents: e.target.value ? (parseInt(e.target.value) * 100).toString() : "" }))} />
                 <input placeholder="Stock" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                   value={newVariant.stock} onChange={(e) => setNewVariant((v) => ({ ...v, stock: e.target.value }))} />
                 <input placeholder="SKU" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
