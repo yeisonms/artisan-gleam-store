@@ -1,7 +1,7 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ShoppingBag, Menu, X, Search } from "lucide-react";
 import { useCart } from "@/lib/cart";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import logoHeader from "@/assets/logo-header.png";
 
@@ -16,8 +16,27 @@ const navLinks = [
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
   const itemCount = useCart((s) => s.itemCount());
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/productos?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
+
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchOpen]);
 
   return (
     <header className="absolute top-0 w-full z-50 bg-[#FDFCF6] shadow-sm">
@@ -36,11 +55,30 @@ export default function Header() {
             <img src={logoHeader} alt="Magna Arte" className="h-12 md:h-16 w-auto object-contain" />
           </Link>
 
-          <div className="absolute right-4 flex items-center gap-4">
-            <button className="p-2 text-gold hover:text-gold-dark transition-colors" aria-label="Buscar">
-              <Search size={20} strokeWidth={1.5} />
-            </button>
-            <Link to="/carrito" className="relative p-2 text-gold hover:text-gold-dark transition-colors" aria-label="Carrito">
+          <div className="absolute right-4 flex items-center gap-2 md:gap-4">
+            <form 
+              onSubmit={handleSearchSubmit} 
+              className={`flex items-center transition-all duration-300 overflow-hidden ${isSearchOpen ? 'w-40 md:w-56 border-b border-gold bg-[#FDFCF6]' : 'w-10 border-b border-transparent'}`}
+            >
+              <button 
+                type="button" 
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                className="p-2 text-gold hover:text-gold-dark transition-colors shrink-0" 
+                aria-label="Buscar"
+              >
+                <Search size={20} strokeWidth={1.5} />
+              </button>
+              <input 
+                ref={searchInputRef}
+                type="text" 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar..." 
+                className={`bg-transparent text-sm text-charcoal focus:outline-none transition-all duration-300 w-full placeholder:text-gold/50 ${isSearchOpen ? 'opacity-100 pr-2' : 'opacity-0'}`}
+                tabIndex={isSearchOpen ? 0 : -1}
+              />
+            </form>
+            <Link to="/carrito" className="relative p-2 text-gold hover:text-gold-dark transition-colors shrink-0" aria-label="Carrito">
               <ShoppingBag size={20} strokeWidth={1.5} />
               {itemCount > 0 && (
                 <span className="absolute top-0 right-0 bg-charcoal text-gold text-[10px] font-medium rounded-full w-4 h-4 flex items-center justify-center shadow-sm border border-gold/30">

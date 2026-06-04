@@ -40,7 +40,7 @@ export default function Footer() {
             <h4 className="font-display text-xs tracking-[0.2em] uppercase mb-6 text-gold">Contacto</h4>
             <nav className="flex flex-col gap-4">
               <Link to="/contacto" className="text-sm text-white/60 hover:text-white transition-colors tracking-wide">Contáctanos</Link>
-              <Link to="/solicitud-personalizada" className="text-sm text-white/60 hover:text-white transition-colors tracking-wide">Joya Personalizada</Link>
+              <Link to="/solicitud-personalizada" className="text-sm text-white/60 hover:text-white transition-colors tracking-wide">Diseño personalizado</Link>
             </nav>
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function Footer() {
           <div className="flex items-center gap-6">
             <span className="text-xs text-white/40 tracking-widest uppercase cursor-pointer hover:text-white transition-colors">Instagram</span>
             <span className="text-xs text-white/40 tracking-widest uppercase cursor-pointer hover:text-white transition-colors">Facebook</span>
-            <span className="text-xs text-white/40 tracking-widest uppercase cursor-pointer hover:text-white transition-colors">Pinterest</span>
+            <span className="text-xs text-white/40 tracking-widest uppercase cursor-pointer hover:text-white transition-colors">Tiktok</span>
           </div>
         </div>
       </div>

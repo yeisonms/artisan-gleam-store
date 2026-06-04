@@ -24,10 +24,15 @@ interface Category {
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const categorySlug = searchParams.get("categoria") || "";
+  const initialQ = searchParams.get("q") || "";
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialQ);
+
+  useEffect(() => {
+    setSearchQuery(initialQ);
+  }, [initialQ]);
 
   useEffect(() => {
     const fetchCategories = async () => {
