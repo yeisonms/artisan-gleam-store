@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Anillos", href: "/productos?categoria=anillos" },
   { label: "Aretes", href: "/productos?categoria=aretes" },
   { label: "Dijes", href: "/productos?categoria=dijes" },
+  { label: "Casos de éxito", href: "/casos-de-exito" },
   { label: "Personalizado", href: "/productos?categoria=elaboracion-personalizada-de-joyas" },
 ];
 

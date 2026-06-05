@@ -10,6 +10,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
 import CustomRequest from "./pages/CustomRequest";
+import CasosExito from "./pages/CasosExito";
 import Policies from "./pages/Policies";
 import Contact from "./pages/Contact";
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -57,6 +58,7 @@ const App = () => (
           <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
           <Route path="/pedido-exitoso" element={<PublicLayout><OrderSuccess /></PublicLayout>} />
           <Route path="/solicitud-personalizada" element={<PublicLayout><CustomRequest /></PublicLayout>} />
+          <Route path="/casos-de-exito" element={<PublicLayout><CasosExito /></PublicLayout>} />
           <Route path="/politicas" element={<PublicLayout><Policies /></PublicLayout>} />
           <Route path="/contacto" element={<PublicLayout><Contact /></PublicLayout>} />
           <Route path="/admin/login" element={<AdminLogin />} />

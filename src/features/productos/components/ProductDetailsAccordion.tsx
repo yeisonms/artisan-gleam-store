@@ -30,7 +30,7 @@ function AccordionItem({ title, children, isOpen, onToggle }: AccordionItemProps
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="pb-6 text-sm text-muted-foreground leading-relaxed">
+            <div className="pb-6 text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
               {children}
             </div>
           </motion.div>
