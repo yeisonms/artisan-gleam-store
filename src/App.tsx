@@ -22,6 +22,7 @@ import AdminOrders from "./pages/admin/AdminOrders";
 import NotFound from "./pages/NotFound";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
+import { WhatsAppButton } from "./components/layout/WhatsAppButton";
 import PosPage from "./features/pos/PosPage";
 import ClientesPage from "./features/clientes/ClientesPage";
 import CarteraPage from "./features/cartera/CarteraPage";
@@ -37,6 +38,7 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
       <Header />
       {children}
       <Footer />
+      <WhatsAppButton />
     </>
   );
 }
