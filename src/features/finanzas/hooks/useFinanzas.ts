@@ -93,11 +93,36 @@ export function useFinanzas() {
     return true;
   };
 
+  const registrarIngreso = async (montoCents: number, notas: string, metodoPago: string) => {
+    if (montoCents <= 0) {
+      toast.error('El monto debe ser mayor a 0');
+      return false;
+    }
+
+    const { error } = await supabase.from('transacciones_financieras').insert({
+      tipo: 'Ingreso',
+      monto_cents: montoCents,
+      notas: notas.trim(),
+      metodo_pago: metodoPago,
+    });
+
+    if (error) {
+      console.error('Error insertando ingreso', error);
+      toast.error(error.message || 'Error al registrar el ingreso');
+      return false;
+    }
+
+    toast.success('Ingreso registrado exitosamente');
+    await fetchTransacciones();
+    return true;
+  };
+
   return {
     transacciones,
     loading,
     kpis,
     registrarEgreso,
+    registrarIngreso,
     refreshFinanzas: fetchTransacciones,
   };
 }

@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { LineChart, TrendingUp, TrendingDown, Wallet, Plus } from 'lucide-react';
 import { useFinanzas } from './hooks/useFinanzas';
 import { EgresoModal } from './components/EgresoModal';
+import { IngresoModal } from './components/IngresoModal';
 import { formatCOP } from '@/lib/cart';
 import BalanceGeneralTab from './components/BalanceGeneralTab';
 
 export default function FinanzasPage() {
-  const { transacciones, loading, kpis, registrarEgreso } = useFinanzas();
+  const { transacciones, loading, kpis, registrarEgreso, registrarIngreso } = useFinanzas();
   const [isEgresoModalOpen, setIsEgresoModalOpen] = useState(false);
+  const [isIngresoModalOpen, setIsIngresoModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'flujo'|'balance'>('balance');
 
   // Helper para pintar de colores los tipos
@@ -39,16 +41,24 @@ export default function FinanzasPage() {
 
       {activeTab === 'flujo' && (
         <div className="space-y-6 animate-fade-in">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <h2 className="font-display text-lg text-foreground flex items-center gap-2">
               <LineChart size={20} /> Resumen de Caja Chica
             </h2>
-            <button
-              onClick={() => setIsEgresoModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-sm bg-red-600 text-white hover:bg-red-700 transition-colors shadow-sm"
-            >
-              <Plus size={16} /> Nuevo Egreso
-            </button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                onClick={() => setIsIngresoModalOpen(true)}
+                className="inline-flex items-center justify-center flex-1 sm:flex-none gap-1.5 px-4 py-2 text-sm bg-green-600 text-white hover:bg-green-700 transition-colors shadow-sm"
+              >
+                <Plus size={16} /> Nuevo Ingreso
+              </button>
+              <button
+                onClick={() => setIsEgresoModalOpen(true)}
+                className="inline-flex items-center justify-center flex-1 sm:flex-none gap-1.5 px-4 py-2 text-sm bg-red-600 text-white hover:bg-red-700 transition-colors shadow-sm"
+              >
+                <Plus size={16} /> Nuevo Egreso
+              </button>
+            </div>
           </div>
 
       {/* Tarjetas de KPIs */}
@@ -151,6 +161,11 @@ export default function FinanzasPage() {
         isOpen={isEgresoModalOpen}
         onClose={() => setIsEgresoModalOpen(false)}
         onSave={registrarEgreso}
+      />
+      <IngresoModal
+        isOpen={isIngresoModalOpen}
+        onClose={() => setIsIngresoModalOpen(false)}
+        onSave={registrarIngreso}
       />
     </div>
   );
