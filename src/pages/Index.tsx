@@ -52,87 +52,101 @@ export default function Index() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative h-[80vh] md:h-[90vh] overflow-hidden">
+      <section className="relative h-[80vh] md:h-[95vh] overflow-hidden bg-charcoal pt-24 md:pt-32">
         <img
           src={heroImage}
           alt="Joyería artesanal de lujo"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover opacity-60 mix-blend-overlay"
+          loading="eager"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-background" />
         <div className="relative h-full container flex flex-col justify-center items-center text-center">
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.3 }}
-            className="max-w-3xl"
+            transition={{ duration: 1.2, ease: "easeOut", delay: 0.2 }}
+            className="max-w-4xl px-4 flex flex-col items-center"
           >
-            <div className="w-16 h-px bg-gold mx-auto mb-8" />
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl text-gold leading-tight">
-              El Arte de la <span className="italic">Joyería</span>
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 1, delay: 1 }}
+              className="w-24 h-[1px] bg-gold mx-auto mb-8 origin-center" 
+            />
+            
+            <h1 className="text-5xl md:text-7xl lg:text-8xl text-gold font-display mb-6 tracking-wide drop-shadow-lg">
+              El Arte de la <span className="italic font-light">Joyería</span>
             </h1>
-            <p className="mt-6 text-ivory/80 text-base md:text-lg max-w-lg mx-auto leading-relaxed font-sans font-light">
-              Piezas únicas elaboradas a mano con los más finos materiales. Cada joya cuenta tu historia.
+
+            <p className="mt-4 text-white/90 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed font-sans font-light tracking-wide">
+              Piezas únicas elaboradas a mano con los más finos materiales.<br/>
+              Cada joya cuenta tu historia.
             </p>
-            <div className="mt-10 flex flex-wrap justify-center gap-4">
+            <div className="mt-12 flex flex-wrap justify-center gap-6">
               <Link
                 to="/productos"
-                className="inline-flex items-center px-10 py-3.5 bg-gold text-accent-foreground font-sans text-xs tracking-[0.2em] uppercase hover:bg-gold-dark transition-colors"
+                className="inline-flex items-center justify-center px-10 py-4 bg-gold text-[#1a1a1a] font-sans font-medium text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold-light transition-all duration-500 rounded-sm hover:-translate-y-1 hover:shadow-2xl hover:shadow-gold/20"
               >
                 Explorar Colección
               </Link>
               <Link
                 to="/solicitud-personalizada"
-                className="inline-flex items-center px-10 py-3.5 border border-gold text-gold font-sans text-xs tracking-[0.2em] uppercase hover:bg-gold/10 transition-colors"
+                className="inline-flex items-center justify-center px-10 py-4 border border-gold text-gold font-sans text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold/10 transition-all duration-500 rounded-sm hover:-translate-y-1"
               >
                 Diseño Personalizado
               </Link>
             </div>
-            <div className="w-16 h-px bg-gold mx-auto mt-10" />
+            <motion.div 
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 1, delay: 1 }}
+              className="w-24 h-[1px] bg-gold mx-auto mt-12 origin-center" 
+            />
           </motion.div>
         </div>
       </section>
 
       {/* Categories */}
-      <section className="bg-background py-20 md:py-28">
+      <section className="bg-background py-24 md:py-32">
         <div className="container">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-14"
+            transition={{ duration: 0.8 }}
+            className="text-center mb-16 md:mb-24"
           >
-            <h2 className="font-display text-3xl md:text-4xl text-gold">Nuestras Colecciones</h2>
-            <div className="w-16 h-px bg-gold mx-auto mt-5" />
+            <h2 className="font-display text-4xl md:text-5xl text-foreground font-medium">Nuestras Colecciones</h2>
+            <div className="w-16 h-[2px] bg-gold mx-auto mt-6" />
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {categories.map((cat, i) => (
               <motion.div
                 key={cat.slug}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
+                transition={{ duration: 0.7, delay: i * 0.15 }}
               >
                 <Link
                   to={`/productos?categoria=${cat.slug}`}
-                  className="block group aspect-[3/4] relative overflow-hidden"
+                  className="block group aspect-[4/5] relative overflow-hidden rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500"
                 >
                   {cat.image_url ? (
                     <img
                       src={cat.image_url}
                       alt={cat.name}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-out"
                       loading="lazy"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-charcoal" />
+                    <div className="absolute inset-0 bg-secondary" />
                   )}
-                  <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors" />
-                  <div className="absolute inset-0 flex flex-col items-center justify-end pb-8">
-                    <div className="w-8 h-px bg-gold mb-3 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <span className="font-display text-sm md:text-base tracking-[0.2em] uppercase text-gold drop-shadow-lg">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-end pb-10 px-6 text-center">
+                    <div className="w-8 h-[1px] bg-gold mb-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0" />
+                    <span className="font-display text-lg md:text-xl tracking-[0.15em] uppercase text-white drop-shadow-md">
                       {cat.name}
                     </span>
                   </div>
@@ -145,69 +159,81 @@ export default function Index() {
 
       {/* Featured Products */}
       {featured.length > 0 && (
-        <section className="bg-background pb-20 md:pb-28">
+        <section className="bg-background pb-24 md:pb-32">
           <div className="container">
             <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-center mb-14"
+              transition={{ duration: 0.8 }}
+              className="text-center mb-16 md:mb-24"
             >
-              <h2 className="font-display text-3xl md:text-4xl text-gold">Piezas Destacadas</h2>
-              <div className="w-16 h-px bg-gold mx-auto mt-5" />
+              <h2 className="font-display text-4xl md:text-5xl text-foreground font-medium">Piezas Destacadas</h2>
+              <div className="w-16 h-[2px] bg-gold mx-auto mt-6" />
             </motion.div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-              {featured.map((product) => (
-                <ProductCard
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              {featured.map((product, i) => (
+                <motion.div
                   key={product.id}
-                  id={product.id}
-                  name={product.name}
-                  slug={product.slug}
-                  priceCents={product.price_cents}
-                  imageUrl={product.product_images?.[0]?.url}
-                  isCustomRequest={product.is_custom_request}
-                />
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.7, delay: i * 0.1 }}
+                >
+                  <ProductCard
+                    id={product.id}
+                    name={product.name}
+                    slug={product.slug}
+                    priceCents={product.price_cents}
+                    imageUrl={product.product_images?.[0]?.url}
+                    isCustomRequest={product.is_custom_request}
+                  />
+                </motion.div>
               ))}
             </div>
 
-            <div className="text-center mt-12">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="text-center mt-20"
+            >
               <Link
                 to="/productos"
-                className="inline-flex items-center px-10 py-3.5 border border-gold text-gold text-xs tracking-[0.2em] uppercase hover:bg-gold/10 transition-colors font-sans"
+                className="inline-flex items-center px-12 py-4 border border-foreground/20 text-foreground text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-foreground hover:text-background transition-all duration-500 rounded-sm"
               >
-                Ver Toda la Colección
+                Descubrir Toda la Colección
               </Link>
-            </div>
+            </motion.div>
           </div>
         </section>
       )}
 
-      {/* Brand statement with marble */}
-      <section className="relative py-20 md:py-28 overflow-hidden">
+      {/* Brand statement */}
+      <section className="relative py-32 md:py-48 overflow-hidden bg-black text-white">
         <img
           src={marbleTexture}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover"
-          aria-hidden="true"
+          alt="Marble Texture"
+          className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen"
         />
-        <div className="absolute inset-0 bg-black/60" />
-        <div className="relative container text-center max-w-3xl mx-auto">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black" />
+        <div className="relative container text-center max-w-4xl mx-auto px-4 flex flex-col items-center">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
+            className="flex flex-col items-center"
           >
-            <div className="w-16 h-px bg-gold mx-auto mb-10" />
-            <p className="font-display text-xl md:text-3xl italic leading-relaxed text-gold/90">
+            <div className="w-16 h-[1px] bg-gold mx-auto mb-10" />
+            <p className="font-display text-2xl md:text-4xl lg:text-5xl italic leading-relaxed text-gold font-light">
               "Cada pieza de Magna Arte es una obra maestra artesanal, diseñada para trascender el tiempo y celebrar los momentos más preciados de tu vida."
             </p>
-            <div className="w-16 h-px bg-gold mx-auto mt-10 mb-10" />
+            <div className="w-16 h-[1px] bg-gold mx-auto mt-10 mb-14" />
             <Link
               to="/productos"
-              className="inline-flex items-center px-10 py-3.5 border border-gold text-gold text-xs tracking-[0.2em] uppercase hover:bg-gold/10 transition-colors font-sans"
+              className="inline-flex items-center px-10 py-4 border border-gold text-gold text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold/10 transition-all duration-500 rounded-sm"
             >
               Ver Toda la Colección
             </Link>

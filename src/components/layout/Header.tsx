@@ -11,117 +11,98 @@ const navLinks = [
   { label: "Anillos", href: "/productos?categoria=anillos" },
   { label: "Aretes", href: "/productos?categoria=aretes" },
   { label: "Dijes", href: "/productos?categoria=dijes" },
-  { label: "Personalizado", href: "/solicitud-personalizada" },
+  { label: "Casos de éxito", href: "/casos-de-exito" },
+  { label: "Diseño personalizado", href: "/solicitud-personalizada" },
 ];
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const itemCount = useCart((s) => s.itemCount());
   const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (searchOpen && searchInputRef.current) {
-      searchInputRef.current.focus();
-    }
-  }, [searchOpen]);
-
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/productos?busqueda=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchOpen(false);
+      navigate(`/productos?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
       setSearchQuery("");
     }
   };
 
+  useEffect(() => {
+    if (isSearchOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isSearchOpen]);
+
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-gold/20">
-      {/* Top row: hamburger — logo centered — actions */}
-      <div className="container flex items-center justify-between h-20 md:h-24">
-        {/* Left: mobile menu toggle */}
-        <button
-          className="md:hidden p-2 text-gold"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Menu"
-        >
-          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
-        </button>
-
-        {/* Spacer for desktop to balance the right side */}
-        <div className="hidden md:block w-24" />
-
-        {/* Center: Logo */}
-        <Link to="/" className="flex items-center absolute left-1/2 -translate-x-1/2">
-          <img src={logoHeader} alt="Magna Arte" className="h-12 md:h-16 w-auto" />
-        </Link>
-
-        {/* Right: Actions */}
-        <div className="flex items-center gap-3">
+    <header className="absolute top-0 w-full z-50 bg-[#FDFCF6] shadow-sm">
+      <div className="container flex flex-col items-center">
+        {/* Top row: Logo and Icons */}
+        <div className="w-full relative flex justify-center items-center py-6">
           <button
-            onClick={() => setSearchOpen(!searchOpen)}
-            className="p-2 text-gold/70 hover:text-gold transition-colors"
-            aria-label="Buscar"
+            className="md:hidden absolute left-4 p-2 text-gold hover:text-gold-dark transition-colors"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Menu"
           >
-            <Search size={20} strokeWidth={1.5} />
+            {mobileOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
           </button>
-          <Link to="/carrito" className="relative p-2 text-gold/70 hover:text-gold transition-colors">
-            <ShoppingBag size={20} strokeWidth={1.5} />
-            {itemCount > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 bg-gold text-accent-foreground text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                {itemCount}
-              </span>
-            )}
-          </Link>
-        </div>
-      </div>
 
-      {/* Desktop nav row */}
-      <nav className="hidden md:flex items-center justify-center gap-8 pb-3 border-t border-gold/10 pt-2">
-        {navLinks.map((link) => (
-          <Link
-            key={link.href}
-            to={link.href}
-            className="text-xs tracking-[0.15em] text-gold/70 hover:text-gold transition-colors uppercase font-sans"
-          >
-            {link.label}
+          <Link to="/" className="transition-opacity duration-300 hover:opacity-80">
+            <img src={logoHeader} alt="Magna Arte" className="h-12 md:h-16 w-auto object-contain" />
           </Link>
-        ))}
-      </nav>
 
-      {/* Search bar */}
-      <AnimatePresence>
-        {searchOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden border-t border-gold/20 bg-background"
-          >
-            <form onSubmit={handleSearch} className="container py-3 flex items-center gap-3">
-              <Search size={16} className="text-muted-foreground flex-shrink-0" />
-              <input
+          <div className="absolute right-4 flex items-center gap-2 md:gap-4">
+            <form 
+              onSubmit={handleSearchSubmit} 
+              className={`flex items-center transition-all duration-300 overflow-hidden ${isSearchOpen ? 'w-40 md:w-56 border-b border-gold bg-[#FDFCF6]' : 'w-10 border-b border-transparent'}`}
+            >
+              <button 
+                type="button" 
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                className="p-2 text-gold hover:text-gold-dark transition-colors shrink-0" 
+                aria-label="Buscar"
+              >
+                <Search size={20} strokeWidth={1.5} />
+              </button>
+              <input 
                 ref={searchInputRef}
-                type="text"
+                type="text" 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar joyas..."
-                className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
+                placeholder="Buscar..." 
+                className={`bg-transparent text-sm text-charcoal focus:outline-none transition-all duration-300 w-full placeholder:text-gold/50 ${isSearchOpen ? 'opacity-100 pr-2' : 'opacity-0'}`}
+                tabIndex={isSearchOpen ? 0 : -1}
               />
-              <button
-                type="button"
-                onClick={() => { setSearchOpen(false); setSearchQuery(""); }}
-                className="p-1 text-muted-foreground hover:text-foreground"
-              >
-                <X size={16} />
-              </button>
             </form>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Link to="/carrito" className="relative p-2 text-gold hover:text-gold-dark transition-colors shrink-0" aria-label="Carrito">
+              <ShoppingBag size={20} strokeWidth={1.5} />
+              {itemCount > 0 && (
+                <span className="absolute top-0 right-0 bg-charcoal text-gold text-[10px] font-medium rounded-full w-4 h-4 flex items-center justify-center shadow-sm border border-gold/30">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
+          </div>
+        </div>
+
+        {/* Bottom row: Navigation */}
+        <nav className="hidden md:flex items-center gap-8 pb-6">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              to={link.href}
+              className="text-xs md:text-sm tracking-[0.2em] font-medium text-gold hover:text-gold-dark uppercase transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
 
       {/* Mobile nav */}
       <AnimatePresence>
@@ -130,14 +111,14 @@ export default function Header() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden border-t border-gold/20 bg-background"
+            className="md:hidden overflow-hidden border-t border-gold/20 bg-[#FDFCF6] absolute top-full w-full shadow-lg"
           >
-            <div className="container py-6 flex flex-col gap-4">
+            <div className="container py-6 flex flex-col gap-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
-                  className="text-xs tracking-[0.15em] text-gold/70 hover:text-gold uppercase py-1 font-sans"
+                  className="text-sm tracking-[0.2em] text-gold hover:text-gold-dark uppercase py-2 border-b border-gold/10"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
@@ -150,3 +131,4 @@ export default function Header() {
     </header>
   );
 }
+

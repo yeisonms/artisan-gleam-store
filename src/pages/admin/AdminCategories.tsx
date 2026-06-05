@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, X, Check, Upload, ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, X, Check, Upload, Image as ImageIcon } from "lucide-react";
 
 interface Category {
   id: string;
   name: string;
   slug: string;
   description: string | null;
+  image_url: string | null;
   is_active: boolean;
   sort_order: number;
-  image_url: string | null;
   created_at: string;
 }
 
-const emptyForm = { name: "", slug: "", description: "", is_active: true, sort_order: 0, image_url: "" };
+const emptyForm = { name: "", slug: "", description: "", image_url: "", is_active: true, sort_order: 0 };
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
@@ -37,6 +37,23 @@ export default function AdminCategories() {
   const autoSlug = (name: string) =>
     name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
+  const uploadImage = async (file: File) => {
+    setUploadingImage(true);
+    const ext = file.name.split(".").pop();
+    const uuid = Date.now().toString(36) + Math.random().toString(36).substring(2);
+    const path = `categories/${uuid}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("product-images").upload(path, file);
+    if (uploadError) { 
+      toast.error("Error al subir imagen"); 
+      setUploadingImage(false); 
+      return; 
+    }
+    const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(path);
+    setForm(f => ({ ...f, image_url: urlData.publicUrl }));
+    toast.success("Imagen subida. No olvides guardar.");
+    setUploadingImage(false);
+  };
+
   const handleCreate = async () => {
     if (!form.name.trim() || !form.slug.trim()) { toast.error("Nombre y slug requeridos"); return; }
     setSaving(true);
@@ -44,9 +61,9 @@ export default function AdminCategories() {
       name: form.name.trim(),
       slug: form.slug.trim(),
       description: form.description.trim() || null,
+      image_url: form.image_url.trim() || null,
       is_active: form.is_active,
       sort_order: form.sort_order,
-      image_url: form.image_url.trim() || null,
     });
     if (error) toast.error("Error al crear categoría");
     else { toast.success("Categoría creada"); setCreating(false); setForm(emptyForm); fetch(); }
@@ -60,9 +77,9 @@ export default function AdminCategories() {
       name: form.name.trim(),
       slug: form.slug.trim(),
       description: form.description.trim() || null,
+      image_url: form.image_url.trim() || null,
       is_active: form.is_active,
       sort_order: form.sort_order,
-      image_url: form.image_url.trim() || null,
     }).eq("id", id);
     if (error) toast.error("Error al actualizar");
     else { toast.success("Categoría actualizada"); setEditing(null); fetch(); }
@@ -79,7 +96,7 @@ export default function AdminCategories() {
   const startEdit = (c: Category) => {
     setEditing(c.id);
     setCreating(false);
-    setForm({ name: c.name, slug: c.slug, description: c.description || "", is_active: c.is_active, sort_order: c.sort_order, image_url: c.image_url || "" });
+    setForm({ name: c.name, slug: c.slug, description: c.description || "", image_url: c.image_url || "", is_active: c.is_active, sort_order: c.sort_order });
   };
 
   const startCreate = () => {
@@ -113,6 +130,7 @@ export default function AdminCategories() {
           />
         </div>
       </div>
+      
       <div>
         <label className="text-xs text-muted-foreground uppercase tracking-wider">Descripción</label>
         <textarea
@@ -122,37 +140,30 @@ export default function AdminCategories() {
           onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
         />
       </div>
+
       <div>
-        <label className="text-xs text-muted-foreground uppercase tracking-wider">Imagen de categoría</label>
-        <div className="flex items-center gap-3 mt-1">
+        <label className="text-xs text-muted-foreground uppercase tracking-wider">Imagen de Categoría</label>
+        <div className="flex gap-2 mt-1">
           {form.image_url && (
-            <img src={form.image_url} alt="Preview" className="w-16 h-16 object-cover border border-border" />
+            <div className="w-12 h-12 shrink-0 border border-border rounded overflow-hidden">
+              <img src={form.image_url} alt="Preview" className="w-full h-full object-cover" />
+            </div>
           )}
-          <label className="inline-flex items-center gap-1 px-3 py-2 text-sm border border-border text-muted-foreground hover:text-foreground cursor-pointer">
-            <Upload size={14} />
-            {uploadingImage ? "Subiendo..." : "Subir imagen"}
+          <div className="flex flex-col gap-2 flex-1">
             <input
-              type="file"
-              accept="image/*"
-              className="hidden"
-              disabled={uploadingImage}
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (!file) return;
-                if (file.size > 5 * 1024 * 1024) { toast.error("Máximo 5MB"); return; }
-                setUploadingImage(true);
-                const ext = file.name.split(".").pop();
-                const path = `categories/${crypto.randomUUID()}.${ext}`;
-                const { error } = await supabase.storage.from("product-images").upload(path, file);
-                if (error) { toast.error("Error al subir imagen"); setUploadingImage(false); return; }
-                const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(path);
-                setForm((f) => ({ ...f, image_url: urlData.publicUrl }));
-                setUploadingImage(false);
-              }}
+              placeholder="URL de la imagen o subir archivo"
+              className="w-full px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              value={form.image_url}
+              onChange={(e) => setForm((f) => ({ ...f, image_url: e.target.value }))}
             />
-          </label>
+            <label className={`inline-flex items-center gap-1 w-max px-3 py-1.5 text-xs bg-secondary text-secondary-foreground hover:bg-secondary/80 cursor-pointer ${uploadingImage ? "opacity-50 pointer-events-none" : ""}`}>
+              <Upload size={14} /> {uploadingImage ? "Subiendo..." : "Subir desde PC"}
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.target.value = ""; }} />
+            </label>
+          </div>
         </div>
       </div>
+
       <div className="flex items-center gap-6">
         <label className="flex items-center gap-2 text-sm">
           <input
@@ -212,9 +223,18 @@ export default function AdminCategories() {
               <div key={c.id}>{renderForm(() => handleUpdate(c.id))}</div>
             ) : (
               <div key={c.id} className="flex items-center justify-between border border-border p-3 hover:bg-secondary/30 transition-colors">
-                <div>
-                  <p className="text-sm font-medium text-foreground">{c.name}</p>
-                  <p className="text-xs text-muted-foreground">/{c.slug} · Orden: {c.sort_order}</p>
+                <div className="flex items-center gap-4">
+                  {c.image_url ? (
+                     <img src={c.image_url} alt={c.name} className="w-10 h-10 object-cover rounded border border-border" />
+                  ) : (
+                     <div className="w-10 h-10 bg-secondary rounded border border-border flex items-center justify-center text-muted-foreground">
+                        <ImageIcon size={16} />
+                     </div>
+                  )}
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{c.name}</p>
+                    <p className="text-xs text-muted-foreground">/{c.slug} · Orden: {c.sort_order}</p>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <span className={`text-xs px-2 py-0.5 rounded ${c.is_active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>

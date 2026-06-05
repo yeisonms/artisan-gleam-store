@@ -62,7 +62,7 @@ export default function Policies() {
 
   return (
     <div className="min-h-screen">
-      <div className="container py-8 md:py-12">
+      <div className="container pt-36 pb-8 md:pt-40 md:pb-12">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}

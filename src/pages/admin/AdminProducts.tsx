@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatCOP } from "@/lib/cart";
-import { Plus, Pencil, Trash2, ChevronLeft, X, Check, Image as ImageIcon, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronLeft, X, Check, Image as ImageIcon, Upload, Search } from "lucide-react";
 
 interface Product {
   id: string;
@@ -10,12 +10,14 @@ interface Product {
   slug: string;
   description: string | null;
   price_cents: number;
+  cost_cents: number;
   currency: string;
   category_id: string | null;
   is_active: boolean;
   featured: boolean;
   is_custom_request: boolean;
   created_at: string;
+  product_variants?: { sku: string | null }[];
 }
 
 interface Category { id: string; name: string; }
@@ -24,6 +26,7 @@ interface Variant {
   id: string;
   variant_name: string;
   price_cents: number | null;
+  cost_cents: number | null;
   stock: number;
   sku: string | null;
   attributes: Record<string, string>;
@@ -37,7 +40,7 @@ interface ProductImage {
 }
 
 const emptyProduct = {
-  name: "", slug: "", description: "", price_cents: 0,
+  name: "", slug: "", description: "", price_cents: 0, cost_cents: 0,
   category_id: "", is_active: true, featured: false, is_custom_request: false,
 };
 
@@ -53,8 +56,9 @@ export default function AdminProducts() {
   // Variants & images for detail
   const [variants, setVariants] = useState<Variant[]>([]);
   const [images, setImages] = useState<ProductImage[]>([]);
-  const [newVariant, setNewVariant] = useState({ variant_name: "", price_cents: "", stock: "0", sku: "", attributes: "{}" });
+  const [newVariant, setNewVariant] = useState({ variant_name: "", price_cents: "", cost_cents: "", stock: "0", sku: "", attributes: "{}" });
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const autoSlug = (name: string) =>
     name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -62,7 +66,7 @@ export default function AdminProducts() {
   const fetchAll = async () => {
     setLoading(true);
     const [prodRes, catRes] = await Promise.all([
-      supabase.from("products").select("*").order("created_at", { ascending: false }),
+      supabase.from("products").select("*, product_variants(sku)").order("created_at", { ascending: false }),
       supabase.from("categories").select("id, name").order("sort_order"),
     ]);
     if (prodRes.data) setProducts(prodRes.data);
@@ -93,7 +97,7 @@ export default function AdminProducts() {
     setEditingId(p.id);
     setForm({
       name: p.name, slug: p.slug, description: p.description || "",
-      price_cents: p.price_cents, category_id: p.category_id || "",
+      price_cents: p.price_cents, cost_cents: p.cost_cents || 0, category_id: p.category_id || "",
       is_active: p.is_active, featured: p.featured, is_custom_request: p.is_custom_request,
     });
     await fetchProductDetails(p.id);
@@ -108,6 +112,7 @@ export default function AdminProducts() {
       slug: form.slug.trim(),
       description: form.description.trim() || null,
       price_cents: form.price_cents,
+      cost_cents: form.cost_cents,
       category_id: form.category_id || null,
       is_active: form.is_active,
       featured: form.featured,
@@ -143,12 +148,13 @@ export default function AdminProducts() {
       product_id: editingId,
       variant_name: newVariant.variant_name.trim(),
       price_cents: newVariant.price_cents ? parseInt(newVariant.price_cents) : null,
+      cost_cents: newVariant.cost_cents ? parseInt(newVariant.cost_cents) : null,
       stock: parseInt(newVariant.stock) || 0,
       sku: newVariant.sku.trim() || null,
       attributes: attrs,
     });
     if (error) toast.error("Error al agregar variante");
-    else { toast.success("Variante agregada"); setNewVariant({ variant_name: "", price_cents: "", stock: "0", sku: "", attributes: "{}" }); fetchProductDetails(editingId); }
+    else { toast.success("Variante agregada"); setNewVariant({ variant_name: "", price_cents: "", cost_cents: "", stock: "0", sku: "", attributes: "{}" }); fetchProductDetails(editingId); }
   };
 
   const deleteVariant = async (vId: string) => {
@@ -176,7 +182,8 @@ export default function AdminProducts() {
     if (!editingId) { toast.error("Guarda el producto primero"); return; }
     setUploadingImage(true);
     const ext = file.name.split(".").pop();
-    const path = `${editingId}/${crypto.randomUUID()}.${ext}`;
+    const uuid = Date.now().toString(36) + Math.random().toString(36).substring(2);
+    const path = `${editingId}/${uuid}.${ext}`;
     const { error: uploadError } = await supabase.storage.from("product-images").upload(path, file);
     if (uploadError) { toast.error("Error al subir imagen"); setUploadingImage(false); return; }
     const { data: urlData } = supabase.storage.from("product-images").getPublicUrl(path);
@@ -230,10 +237,16 @@ export default function AdminProducts() {
 
           <div className="grid sm:grid-cols-3 gap-3">
             <div>
-              <label className="text-xs text-muted-foreground uppercase tracking-wider">Precio base (centavos)</label>
+              <label className="text-xs text-muted-foreground uppercase tracking-wider">Precio base (COP)</label>
               <input type="number" className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                value={form.price_cents} onChange={(e) => setForm((f) => ({ ...f, price_cents: parseInt(e.target.value) || 0 }))} />
-              <p className="text-xs text-muted-foreground mt-1">{formatCOP(form.price_cents)}</p>
+                value={form.price_cents ? form.price_cents / 100 : ""} onChange={(e) => setForm((f) => ({ ...f, price_cents: e.target.value ? parseInt(e.target.value) * 100 : 0 }))} />
+              <p className="text-xs text-muted-foreground mt-1 text-gold">PVP guardado: {formatCOP(form.price_cents)}</p>
+            </div>
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wider">Costo base (COP)</label>
+              <input type="number" className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                value={form.cost_cents ? form.cost_cents / 100 : ""} onChange={(e) => setForm((f) => ({ ...f, cost_cents: e.target.value ? parseInt(e.target.value) * 100 : 0 }))} />
+              <p className="text-xs text-muted-foreground mt-1 text-blue-500">Costo guardado: {formatCOP(form.cost_cents)}</p>
             </div>
             <div>
               <label className="text-xs text-muted-foreground uppercase tracking-wider">Categoría</label>
@@ -278,11 +291,13 @@ export default function AdminProducts() {
             )}
             <div className="border border-border p-4 space-y-3">
               <p className="text-xs text-muted-foreground uppercase tracking-wider">Agregar variante</p>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
                 <input placeholder="Nombre (ej: Oro 18k - Talla 7)" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                   value={newVariant.variant_name} onChange={(e) => setNewVariant((v) => ({ ...v, variant_name: e.target.value }))} />
-                <input placeholder="Precio (centavos, vacío=base)" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                  value={newVariant.price_cents} onChange={(e) => setNewVariant((v) => ({ ...v, price_cents: e.target.value }))} />
+                <input placeholder="Precio (COP, vacío=base)" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  value={newVariant.price_cents ? parseInt(newVariant.price_cents) / 100 : ""} onChange={(e) => setNewVariant((v) => ({ ...v, price_cents: e.target.value ? (parseInt(e.target.value) * 100).toString() : "" }))} />
+                <input placeholder="Costo (COP, vacío=base)" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                  value={newVariant.cost_cents ? parseInt(newVariant.cost_cents) / 100 : ""} onChange={(e) => setNewVariant((v) => ({ ...v, cost_cents: e.target.value ? (parseInt(e.target.value) * 100).toString() : "" }))} />
                 <input placeholder="Stock" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
                   value={newVariant.stock} onChange={(e) => setNewVariant((v) => ({ ...v, stock: e.target.value }))} />
                 <input placeholder="SKU" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
@@ -338,19 +353,39 @@ export default function AdminProducts() {
   }
 
   // List view
+  const filteredProducts = products.filter(p => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    if (p.name.toLowerCase().includes(q)) return true;
+    if (p.product_variants?.some(v => v.sku?.toLowerCase().includes(q))) return true;
+    return false;
+  });
+
   return (
     <div className="p-6 md:p-8">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h1 className="font-display text-2xl text-foreground">Productos</h1>
-        <button onClick={openCreate} className="inline-flex items-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90">
-          <Plus size={14} /> Nuevo
-        </button>
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="relative w-full sm:w-64">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input 
+              type="text"
+              placeholder="Buscar por nombre o SKU..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-sm border border-border bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+          </div>
+          <button onClick={openCreate} className="w-full sm:w-auto inline-flex items-center justify-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90">
+            <Plus size={14} /> Nuevo
+          </button>
+        </div>
       </div>
 
       {loading ? (
         <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-14 bg-secondary animate-pulse" />)}</div>
-      ) : products.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No hay productos.</p>
+      ) : filteredProducts.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No se encontraron productos.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -364,7 +399,7 @@ export default function AdminProducts() {
               </tr>
             </thead>
             <tbody>
-              {products.map((p) => {
+              {filteredProducts.map((p) => {
                 const cat = categories.find((c) => c.id === p.category_id);
                 return (
                   <tr key={p.id} className="border-b border-border hover:bg-secondary/30 transition-colors">

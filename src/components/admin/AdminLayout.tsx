@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Sparkles, LogOut } from "lucide-react";
+import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Sparkles, LogOut, Users, BookOpen, PieChart, Truck, History } from "lucide-react";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Productos", href: "/admin/productos", icon: Package },
   { label: "Categorías", href: "/admin/categorias", icon: FolderOpen },
-  { label: "Pedidos", href: "/admin/pedidos", icon: ShoppingCart },
+  { label: "Punto de Venta", href: "/admin/pos", icon: ShoppingCart },
+  { label: "Historial Ventas", href: "/admin/historial-ventas", icon: History },
+  { label: "Clientes", href: "/admin/clientes", icon: Users },
+  { label: "Cartera", href: "/admin/cartera", icon: BookOpen },
+  { label: "Finanzas", href: "/admin/finanzas", icon: PieChart },
+  { label: "Despachos", href: "/admin/despachos", icon: Truck },
   { label: "Solicitudes", href: "/admin/solicitudes", icon: Sparkles },
 ];
 

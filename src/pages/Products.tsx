@@ -24,16 +24,15 @@ interface Category {
 export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const categorySlug = searchParams.get("categoria") || "";
-  const initialSearch = searchParams.get("busqueda") || "";
+  const initialQ = searchParams.get("q") || "";
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [searchQuery, setSearchQuery] = useState(initialQ);
 
   useEffect(() => {
-    const q = searchParams.get("busqueda") || "";
-    if (q) setSearchQuery(q);
-  }, [searchParams]);
+    setSearchQuery(initialQ);
+  }, [initialQ]);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -87,7 +86,7 @@ export default function Products() {
 
   return (
     <div className="min-h-screen">
-      <div className="container py-8 md:py-12">
+      <div className="container pt-36 pb-8 md:pt-40 md:pb-12">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
