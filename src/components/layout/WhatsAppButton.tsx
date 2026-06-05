@@ -9,11 +9,11 @@ export function WhatsAppButton() {
   const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex items-center justify-end">
+    <div className="fixed bottom-6 right-6 z-50 flex items-center justify-end pointer-events-none">
       {/* Tooltip text container */}
       <div 
         className={`mr-3 bg-white text-charcoal px-4 py-2 rounded-lg shadow-lg border border-gold/20 text-sm font-medium transition-all duration-300 origin-right ${
-          isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"
+          isHovered ? "opacity-100 scale-100" : "opacity-0 scale-95"
         }`}
       >
         Soporte y PQRS
@@ -24,7 +24,7 @@ export function WhatsAppButton() {
         href={waUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="relative flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg shadow-black/20 hover:scale-110 transition-transform duration-300 group"
+        className="pointer-events-auto relative flex items-center justify-center w-14 h-14 bg-[#25D366] text-white rounded-full shadow-lg shadow-black/20 hover:scale-110 transition-transform duration-300 group"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         aria-label="Contactar por WhatsApp"

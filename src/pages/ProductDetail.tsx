@@ -7,6 +7,9 @@ import ProductGallery, { ProductImage } from "@/features/productos/components/Pr
 import ProductInfo from "@/features/productos/components/ProductInfo";
 import ProductActions, { Variant } from "@/features/productos/components/ProductActions";
 import ProductDetailsAccordion from "@/features/productos/components/ProductDetailsAccordion";
+import ProductWhatsAppBanner from "@/features/productos/components/ProductWhatsAppBanner";
+import RelatedProducts from "@/features/productos/components/RelatedProducts";
+import ProductShare from "@/features/productos/components/ProductShare";
 
 interface ProductDetail {
   id: string;
@@ -142,8 +145,16 @@ export default function ProductDetailPage() {
               description={product.description} 
               attributes={selectedVariant?.attributes} 
             />
+
+            <ProductShare />
           </div>
 
+        </div>
+
+        {/* Secciones adicionales (Inferiores) */}
+        <div className="mt-20 md:mt-28 space-y-20 md:space-y-28 border-t border-border/50 pt-16">
+          <ProductWhatsAppBanner productName={product.name} />
+          <RelatedProducts currentProductId={product.id} categoryId={product.category_id} />
         </div>
       </div>
     </div>
