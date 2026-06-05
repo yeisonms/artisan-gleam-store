@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { formatCOP } from "@/lib/cart";
-import { Plus, Pencil, Trash2, ChevronLeft, X, Check, Image as ImageIcon, Upload } from "lucide-react";
+import { Plus, Pencil, Trash2, ChevronLeft, X, Check, Image as ImageIcon, Upload, Search } from "lucide-react";
 
 interface Product {
   id: string;
@@ -17,6 +17,7 @@ interface Product {
   featured: boolean;
   is_custom_request: boolean;
   created_at: string;
+  product_variants?: { sku: string | null }[];
 }
 
 interface Category { id: string; name: string; }
@@ -57,6 +58,7 @@ export default function AdminProducts() {
   const [images, setImages] = useState<ProductImage[]>([]);
   const [newVariant, setNewVariant] = useState({ variant_name: "", price_cents: "", cost_cents: "", stock: "0", sku: "", attributes: "{}" });
   const [newImageUrl, setNewImageUrl] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const autoSlug = (name: string) =>
     name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -64,7 +66,7 @@ export default function AdminProducts() {
   const fetchAll = async () => {
     setLoading(true);
     const [prodRes, catRes] = await Promise.all([
-      supabase.from("products").select("*").order("created_at", { ascending: false }),
+      supabase.from("products").select("*, product_variants(sku)").order("created_at", { ascending: false }),
       supabase.from("categories").select("id, name").order("sort_order"),
     ]);
     if (prodRes.data) setProducts(prodRes.data);
@@ -351,19 +353,39 @@ export default function AdminProducts() {
   }
 
   // List view
+  const filteredProducts = products.filter(p => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    if (p.name.toLowerCase().includes(q)) return true;
+    if (p.product_variants?.some(v => v.sku?.toLowerCase().includes(q))) return true;
+    return false;
+  });
+
   return (
     <div className="p-6 md:p-8">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h1 className="font-display text-2xl text-foreground">Productos</h1>
-        <button onClick={openCreate} className="inline-flex items-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90">
-          <Plus size={14} /> Nuevo
-        </button>
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="relative w-full sm:w-64">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <input 
+              type="text"
+              placeholder="Buscar por nombre o SKU..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 pr-3 py-2 text-sm border border-border bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+            />
+          </div>
+          <button onClick={openCreate} className="w-full sm:w-auto inline-flex items-center justify-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90">
+            <Plus size={14} /> Nuevo
+          </button>
+        </div>
       </div>
 
       {loading ? (
         <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-14 bg-secondary animate-pulse" />)}</div>
-      ) : products.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No hay productos.</p>
+      ) : filteredProducts.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No se encontraron productos.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -377,7 +399,7 @@ export default function AdminProducts() {
               </tr>
             </thead>
             <tbody>
-              {products.map((p) => {
+              {filteredProducts.map((p) => {
                 const cat = categories.find((c) => c.id === p.category_id);
                 return (
                   <tr key={p.id} className="border-b border-border hover:bg-secondary/30 transition-colors">

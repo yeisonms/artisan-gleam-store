@@ -156,19 +156,31 @@ export default function DashboardPage() {
               </div>
             ) : (
               <div className="space-y-3">
-                {criticalStock.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-3 border border-border bg-secondary/10 hover:bg-secondary/30 transition-colors">
-                    <div className="overflow-hidden pr-2">
-                      <p className="text-xs text-muted-foreground truncate">{item.products?.name}</p>
-                      <p className="text-sm font-medium text-foreground truncate">{item.variant_name}</p>
+                {criticalStock.map((item) => {
+                  const imageUrl = item.products?.product_images?.[0]?.url;
+                  return (
+                    <div key={item.id} className="flex items-center gap-3 p-3 border border-border bg-secondary/10 hover:bg-secondary/30 transition-colors">
+                      {imageUrl ? (
+                        <img src={imageUrl} alt={item.products?.name || "Producto"} className="w-10 h-10 object-cover rounded-sm border border-border shrink-0" />
+                      ) : (
+                        <div className="w-10 h-10 bg-secondary flex items-center justify-center rounded-sm border border-border shrink-0">
+                          <Box size={16} className="text-muted-foreground opacity-50" />
+                        </div>
+                      )}
+                      <div className="overflow-hidden flex-1">
+                        <p className="text-xs text-muted-foreground truncate">{item.products?.name}</p>
+                        <p className="text-sm font-medium text-foreground truncate">
+                          {item.variant_name} {item.sku && <span className="text-xs text-muted-foreground font-normal ml-1">({item.sku})</span>}
+                        </p>
+                      </div>
+                      <div className={`px-2 py-1 text-xs font-bold rounded-sm shrink-0 ${
+                        item.stock === 0 ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
+                      }`}>
+                        {item.stock} u.
+                      </div>
                     </div>
-                    <div className={`px-2 py-1 text-xs font-bold rounded-sm ${
-                      item.stock === 0 ? 'bg-red-100 text-red-700' : 'bg-yellow-100 text-yellow-700'
-                    }`}>
-                      {item.stock} u.
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

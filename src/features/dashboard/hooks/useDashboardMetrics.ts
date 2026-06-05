@@ -17,8 +17,10 @@ export interface CriticalStock {
   id: string;
   variant_name: string;
   stock: number;
+  sku: string | null;
   products: {
     name: string;
+    product_images?: { url: string }[];
   } | null;
 }
 
@@ -39,31 +41,40 @@ export function useDashboardMetrics() {
       const [
         { data: ventasDia, error: error1 },
         { data: cartera, error: error2 },
-        { data: inventario, error: error3 },
         { data: ingresosChart, error: error4 },
         { data: criticalItems, error: error5 },
+        { data: variantsRes, error: error6 },
       ] = await Promise.all([
         supabase.rpc('get_ventas_del_dia'),
         supabase.rpc('get_cartera_activa'),
-        supabase.rpc('get_valor_inventario'),
         supabase.rpc('get_ingresos_7_dias'),
         supabase
           .from('product_variants')
-          .select('id, variant_name, stock, products (name)')
+          .select('id, variant_name, stock, sku, products (name, product_images(url))')
           .lt('stock', 3)
           .order('stock', { ascending: true })
           .limit(5),
+        supabase.from('product_variants').select('stock, cost_cents')
       ]);
 
-      if (error1 || error2 || error3 || error4 || error5) {
-        console.error("Dashboard Errors:", { error1, error2, error3, error4, error5 });
+      if (error1 || error2 || error4 || error5 || error6) {
+        console.error("Dashboard Errors:", { error1, error2, error4, error5, error6 });
         toast.error('Error al cargar algunas métricas del panel');
+      }
+
+      let realInventoryValue = 0;
+      if (variantsRes) {
+        realInventoryValue = variantsRes.reduce((sum: number, variant: any) => {
+          const cost = variant.cost_cents || 0;
+          const stock = variant.stock || 0;
+          return sum + (cost * stock);
+        }, 0);
       }
 
       setMetrics({
         ventasDelDiaCents: ventasDia || 0,
         carteraActivaCents: cartera || 0,
-        valorInventarioCents: inventario || 0,
+        valorInventarioCents: realInventoryValue,
       });
 
       // El RPC retorna un arreglo JSON (puede venir como string o como objeto dependiendo del driver de supabase-js, típicamente parseado)
