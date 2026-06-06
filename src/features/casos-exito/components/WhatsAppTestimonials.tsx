@@ -3,11 +3,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const screenshots = [
   { src: "/casos-exito/whatsapp1.webp", name: "Alejandro", location: "Medellín" },
-  { src: "/casos-exito/whatsapp2.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
-  { src: "/casos-exito/whatsapp3.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
-  { src: "/casos-exito/whatsapp4.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
-  { src: "/casos-exito/whatsapp5.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
-  { src: "/casos-exito/whatsapp6.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
+  { src: "/casos-exito/whatsapp2.webp", name: "Andres Perez", location: "Villavicencio" },
+  { src: "/casos-exito/whatsapp3.webp", name: "Jairo Mesa", location: "Bucaramanga" },
+  { src: "/casos-exito/whatsapp4.webp", name: "Laura Martinez", location: "Madrid" },
+  { src: "/casos-exito/whatsapp5.webp", name: "Yenny", location: "Armenia" },
+  { src: "/casos-exito/whatsapp6.webp", name: "Sofia", location: "Madrid" },
 ];
 
 export default function WhatsAppTestimonials() {

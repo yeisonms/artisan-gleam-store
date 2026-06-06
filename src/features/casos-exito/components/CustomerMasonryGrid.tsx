@@ -3,7 +3,7 @@ import React from "react";
 const customers = [
   { src: "/casos-exito/cliente1.webp", name: "Juan Carlos", location: "Bucaramanga, Pulsera de oro" },
   { src: "/casos-exito/cliente2.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
-  { src: "/casos-exito/cliente3.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
+  { src: "/casos-exito/cliente3.webp", name: "Mariana Jaramillo", location: "Cucuta, Manilla en oro laminado y esmeraldas" },
   { src: "/casos-exito/cliente4.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
   { src: "/casos-exito/cliente5.webp", name: "Alberto", location: "Bogota, Pulsera de plata y esmeraldas" },
   { src: "/casos-exito/cliente6.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
