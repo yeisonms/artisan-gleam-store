@@ -56,7 +56,7 @@ export default function Products() {
         .order("created_at", { ascending: false });
 
       if (categorySlug) {
-        const cat = categories.find((c) => c.slug === categorySlug);
+        const cat = categories.find((c) => c.slug?.toLowerCase().trim() === categorySlug.toLowerCase().trim());
         if (cat) {
           query = query.eq("category_id", cat.id);
         }
