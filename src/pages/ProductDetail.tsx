@@ -119,7 +119,7 @@ export default function ProductDetailPage() {
         <div className="grid md:grid-cols-[55%_45%] gap-10 md:gap-16 lg:gap-24 items-start">
           
           {/* Columna Izquierda: Galería */}
-          <div className="sticky top-24">
+          <div className="md:sticky md:top-24">
             <ProductGallery images={images} productName={product.name} />
           </div>
 

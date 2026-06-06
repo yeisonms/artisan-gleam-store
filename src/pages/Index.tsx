@@ -91,7 +91,7 @@ export default function Index() {
               </Link>
               <Link
                 to="/solicitud-personalizada"
-                className="inline-flex items-center justify-center px-10 py-4 border border-gold text-gold font-sans text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-gold/10 transition-all duration-500 rounded-sm hover:-translate-y-1"
+                className="inline-flex items-center justify-center px-10 py-4 bg-black/60 backdrop-blur-md border border-gold/50 text-white font-sans text-xs md:text-sm tracking-[0.2em] uppercase hover:bg-black/80 hover:border-gold transition-all duration-500 rounded-sm hover:-translate-y-1 shadow-lg"
               >
                 Diseño Personalizado
               </Link>
