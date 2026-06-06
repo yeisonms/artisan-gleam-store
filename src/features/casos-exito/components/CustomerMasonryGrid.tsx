@@ -1,13 +1,13 @@
 import React from "react";
 
-const images = [
-  "https://images.unsplash.com/photo-1599643478524-fb524fa0a14b?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1573408301145-b98c4af01158?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1584302179602-e4c3d3fd629d?auto=format&fit=crop&w=600&q=80",
-  "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=600&q=80",
+const customers = [
+  { src: "/casos-exito/cliente1.webp", name: "Juan Carlos", location: "Bucaramanga, Pulsera de oro" },
+  { src: "/casos-exito/cliente2.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
+  { src: "/casos-exito/cliente3.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
+  { src: "/casos-exito/cliente4.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
+  { src: "/casos-exito/cliente5.webp", name: "Alberto", location: "Bogota, Pulsera de plata y esmeraldas" },
+  { src: "/casos-exito/cliente6.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
+  { src: "/casos-exito/cliente7.webp", name: "Nombre del Cliente", location: "Ciudad, País" },
 ];
 
 export default function CustomerMasonryGrid() {
@@ -21,16 +21,26 @@ export default function CustomerMasonryGrid() {
 
         {/* Masonry Grid */}
         <div className="columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4 max-w-7xl mx-auto">
-          {images.map((src, index) => (
-            <div key={index} className="break-inside-avoid relative group rounded-xl overflow-hidden shadow-sm">
+          {customers.map((customer, index) => (
+            <div key={index} className="break-inside-avoid relative group rounded-xl overflow-hidden shadow-sm cursor-pointer">
               <img
-                src={src}
-                alt={`Cliente Magna Arte ${index + 1}`}
+                src={customer.src}
+                alt={`${customer.name} - ${customer.location}`}
                 className="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500 ease-in-out"
                 loading="lazy"
               />
-              {/* Overlay hover sutil */}
-              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              {/* Overlay hover con gradiente para lectura clara */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              {/* Contenido flotante */}
+              <div className="absolute bottom-0 left-0 p-4 md:p-5 w-full flex flex-col translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+                <span className="text-white font-semibold text-sm md:text-base drop-shadow-md tracking-wide">
+                  {customer.name}
+                </span>
+                <span className="text-white/80 text-xs md:text-sm drop-shadow-sm font-light mt-0.5">
+                  {customer.location}
+                </span>
+              </div>
             </div>
           ))}
         </div>
