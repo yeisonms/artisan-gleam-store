@@ -9,6 +9,7 @@ import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
 import CustomRequest from "./pages/CustomRequest";
 import CasosExito from "./pages/CasosExito";
 import Policies from "./pages/Policies";
@@ -56,6 +57,7 @@ const App = () => (
           <Route path="/producto/:slug" element={<PublicLayout><ProductDetail /></PublicLayout>} />
           <Route path="/carrito" element={<PublicLayout><Cart /></PublicLayout>} />
           <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
+          <Route path="/checkout/success" element={<PublicLayout><CheckoutSuccess /></PublicLayout>} />
           <Route path="/pedido-exitoso" element={<PublicLayout><OrderSuccess /></PublicLayout>} />
           <Route path="/solicitud-personalizada" element={<PublicLayout><CustomRequest /></PublicLayout>} />
           <Route path="/casos-de-exito" element={<PublicLayout><CasosExito /></PublicLayout>} />

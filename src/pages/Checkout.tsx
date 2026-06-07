@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { z } from "zod";
 import { processWebOrder, WebOrderPayload } from "@/services/webhookService";
+import WompiCheckoutButton from "@/features/checkout/components/WompiCheckoutButton";
+import { openWompiWidget } from "@/features/checkout/utils/wompi";
 
 const checkoutSchema = z.object({
   fullName: z.string().trim().min(2, "Nombre requerido").max(100),
@@ -21,15 +23,29 @@ type CheckoutForm = z.infer<typeof checkoutSchema>;
 export default function Checkout() {
   const { items, totalCents, clearCart } = useCart();
   const navigate = useNavigate();
-  const [form, setForm] = useState<CheckoutForm>({
-    fullName: "",
-    phone: "",
-    email: "",
-    address: "",
-    city: "",
-    department: "",
-    notes: "",
+  const [form, setForm] = useState<CheckoutForm>(() => {
+    const saved = localStorage.getItem("magna_checkout_form");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        // ignore
+      }
+    }
+    return {
+      fullName: "",
+      phone: "",
+      email: "",
+      address: "",
+      city: "",
+      department: "",
+      notes: "",
+    };
   });
+
+  useEffect(() => {
+    localStorage.setItem("magna_checkout_form", JSON.stringify(form));
+  }, [form]);
   const [errors, setErrors] = useState<Partial<Record<keyof CheckoutForm, string>>>({});
   const [submitting, setSubmitting] = useState(false);
 
@@ -60,44 +76,71 @@ export default function Checkout() {
 
     setSubmitting(true);
     try {
+      const reference = crypto.randomUUID(); // Referencia única para Wompi
       const total = totalCents();
-      
-      // 1. Crear el cliente
-      const { data: newCustomer, error: customerError } = await supabase
-        .from('clientes')
-        .insert({
-          nombre: result.data.fullName,
+
+      // Abrir Widget de Wompi de forma programática (Opción A)
+      openWompiWidget(
+        total,
+        reference,
+        {
           email: result.data.email,
-          telefono: result.data.phone,
-        })
-        .select('id')
-        .single();
+          fullName: result.data.fullName,
+          phone: result.data.phone
+        },
+        async (transaction) => {
+          // Callback de éxito de Wompi
+          try {
+            // 1. Crear el cliente
+            const { data: newCustomer, error: customerError } = await supabase
+              .from('clientes')
+              .insert({
+                nombre: result.data.fullName,
+                email: result.data.email,
+                telefono: result.data.phone,
+              })
+              .select('id')
+              .single();
 
-      if (customerError) throw new Error("Error registrando datos del cliente");
+            if (customerError) throw new Error("Error registrando datos del cliente");
 
-      // 2. Procesar la orden omnicanal
-      const payload: WebOrderPayload = {
-        cliente_id: newCustomer.id,
-        canal: 'Digital',
-        estado_pago: 'Pagado', // Simulamos pago exitoso para la demo
-        total_cents: total,
-        detalles: items.map((item) => ({
-          variante_id: item.variantId,
-          cantidad: item.quantity,
-          precio_unitario_cents: item.unitPriceCents,
-          subtotal_cents: item.unitPriceCents * item.quantity,
-        })),
-      };
+            // 2. Procesar la orden omnicanal
+            const payload: WebOrderPayload = {
+              cliente_id: newCustomer.id,
+              canal: 'Digital',
+              estado_pago: 'Pagado',
+              total_cents: total,
+              detalles: items.map((item) => ({
+                variante_id: item.variantId,
+                cantidad: item.quantity,
+                precio_unitario_cents: item.unitPriceCents,
+                subtotal_cents: item.unitPriceCents * item.quantity,
+              })),
+            };
 
-      const res = await processWebOrder(payload);
-      if (!res.success) throw new Error(res.error);
+            const res = await processWebOrder(payload);
+            if (!res.success) throw new Error(res.error);
 
-      toast.success("¡Pedido registrado!");
-      clearCart();
-      navigate(`/pedido-exitoso?pedido=${newCustomer.id}`);
-    } catch {
+            toast.success("¡Pago exitoso y pedido registrado!");
+            clearCart();
+            localStorage.removeItem("magna_checkout_form");
+            navigate(`/checkout/success?ref=${reference}`);
+          } catch (err) {
+            console.error(err);
+            toast.error("El pago fue exitoso pero hubo un error guardando el pedido. Contáctanos.");
+          } finally {
+            setSubmitting(false);
+          }
+        }
+      );
+
+      // Desactivamos el submitting si se cancela o cierra (Wompi no avisa explícitamente cierre sin pago, 
+      // así que en un flujo real dependeríamos de webhooks, pero para este caso lo dejamos como "Pendiente" en UI o reactivamos tras unos segundos si falla).
+      // Para evitar que quede bloqueado eternamente si el usuario cierra el modal:
+      setTimeout(() => setSubmitting(false), 2000);
+
+    } catch (err) {
       toast.error("Error inesperado. Intenta de nuevo.");
-    } finally {
       setSubmitting(false);
     }
   };
@@ -115,15 +158,15 @@ export default function Checkout() {
             <h2 className="font-display text-lg text-foreground mb-4">Datos de Contacto</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <input className={inputClass} placeholder="Nombre completo" value={form.fullName} onChange={(e) => handleChange("fullName", e.target.value)} />
+                <input className={inputClass} placeholder="Nombre completo" autoComplete="name" value={form.fullName} onChange={(e) => handleChange("fullName", e.target.value)} />
                 {errors.fullName && <p className="text-destructive text-xs mt-1">{errors.fullName}</p>}
               </div>
               <div>
-                <input className={inputClass} placeholder="Teléfono" value={form.phone} onChange={(e) => handleChange("phone", e.target.value)} />
+                <input className={inputClass} placeholder="Teléfono" autoComplete="tel" value={form.phone} onChange={(e) => handleChange("phone", e.target.value)} />
                 {errors.phone && <p className="text-destructive text-xs mt-1">{errors.phone}</p>}
               </div>
               <div className="sm:col-span-2">
-                <input className={inputClass} placeholder="Email" type="email" value={form.email} onChange={(e) => handleChange("email", e.target.value)} />
+                <input className={inputClass} placeholder="Email" type="email" autoComplete="email" value={form.email} onChange={(e) => handleChange("email", e.target.value)} />
                 {errors.email && <p className="text-destructive text-xs mt-1">{errors.email}</p>}
               </div>
             </div>
@@ -133,15 +176,15 @@ export default function Checkout() {
             <h2 className="font-display text-lg text-foreground mb-4">Dirección de Envío</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <input className={inputClass} placeholder="Dirección" value={form.address} onChange={(e) => handleChange("address", e.target.value)} />
+                <input className={inputClass} placeholder="Dirección" autoComplete="street-address" value={form.address} onChange={(e) => handleChange("address", e.target.value)} />
                 {errors.address && <p className="text-destructive text-xs mt-1">{errors.address}</p>}
               </div>
               <div>
-                <input className={inputClass} placeholder="Ciudad" value={form.city} onChange={(e) => handleChange("city", e.target.value)} />
+                <input className={inputClass} placeholder="Ciudad" autoComplete="address-level2" value={form.city} onChange={(e) => handleChange("city", e.target.value)} />
                 {errors.city && <p className="text-destructive text-xs mt-1">{errors.city}</p>}
               </div>
               <div>
-                <input className={inputClass} placeholder="Departamento" value={form.department} onChange={(e) => handleChange("department", e.target.value)} />
+                <input className={inputClass} placeholder="Departamento" autoComplete="address-level1" value={form.department} onChange={(e) => handleChange("department", e.target.value)} />
                 {errors.department && <p className="text-destructive text-xs mt-1">{errors.department}</p>}
               </div>
               <div className="sm:col-span-2">
@@ -174,13 +217,7 @@ export default function Checkout() {
               <span>{formatCOP(totalCents())}</span>
             </div>
           </div>
-          <button
-            type="submit"
-            disabled={submitting}
-            className="block mt-6 w-full text-center px-8 py-3 bg-gold text-accent-foreground text-sm tracking-widest uppercase hover:bg-gold-dark transition-colors disabled:opacity-50"
-          >
-            {submitting ? "Procesando..." : "Realizar Pedido"}
-          </button>
+          <WompiCheckoutButton submitting={submitting} />
         </div>
       </form>
     </div>
