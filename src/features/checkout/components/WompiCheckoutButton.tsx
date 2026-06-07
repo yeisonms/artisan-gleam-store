@@ -7,29 +7,18 @@ interface WompiCheckoutButtonProps {
 }
 
 export default function WompiCheckoutButton({ disabled, submitting }: WompiCheckoutButtonProps) {
-  const [scriptLoaded, setScriptLoaded] = useState(false);
-
-  useEffect(() => {
-    if (document.querySelector('script[src="https://checkout.wompi.co/widget.js"]')) {
-      setScriptLoaded(true);
-      return;
-    }
-    const script = document.createElement("script");
-    script.src = "https://checkout.wompi.co/widget.js";
-    script.async = true;
-    script.setAttribute("data-public-key", import.meta.env.VITE_WOMPI_PUBLIC_KEY || "");
-    script.onload = () => setScriptLoaded(true);
-    document.body.appendChild(script);
-  }, []);
+  // El script ahora se carga estáticamente en index.html
+  // Asumimos que está cargado.
+  const scriptLoaded = true;
 
   return (
     <button
       type="submit"
-      disabled={disabled || submitting || !scriptLoaded}
+      disabled={disabled || submitting}
       className="flex items-center justify-center gap-2 mt-6 w-full text-center px-8 py-4 bg-[#1a1a1a] text-white text-sm tracking-widest uppercase hover:bg-black transition-colors disabled:opacity-50 border border-gold/30 shadow-xl"
     >
       <Lock size={16} className="text-gold" />
-      {submitting ? "Preparando pago..." : scriptLoaded ? "Pagar de forma segura" : "Cargando pasarela..."}
+      {submitting ? "Preparando pago..." : "Pagar de forma segura"}
     </button>
   );
 }
