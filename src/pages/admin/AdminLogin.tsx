@@ -43,8 +43,8 @@ export default function AdminLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-primary">
       <div className="w-full max-w-sm p-8 bg-card border border-border">
-        <h1 className="font-display text-2xl text-center text-foreground mb-2">
-          MAGNA <span className="text-gold">ARTE</span>
+        <h1 className="font-display text-2xl text-center text-gold mb-2 tracking-widest uppercase">
+          MEMORIES
         </h1>
         <p className="text-center text-muted-foreground text-sm mb-8">
           Panel de Administración
