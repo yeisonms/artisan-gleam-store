@@ -2,13 +2,15 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Index from "./pages/Index";
 import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import OrderSuccess from "./pages/OrderSuccess";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
 import CustomRequest from "./pages/CustomRequest";
 import CasosExito from "./pages/CasosExito";
 import Policies from "./pages/Policies";
@@ -44,18 +46,30 @@ function PublicLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<PublicLayout><Index /></PublicLayout>} />
           <Route path="/productos" element={<PublicLayout><Products /></PublicLayout>} />
           <Route path="/producto/:slug" element={<PublicLayout><ProductDetail /></PublicLayout>} />
           <Route path="/carrito" element={<PublicLayout><Cart /></PublicLayout>} />
           <Route path="/checkout" element={<PublicLayout><Checkout /></PublicLayout>} />
+          <Route path="/checkout/success" element={<PublicLayout><CheckoutSuccess /></PublicLayout>} />
           <Route path="/pedido-exitoso" element={<PublicLayout><OrderSuccess /></PublicLayout>} />
           <Route path="/solicitud-personalizada" element={<PublicLayout><CustomRequest /></PublicLayout>} />
           <Route path="/casos-de-exito" element={<PublicLayout><CasosExito /></PublicLayout>} />
