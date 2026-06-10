@@ -113,7 +113,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="bg-[#FAFAFA] min-h-screen text-charcoal">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 md:pt-28 pb-10 md:pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 md:pt-12 pb-10 md:pb-16">
         
         {/* CSS Grid 55/45 Layout */}
         <div className="grid md:grid-cols-[55%_45%] gap-10 md:gap-16 lg:gap-24 items-start">

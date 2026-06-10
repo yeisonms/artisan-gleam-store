@@ -178,7 +178,7 @@ export default function Checkout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] pt-40 md:pt-48 pb-20 px-4 sm:px-6 lg:px-8 selection:bg-gold/20 font-sans">
+    <div className="min-h-screen bg-[#faf9f8] pt-8 md:pt-12 pb-20 px-4 sm:px-6 lg:px-8 selection:bg-gold/20 font-sans">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="font-serif text-3xl md:text-4xl text-charcoal mb-3 tracking-wide">Finalizar Compra</h1>

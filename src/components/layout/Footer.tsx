@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import logoTransparent from "@/assets/logo-transparent.png";
+import { Instagram, MapPin, Mail, Phone, Heart } from "lucide-react";
+import logoTransparent from "@/assets/logo-memories.png";
 
 export default function Footer() {
   return (
@@ -7,8 +8,8 @@ export default function Footer() {
       <div className="container">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-16">
           <div className="md:col-span-1">
-            <Link to="/" className="inline-block mb-6 transition-opacity hover:opacity-80">
-              <img src={logoTransparent} alt="Magna Arte" className="h-20 md:h-28 w-auto object-contain" />
+            <Link to="/" className="inline-block mb-4">
+              <img src={logoTransparent} alt="Memories" className="h-28 md:h-36 w-auto object-contain drop-shadow-sm" />
             </Link>
             <p className="text-sm text-white/60 leading-relaxed font-light">
               Joyería artesanal de alta calidad. Cada pieza cuenta una historia única, elaborada con pasión y dedicación.
@@ -46,8 +47,8 @@ export default function Footer() {
         </div>
 
         <div className="mt-20 pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-white/40 tracking-widest">
-            © {new Date().getFullYear()} MAGNA ARTE. TODOS LOS DERECHOS RESERVADOS.
+          <p className="text-muted-foreground tracking-widest text-[10px]">
+            © {new Date().getFullYear()} MEMORIES. TODOS LOS DERECHOS RESERVADOS.
           </p>
           <div className="flex flex-row items-center gap-6 relative z-50 isolate">
             <a href="https://www.instagram.com/tu_usuario" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en Instagram" className="block relative z-50 pointer-events-auto cursor-pointer text-gray-400 hover:text-gold transition-all duration-300 hover:scale-110">

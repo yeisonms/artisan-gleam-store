@@ -86,7 +86,7 @@ export default function Products() {
 
   return (
     <div className="min-h-screen">
-      <div className="container pt-36 pb-8 md:pt-40 md:pb-12">
+      <div className="container pt-8 pb-8 md:pt-12 md:pb-12">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}

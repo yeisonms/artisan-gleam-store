@@ -8,7 +8,7 @@ export default function Cart() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-[#faf9f8] flex flex-col items-center justify-center container pt-20">
+      <div className="min-h-screen bg-[#faf9f8] flex flex-col items-center justify-center container pt-8">
         <div className="bg-white p-16 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center max-w-md w-full border border-border/40">
           <ShoppingBag size={48} className="text-gold/50 mb-6 stroke-[1.5]" />
           <h1 className="font-serif text-2xl text-charcoal mb-3 tracking-wide">Tu carrito está vacío</h1>
@@ -25,7 +25,7 @@ export default function Cart() {
   }
 
   return (
-    <div className="min-h-screen bg-[#faf9f8] pt-40 md:pt-48 pb-20 px-4 sm:px-6 lg:px-8 selection:bg-gold/20 font-sans">
+    <div className="min-h-screen bg-[#faf9f8] pt-8 md:pt-12 pb-20 px-4 sm:px-6 lg:px-8 selection:bg-gold/20 font-sans">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="font-serif text-3xl md:text-4xl text-charcoal mb-3 tracking-wide">Tu Carrito</h1>

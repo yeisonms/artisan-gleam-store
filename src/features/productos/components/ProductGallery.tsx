@@ -76,7 +76,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
           </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground font-display text-2xl tracking-widest">
-            MAGNA ARTE
+            MEMORIES
           </div>
         )}
       </div>

@@ -15,7 +15,7 @@ export default function CustomerMasonryGrid() {
     <section className="py-16 md:py-24 bg-white">
       <div className="container px-4 md:px-6">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="font-serif text-3xl md:text-4xl text-charcoal mb-4">Parte de la familia Magna Arte</h2>
+          <h2 className="font-serif text-3xl md:text-4xl text-charcoal mb-4">Parte de la familia Memories</h2>
           <p className="text-muted-foreground text-lg">Nuestros clientes lucen sus joyas con orgullo.</p>
         </div>
 

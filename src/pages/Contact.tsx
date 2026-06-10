@@ -43,7 +43,7 @@ export default function Contact() {
     setSubmitting(true);
     // Build WhatsApp message
     const whatsappMsg = encodeURIComponent(
-      `Hola Magna Arte!\n\nNombre: ${result.data.name}\nEmail: ${result.data.email}\nAsunto: ${result.data.subject}\n\n${result.data.message}`
+      `Hola Memories!\n\nNombre: ${result.data.name}\nEmail: ${result.data.email}\nAsunto: ${result.data.subject}\n\n${result.data.message}`
     );
     window.open(`https://wa.me/573000000000?text=${whatsappMsg}`, "_blank");
     toast.success("Redirigiendo a WhatsApp...");

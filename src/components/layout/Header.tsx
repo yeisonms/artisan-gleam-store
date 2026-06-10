@@ -3,7 +3,7 @@ import { ShoppingBag, Menu, X, Search } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import logoHeader from "@/assets/logo-header.png";
+import logoHeader from "@/assets/logo-memories.png";
 
 const navLinks = [
   { label: "Inicio", href: "/" },
@@ -40,7 +40,7 @@ export default function Header() {
   }, [isSearchOpen]);
 
   return (
-    <header className="absolute top-0 w-full z-50 bg-[#FDFCF6] shadow-sm">
+    <header className="sticky top-0 w-full z-50 bg-[#FDFCF6] shadow-sm">
       <div className="container flex flex-col items-center">
         {/* Top row: Logo and Icons */}
         <div className="w-full relative flex justify-center items-center py-6">
@@ -52,8 +52,8 @@ export default function Header() {
             {mobileOpen ? <X size={24} strokeWidth={1.5} /> : <Menu size={24} strokeWidth={1.5} />}
           </button>
 
-          <Link to="/" className="transition-opacity duration-300 hover:opacity-80">
-            <img src={logoHeader} alt="Magna Arte" className="h-12 md:h-16 w-auto object-contain" />
+          <Link to="/" className="flex flex-col items-center gap-1 group z-10 mx-auto" onClick={() => setMobileOpen(false)}>
+            <img src={logoHeader} alt="Memories" className="h-16 md:h-20 w-auto object-contain" />
           </Link>
 
           <div className="absolute right-4 flex items-center gap-2 md:gap-4">

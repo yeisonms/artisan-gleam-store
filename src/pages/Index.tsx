@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import ProductCard from "@/components/products/ProductCard";
-import heroImage from "@/assets/hero-jewelry.jpg";
-import marbleTexture from "@/assets/marble-texture.jpg";
+import heroImage from "@/assets/hero-jewerly.png";
+import marbleTexture from "@/assets/marble-texture-new.png";
 
 interface CategoryItem {
   name: string;
@@ -52,7 +52,7 @@ export default function Index() {
   return (
     <div className="min-h-screen">
       {/* Hero */}
-      <section className="relative h-[80vh] md:h-[95vh] overflow-hidden bg-charcoal pt-24 md:pt-32">
+      <section className="relative h-[80vh] md:h-[95vh] overflow-hidden bg-charcoal">
         <img
           src={heroImage}
           alt="Joyería artesanal de lujo"
@@ -228,7 +228,7 @@ export default function Index() {
           >
             <div className="w-16 h-[1px] bg-gold mx-auto mb-10" />
             <p className="font-display text-2xl md:text-4xl lg:text-5xl italic leading-relaxed text-gold font-light">
-              "Cada pieza de Magna Arte es una obra maestra artesanal, diseñada para trascender el tiempo y celebrar los momentos más preciados de tu vida."
+              "Cada pieza de Memories es una obra maestra artesanal, diseñada para trascender el tiempo y celebrar los momentos más preciados de tu vida."
             </p>
             <div className="w-16 h-[1px] bg-gold mx-auto mt-10 mb-14" />
             <Link
