@@ -20,6 +20,45 @@ const checkoutSchema = z.object({
 
 type CheckoutForm = z.infer<typeof checkoutSchema>;
 
+const FloatingInput = ({ label, id, error, isTextArea, ...props }: any) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const hasValue = Boolean(props.value);
+  const isFloating = isFocused || hasValue;
+
+  return (
+    <div className="relative mb-4">
+      <div className={`relative border ${error ? 'border-destructive' : 'border-border/60 hover:border-border'} bg-white/50 backdrop-blur-sm transition-colors duration-300 focus-within:border-gold focus-within:bg-white`}>
+        <label
+          htmlFor={id}
+          className={`absolute left-4 transition-all duration-300 pointer-events-none text-muted-foreground z-10
+            ${isFloating ? 'text-[10px] top-2 uppercase tracking-widest font-medium text-charcoal/70' : 'text-sm top-4'}
+          `}
+        >
+          {label}
+        </label>
+        {isTextArea ? (
+          <textarea
+            id={id}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            className={`w-full bg-transparent px-4 pb-3 pt-7 text-sm text-foreground focus:outline-none resize-none h-24 relative z-0`}
+            {...props}
+          />
+        ) : (
+          <input
+            id={id}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            className={`w-full bg-transparent px-4 pb-2 pt-6 text-sm text-foreground focus:outline-none relative z-0`}
+            {...props}
+          />
+        )}
+      </div>
+      {error && <p className="text-destructive text-xs mt-1 absolute -bottom-5 left-1">{error}</p>}
+    </div>
+  );
+};
+
 export default function Checkout() {
   const { items, totalCents, clearCart } = useCart();
   const navigate = useNavigate();
@@ -76,10 +115,9 @@ export default function Checkout() {
 
     setSubmitting(true);
     try {
-      const reference = crypto.randomUUID(); // Referencia única para Wompi
+      const reference = crypto.randomUUID(); 
       const total = totalCents();
 
-      // Abrir Widget de Wompi de forma programática (Opción A)
       openWompiWidget(
         total,
         reference,
@@ -89,9 +127,7 @@ export default function Checkout() {
           phone: result.data.phone
         },
         async (transaction) => {
-          // Callback de éxito de Wompi
           try {
-            // 1. Crear el cliente
             const { data: newCustomer, error: customerError } = await supabase
               .from('clientes')
               .insert({
@@ -104,7 +140,6 @@ export default function Checkout() {
 
             if (customerError) throw new Error("Error registrando datos del cliente");
 
-            // 2. Procesar la orden omnicanal
             const payload: WebOrderPayload = {
               cliente_id: newCustomer.id,
               canal: 'Digital',
@@ -134,9 +169,6 @@ export default function Checkout() {
         }
       );
 
-      // Desactivamos el submitting si se cancela o cierra (Wompi no avisa explícitamente cierre sin pago, 
-      // así que en un flujo real dependeríamos de webhooks, pero para este caso lo dejamos como "Pendiente" en UI o reactivamos tras unos segundos si falla).
-      // Para evitar que quede bloqueado eternamente si el usuario cierra el modal:
       setTimeout(() => setSubmitting(false), 2000);
 
     } catch (err) {
@@ -145,81 +177,168 @@ export default function Checkout() {
     }
   };
 
-  const inputClass = "w-full px-4 py-3 bg-background border border-border text-foreground text-sm focus:outline-none focus:border-gold transition-colors placeholder:text-muted-foreground";
-
   return (
-    <div className="container pt-36 pb-8 md:pt-40 md:pb-12 min-h-screen">
-      <h1 className="font-display text-3xl text-foreground mb-2">Checkout</h1>
-      <div className="w-12 h-px bg-gold mb-8" />
-
-      <form onSubmit={handleSubmit} className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <div>
-            <h2 className="font-display text-lg text-foreground mb-4">Datos de Contacto</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <input className={inputClass} placeholder="Nombre completo" autoComplete="name" value={form.fullName} onChange={(e) => handleChange("fullName", e.target.value)} />
-                {errors.fullName && <p className="text-destructive text-xs mt-1">{errors.fullName}</p>}
-              </div>
-              <div>
-                <input className={inputClass} placeholder="Teléfono" autoComplete="tel" value={form.phone} onChange={(e) => handleChange("phone", e.target.value)} />
-                {errors.phone && <p className="text-destructive text-xs mt-1">{errors.phone}</p>}
-              </div>
-              <div className="sm:col-span-2">
-                <input className={inputClass} placeholder="Email" type="email" autoComplete="email" value={form.email} onChange={(e) => handleChange("email", e.target.value)} />
-                {errors.email && <p className="text-destructive text-xs mt-1">{errors.email}</p>}
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <h2 className="font-display text-lg text-foreground mb-4">Dirección de Envío</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="sm:col-span-2">
-                <input className={inputClass} placeholder="Dirección" autoComplete="street-address" value={form.address} onChange={(e) => handleChange("address", e.target.value)} />
-                {errors.address && <p className="text-destructive text-xs mt-1">{errors.address}</p>}
-              </div>
-              <div>
-                <input className={inputClass} placeholder="Ciudad" autoComplete="address-level2" value={form.city} onChange={(e) => handleChange("city", e.target.value)} />
-                {errors.city && <p className="text-destructive text-xs mt-1">{errors.city}</p>}
-              </div>
-              <div>
-                <input className={inputClass} placeholder="Departamento" autoComplete="address-level1" value={form.department} onChange={(e) => handleChange("department", e.target.value)} />
-                {errors.department && <p className="text-destructive text-xs mt-1">{errors.department}</p>}
-              </div>
-              <div className="sm:col-span-2">
-                <textarea className={`${inputClass} resize-none h-20`} placeholder="Notas (opcional)" value={form.notes} onChange={(e) => handleChange("notes", e.target.value)} />
-              </div>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#faf9f8] pt-40 md:pt-48 pb-20 px-4 sm:px-6 lg:px-8 selection:bg-gold/20 font-sans">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-10">
+          <h1 className="font-serif text-3xl md:text-4xl text-charcoal mb-3 tracking-wide">Finalizar Compra</h1>
+          <p className="text-muted-foreground text-sm tracking-widest uppercase">Estás a un paso de brillar</p>
         </div>
 
-        {/* Summary */}
-        <div className="border border-border bg-card p-6 h-fit sticky top-24">
-          <h2 className="font-display text-lg text-foreground mb-4">Tu Pedido</h2>
-          <div className="space-y-3 mb-4">
-            {items.map((item) => (
-              <div key={item.variantId} className="flex justify-between text-sm">
-                <span className="text-muted-foreground">
-                  {item.productName} × {item.quantity}
-                </span>
-                <span className="text-foreground">{formatCOP(item.unitPriceCents * item.quantity)}</span>
+        <div className="bg-white rounded-sm shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-border/40">
+          <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row">
+            
+            {/* Columna Izquierda: Formulario */}
+            <div className="lg:w-3/5 p-8 md:p-12">
+              <div className="space-y-10">
+                {/* Contacto */}
+                <section>
+                  <h2 className="font-serif text-xl text-charcoal mb-6 flex items-center gap-3">
+                    <span className="w-6 h-px bg-gold"></span>
+                    Datos de Contacto
+                  </h2>
+                  <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2">
+                    <FloatingInput 
+                      id="fullName" 
+                      label="Nombre completo" 
+                      autoComplete="name" 
+                      value={form.fullName} 
+                      onChange={(e: any) => handleChange("fullName", e.target.value)} 
+                      error={errors.fullName} 
+                    />
+                    <FloatingInput 
+                      id="phone" 
+                      label="Teléfono" 
+                      autoComplete="tel" 
+                      value={form.phone} 
+                      onChange={(e: any) => handleChange("phone", e.target.value)} 
+                      error={errors.phone} 
+                    />
+                    <div className="sm:col-span-2">
+                      <FloatingInput 
+                        id="email" 
+                        label="Correo electrónico" 
+                        type="email" 
+                        autoComplete="email" 
+                        value={form.email} 
+                        onChange={(e: any) => handleChange("email", e.target.value)} 
+                        error={errors.email} 
+                      />
+                    </div>
+                  </div>
+                </section>
+
+                <div className="w-full h-px bg-border/40 my-8"></div>
+
+                {/* Envío */}
+                <section>
+                  <h2 className="font-serif text-xl text-charcoal mb-6 flex items-center gap-3">
+                    <span className="w-6 h-px bg-gold"></span>
+                    Dirección de Envío
+                  </h2>
+                  <div className="grid sm:grid-cols-2 gap-x-6 gap-y-2">
+                    <div className="sm:col-span-2">
+                      <FloatingInput 
+                        id="address" 
+                        label="Dirección completa" 
+                        autoComplete="street-address" 
+                        value={form.address} 
+                        onChange={(e: any) => handleChange("address", e.target.value)} 
+                        error={errors.address} 
+                      />
+                    </div>
+                    <FloatingInput 
+                      id="city" 
+                      label="Ciudad" 
+                      autoComplete="address-level2" 
+                      value={form.city} 
+                      onChange={(e: any) => handleChange("city", e.target.value)} 
+                      error={errors.city} 
+                    />
+                    <FloatingInput 
+                      id="department" 
+                      label="Departamento" 
+                      autoComplete="address-level1" 
+                      value={form.department} 
+                      onChange={(e: any) => handleChange("department", e.target.value)} 
+                      error={errors.department} 
+                    />
+                    <div className="sm:col-span-2">
+                      <FloatingInput 
+                        id="notes" 
+                        label="Notas adicionales (Opcional)" 
+                        isTextArea 
+                        value={form.notes} 
+                        onChange={(e: any) => handleChange("notes", e.target.value)} 
+                      />
+                    </div>
+                  </div>
+                </section>
               </div>
-            ))}
-          </div>
-          <div className="border-t border-border pt-4 space-y-2">
-            <div className="flex justify-between text-sm text-muted-foreground">
-              <span>Envío</span>
-              <span>$0 (incluido en el precio)</span>
             </div>
-            <div className="flex justify-between font-display text-lg text-foreground">
-              <span>Total</span>
-              <span>{formatCOP(totalCents())}</span>
+
+            {/* Columna Derecha: Resumen */}
+            <div className="lg:w-2/5 bg-[#faf9f8] p-8 md:p-12 lg:border-l border-border/40">
+              <div className="sticky top-32">
+                <h2 className="font-serif text-xl text-charcoal mb-8 tracking-wide">Resumen del Pedido</h2>
+                
+                <div className="space-y-5 mb-8 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                  {items.map((item) => (
+                    <div key={item.variantId} className="flex items-center gap-4 group">
+                      <div className="w-16 h-16 rounded-md overflow-hidden bg-white border border-border/50 shrink-0 relative">
+                        <img 
+                          src={item.imageUrl || "/placeholder.png"} 
+                          alt={item.productName} 
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+                        />
+                        <span className="absolute -top-2 -right-2 bg-charcoal text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full z-10">
+                          {item.quantity}
+                        </span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-charcoal truncate pr-4">{item.productName}</h3>
+                        <p className="text-xs text-muted-foreground mt-0.5">{item.variantName}</p>
+                      </div>
+                      <span className="text-sm font-medium text-charcoal shrink-0">
+                        {formatCOP(item.unitPriceCents * item.quantity)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="space-y-4 pt-6 border-t border-gold/20">
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Subtotal</span>
+                    <span>{formatCOP(totalCents())}</span>
+                  </div>
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>Envío asegurado</span>
+                    <span className="text-gold font-medium">Gratis</span>
+                  </div>
+                  
+                  <div className="pt-4 border-t border-gold/20 flex justify-between items-end">
+                    <span className="font-serif text-xl text-charcoal">Total</span>
+                    <div className="text-right">
+                      <span className="text-xs text-muted-foreground block mb-1">COP</span>
+                      <span className="font-serif text-2xl text-charcoal">{formatCOP(totalCents())}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-8">
+                  <WompiCheckoutButton submitting={submitting} />
+                  
+                  <div className="mt-6 flex items-center justify-center gap-3 opacity-60">
+                    <svg className="w-6 h-6 text-charcoal" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <span className="text-xs tracking-wider uppercase text-charcoal">Pago 100% seguro y encriptado</span>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-          <WompiCheckoutButton submitting={submitting} />
+
+          </form>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
