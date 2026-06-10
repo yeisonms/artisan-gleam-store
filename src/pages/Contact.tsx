@@ -91,7 +91,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h3 className="font-display text-sm text-foreground uppercase tracking-wider mb-1">Email</h3>
-                  <p className="text-muted-foreground text-sm">contacto@magnaarte.com</p>
+                  <p className="text-muted-foreground text-sm">contacto@memories.com</p>
                 </div>
               </div>
 

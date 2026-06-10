@@ -57,7 +57,7 @@ export default function AdminLayout() {
       <aside className="w-60 bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex-shrink-0 hidden md:flex flex-col">
         <div className="p-6 border-b border-sidebar-border">
           <Link to="/" className="font-display text-lg tracking-wider">
-            MAGNA <span className="text-sidebar-primary">ARTE</span>
+            <span className="text-sidebar-primary">MEMORIES</span>
           </Link>
           <p className="text-xs text-sidebar-foreground/50 mt-1">Admin</p>
         </div>
