@@ -4,7 +4,7 @@ import { useState } from "react";
 export function WhatsAppButton() {
   const [isHovered, setIsHovered] = useState(false);
 
-  const phoneNumber = "573184723859";
+  const phoneNumber = "573223842813";
   const message = "Hola, me comunico desde la página web. Necesito asistencia con una solicitud o soporte técnico.";
   const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 

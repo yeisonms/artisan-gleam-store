@@ -5,7 +5,7 @@ interface ProductWhatsAppBannerProps {
 }
 
 export default function ProductWhatsAppBanner({ productName }: ProductWhatsAppBannerProps) {
-  const phoneNumber = "573184723859";
+  const phoneNumber = "573223842813";
   const message = `Hola, estoy interesado en el producto ${productName}`;
   const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 
