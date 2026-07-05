@@ -183,43 +183,47 @@ export default function AdminOrders() {
 
   // List view
   return (
-    <div className="p-6 md:p-8">
-      <h1 className="font-display text-2xl text-foreground mb-6">Pedidos</h1>
+    <div className="p-6 md:p-10">
+      <h1 className="font-serif text-3xl text-charcoal mb-8">Pedidos</h1>
 
       {loading ? (
-        <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-16 bg-secondary animate-pulse" />)}</div>
+        <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-16 bg-white shadow-sm rounded-xl animate-pulse" />)}</div>
       ) : orders.length === 0 ? (
         <p className="text-muted-foreground text-sm">No hay pedidos aún.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-left">
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Pedido</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium hidden md:table-cell">Cliente</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Total</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Estado</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium hidden sm:table-cell">Fecha</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map((o) => {
-                const s = statusLabels[o.status];
-                return (
-                  <tr key={o.id} onClick={() => openDetail(o)} className="border-b border-border hover:bg-secondary/30 cursor-pointer transition-colors">
-                    <td className="py-3 pr-4 text-foreground font-mono text-xs">#{o.id.slice(0, 8)}</td>
-                    <td className="py-3 pr-4 hidden md:table-cell">
-                      <p className="text-foreground">{o.customer_name || "—"}</p>
-                      <p className="text-xs text-muted-foreground">{o.customer_email || ""}</p>
-                    </td>
-                    <td className="py-3 pr-4 text-foreground">{formatCOP(o.total_cents)}</td>
-                    <td className="py-3 pr-4"><span className={`px-2 py-0.5 text-xs font-medium rounded ${s.color}`}>{s.label}</span></td>
-                    <td className="py-3 pr-4 text-muted-foreground text-xs hidden sm:table-cell">{new Date(o.created_at).toLocaleDateString("es-CO")}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 text-left bg-[#faf9f8]/50">
+                  <th className="py-4 px-6 font-serif text-[11px] tracking-widest text-muted-foreground uppercase font-medium">Pedido</th>
+                  <th className="py-4 px-6 font-serif text-[11px] tracking-widest text-muted-foreground uppercase font-medium hidden md:table-cell">Cliente</th>
+                  <th className="py-4 px-6 font-serif text-[11px] tracking-widest text-muted-foreground uppercase font-medium">Total</th>
+                  <th className="py-4 px-6 font-serif text-[11px] tracking-widest text-muted-foreground uppercase font-medium">Estado</th>
+                  <th className="py-4 px-6 font-serif text-[11px] tracking-widest text-muted-foreground uppercase font-medium hidden sm:table-cell">Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((o) => {
+                  const s = statusLabels[o.status];
+                  return (
+                    <tr key={o.id} onClick={() => openDetail(o)} className="border-b border-gray-50 hover:bg-gray-50/50 cursor-pointer transition-colors group">
+                      <td className="py-4 px-6 text-charcoal font-mono text-[11px]">#{o.id.slice(0, 8)}</td>
+                      <td className="py-4 px-6 hidden md:table-cell">
+                        <p className="font-serif font-medium text-charcoal">{o.customer_name || "—"}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{o.customer_email || ""}</p>
+                      </td>
+                      <td className="py-4 px-6 text-muted-foreground font-medium">{formatCOP(o.total_cents)}</td>
+                      <td className="py-4 px-6">
+                        <span className={`px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider rounded-full ${s.color}`}>{s.label}</span>
+                      </td>
+                      <td className="py-4 px-6 text-muted-foreground text-xs hidden sm:table-cell">{new Date(o.created_at).toLocaleDateString("es-CO")}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
