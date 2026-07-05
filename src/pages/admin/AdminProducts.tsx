@@ -207,50 +207,50 @@ export default function AdminProducts() {
   // Form view
   if (view === "form") {
     return (
-      <div className="p-6 md:p-8 max-w-4xl">
-        <button onClick={() => setView("list")} className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6">
+      <div className="p-6 md:p-10 max-w-4xl">
+        <button onClick={() => setView("list")} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-charcoal transition-colors mb-8">
           <ChevronLeft size={16} /> Volver
         </button>
-        <h1 className="font-display text-2xl text-foreground mb-6">{editingId ? "Editar Producto" : "Nuevo Producto"}</h1>
+        <h1 className="font-serif text-3xl text-charcoal mb-8">{editingId ? "Editar Producto" : "Nuevo Producto"}</h1>
 
-        <div className="space-y-4">
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground uppercase tracking-wider">Nombre</label>
-              <input className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+        <div className="bg-white p-8 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
+          <div className="grid sm:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-serif tracking-widest text-muted-foreground uppercase">Nombre</label>
+              <input className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
                 value={form.name}
                 onChange={(e) => { const n = e.target.value; setForm((f) => ({ ...f, name: n, slug: editingId ? f.slug : autoSlug(n) })); }}
               />
             </div>
-            <div>
-              <label className="text-xs text-muted-foreground uppercase tracking-wider">Slug</label>
-              <input className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-serif tracking-widest text-muted-foreground uppercase">Slug</label>
+              <input className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
                 value={form.slug} onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))} />
             </div>
           </div>
 
-          <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider">Descripción</label>
-            <textarea className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring" rows={3}
+          <div className="flex flex-col gap-2">
+            <label className="text-[11px] font-serif tracking-widest text-muted-foreground uppercase">Descripción</label>
+            <textarea className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow resize-none" rows={4}
               value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} />
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-3">
-            <div>
-              <label className="text-xs text-muted-foreground uppercase tracking-wider">Precio base (COP)</label>
-              <input type="number" className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+          <div className="grid sm:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-serif tracking-widest text-muted-foreground uppercase">Precio base (COP)</label>
+              <input type="number" className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
                 value={form.price_cents ? form.price_cents / 100 : ""} onChange={(e) => setForm((f) => ({ ...f, price_cents: e.target.value ? parseInt(e.target.value) * 100 : 0 }))} />
-              <p className="text-xs text-muted-foreground mt-1 text-gold">PVP guardado: {formatCOP(form.price_cents)}</p>
+              <p className="text-[10px] text-muted-foreground mt-1 tracking-wider uppercase font-medium">PVP: <span className="text-gold">{formatCOP(form.price_cents)}</span></p>
             </div>
-            <div>
-              <label className="text-xs text-muted-foreground uppercase tracking-wider">Costo base (COP)</label>
-              <input type="number" className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-serif tracking-widest text-muted-foreground uppercase">Costo base (COP)</label>
+              <input type="number" className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
                 value={form.cost_cents ? form.cost_cents / 100 : ""} onChange={(e) => setForm((f) => ({ ...f, cost_cents: e.target.value ? parseInt(e.target.value) * 100 : 0 }))} />
-              <p className="text-xs text-muted-foreground mt-1 text-blue-500">Costo guardado: {formatCOP(form.cost_cents)}</p>
+              <p className="text-[10px] text-muted-foreground mt-1 tracking-wider uppercase font-medium">Costo: <span className="text-blue-500">{formatCOP(form.cost_cents)}</span></p>
             </div>
-            <div>
-              <label className="text-xs text-muted-foreground uppercase tracking-wider">Categoría</label>
-              <select className="w-full mt-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            <div className="flex flex-col gap-2">
+              <label className="text-[11px] font-serif tracking-widest text-muted-foreground uppercase">Categoría</label>
+              <select className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
                 value={form.category_id} onChange={(e) => setForm((f) => ({ ...f, category_id: e.target.value }))}>
                 <option value="">Sin categoría</option>
                 {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
@@ -258,91 +258,98 @@ export default function AdminProducts() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-6">
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm((f) => ({ ...f, is_active: e.target.checked }))} className="accent-gold" /> Activo</label>
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.featured} onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))} className="accent-gold" /> Destacado</label>
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_custom_request} onChange={(e) => setForm((f) => ({ ...f, is_custom_request: e.target.checked }))} className="accent-gold" /> Pedido personalizado</label>
+          <div className="flex flex-wrap gap-6 pt-2">
+            <label className="flex items-center gap-2 text-sm text-charcoal cursor-pointer"><input type="checkbox" checked={form.is_active} onChange={(e) => setForm((f) => ({ ...f, is_active: e.target.checked }))} className="accent-gold w-4 h-4 rounded" /> Activo</label>
+            <label className="flex items-center gap-2 text-sm text-charcoal cursor-pointer"><input type="checkbox" checked={form.featured} onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))} className="accent-gold w-4 h-4 rounded" /> Destacado</label>
+            <label className="flex items-center gap-2 text-sm text-charcoal cursor-pointer"><input type="checkbox" checked={form.is_custom_request} onChange={(e) => setForm((f) => ({ ...f, is_custom_request: e.target.checked }))} className="accent-gold w-4 h-4 rounded" /> Pedido personalizado</label>
           </div>
 
-          <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-1 px-5 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50">
-            <Check size={14} /> {editingId ? "Actualizar" : "Crear"} Producto
-          </button>
+          <div className="pt-6 border-t border-gray-100 flex justify-end">
+            <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-2 px-8 py-3 text-sm bg-gradient-to-br from-[#1a1a1a] to-black text-white hover:from-black hover:to-[#111] shadow-xl rounded-full transition-all disabled:opacity-50">
+              <Check size={16} /> {editingId ? "Guardar Cambios" : "Crear Producto"}
+            </button>
+          </div>
         </div>
 
         {/* Variants section - only when editing */}
         {editingId && (
-          <div className="mt-10">
-            <h2 className="font-display text-lg text-foreground mb-4">Variantes</h2>
+          <div className="mt-10 bg-white p-8 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
+            <h2 className="font-serif text-2xl text-charcoal">Variantes</h2>
             {variants.length > 0 && (
-              <div className="space-y-2 mb-4">
+              <div className="space-y-3 mb-6">
                 {variants.map((v) => (
-                  <div key={v.id} className="flex items-center justify-between border border-border p-3 text-sm">
+                  <div key={v.id} className="flex items-center justify-between bg-[#faf9f8] border border-gray-100 p-4 rounded-lg text-sm group">
                     <div>
-                      <span className="font-medium text-foreground">{v.variant_name}</span>
-                      <span className="text-muted-foreground ml-2">
+                      <span className="font-serif font-medium text-charcoal">{v.variant_name}</span>
+                      <span className="text-muted-foreground ml-2 text-xs">
                         {v.price_cents != null ? formatCOP(v.price_cents) : "Precio base"} · Stock: {v.stock}
                         {v.sku && ` · SKU: ${v.sku}`}
                       </span>
                     </div>
-                    <button onClick={() => deleteVariant(v.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
+                    <button onClick={() => deleteVariant(v.id)} className="text-muted-foreground hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 size={16} /></button>
                   </div>
                 ))}
               </div>
             )}
-            <div className="border border-border p-4 space-y-3">
-              <p className="text-xs text-muted-foreground uppercase tracking-wider">Agregar variante</p>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-3">
-                <input placeholder="Nombre (ej: Oro 18k - Talla 7)" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            
+            <div className="border border-gray-100 p-6 rounded-xl space-y-4 bg-[#faf9f8]/50">
+              <p className="text-[11px] font-serif tracking-widest text-muted-foreground uppercase">Agregar variante</p>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <input placeholder="Nombre (ej: Oro 18k - Talla 7)" className="w-full px-4 py-3 text-sm bg-white border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
                   value={newVariant.variant_name} onChange={(e) => setNewVariant((v) => ({ ...v, variant_name: e.target.value }))} />
-                <input placeholder="Precio (COP, vacío=base)" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                <input placeholder="Precio (COP, vacío=base)" type="number" className="w-full px-4 py-3 text-sm bg-white border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
                   value={newVariant.price_cents ? parseInt(newVariant.price_cents) / 100 : ""} onChange={(e) => setNewVariant((v) => ({ ...v, price_cents: e.target.value ? (parseInt(e.target.value) * 100).toString() : "" }))} />
-                <input placeholder="Costo (COP, vacío=base)" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                <input placeholder="Costo (COP, vacío=base)" type="number" className="w-full px-4 py-3 text-sm bg-white border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
                   value={newVariant.cost_cents ? parseInt(newVariant.cost_cents) / 100 : ""} onChange={(e) => setNewVariant((v) => ({ ...v, cost_cents: e.target.value ? (parseInt(e.target.value) * 100).toString() : "" }))} />
-                <input placeholder="Stock" type="number" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                <input placeholder="Stock" type="number" className="w-full px-4 py-3 text-sm bg-white border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
                   value={newVariant.stock} onChange={(e) => setNewVariant((v) => ({ ...v, stock: e.target.value }))} />
-                <input placeholder="SKU" className="px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                <input placeholder="SKU" className="w-full px-4 py-3 text-sm bg-white border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
                   value={newVariant.sku} onChange={(e) => setNewVariant((v) => ({ ...v, sku: e.target.value }))} />
               </div>
-              <div>
-                <input placeholder='Atributos JSON (ej: {"metal":"oro","talla":"7"})' className="w-full px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              <div className="flex gap-4 items-center">
+                <input placeholder='Atributos JSON (ej: {"metal":"oro","talla":"7"})' className="flex-1 px-4 py-3 text-sm bg-white border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow font-mono text-xs"
                   value={newVariant.attributes} onChange={(e) => setNewVariant((v) => ({ ...v, attributes: e.target.value }))} />
+                <button onClick={addVariant} className="inline-flex items-center gap-2 px-6 py-3 text-sm bg-white border border-gray-200 text-charcoal hover:bg-gray-50 rounded-full transition-all shrink-0">
+                  <Plus size={14} /> Agregar
+                </button>
               </div>
-              <button onClick={addVariant} className="inline-flex items-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90">
-                <Plus size={14} /> Agregar
-              </button>
             </div>
           </div>
         )}
 
         {/* Images section - only when editing */}
         {editingId && (
-          <div className="mt-10">
-            <h2 className="font-display text-lg text-foreground mb-4">Imágenes</h2>
+          <div className="mt-10 bg-white p-8 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] space-y-6">
+            <h2 className="font-serif text-2xl text-charcoal">Imágenes</h2>
             {images.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 {images.map((img) => (
-                  <div key={img.id} className="relative border border-border group">
+                  <div key={img.id} className="relative rounded-xl overflow-hidden group shadow-[0_4px_12px_rgb(0,0,0,0.05)] border border-gray-100">
                     <img src={img.url} alt={img.alt || ""} className="w-full aspect-square object-cover" />
                     <button onClick={() => deleteImage(img.id)}
-                      className="absolute top-1 right-1 bg-background/80 p-1 opacity-0 group-hover:opacity-100 transition-opacity text-destructive">
-                      <Trash2 size={14} />
+                      className="absolute top-2 right-2 bg-white/90 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:bg-white hover:text-red-600 shadow-sm">
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 ))}
               </div>
             )}
-            <div className="space-y-3">
-              <div className="flex gap-2">
-                <label className={`inline-flex items-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90 cursor-pointer ${uploadingImage ? "opacity-50 pointer-events-none" : ""}`}>
-                  <Upload size={14} /> {uploadingImage ? "Subiendo..." : "Subir imagen"}
+            
+            <div className="space-y-4 pt-4 border-t border-gray-100">
+              <div className="flex gap-4">
+                <label className={`inline-flex items-center justify-center gap-2 px-6 py-3 text-sm bg-white border border-gray-200 text-charcoal hover:bg-gray-50 rounded-full transition-all cursor-pointer shadow-sm ${uploadingImage ? "opacity-50 pointer-events-none" : ""}`}>
+                  <Upload size={16} /> {uploadingImage ? "Subiendo..." : "Subir desde PC"}
                   <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadImage(f); e.target.value = ""; }} />
                 </label>
               </div>
-              <div className="flex gap-2">
-                <input placeholder="O pegar URL de imagen" className="flex-1 px-3 py-2 text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-                  value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} />
-                <button onClick={addImage} className="inline-flex items-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90">
-                  <ImageIcon size={14} /> Agregar URL
+              <div className="flex gap-4 items-center">
+                <div className="flex-1 relative">
+                  <ImageIcon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <input placeholder="O pegar URL de imagen" className="w-full pl-10 pr-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
+                    value={newImageUrl} onChange={(e) => setNewImageUrl(e.target.value)} />
+                </div>
+                <button onClick={addImage} className="inline-flex items-center gap-2 px-6 py-3 text-sm bg-gradient-to-br from-[#1a1a1a] to-black text-white hover:from-black hover:to-[#111] shadow-md rounded-full transition-all shrink-0">
+                  <Plus size={16} /> Agregar URL
                 </button>
               </div>
             </div>
