@@ -362,72 +362,74 @@ export default function AdminProducts() {
   });
 
   return (
-    <div className="p-6 md:p-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <h1 className="font-display text-2xl text-foreground">Productos</h1>
-        <div className="flex flex-col sm:flex-row items-center gap-3">
-          <div className="relative w-full sm:w-64">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+    <div className="p-6 md:p-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-8">
+        <h1 className="font-serif text-3xl text-charcoal">Productos</h1>
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="relative w-full sm:w-72">
+            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input 
               type="text"
               placeholder="Buscar por nombre o SKU..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm border border-border bg-background focus:outline-none focus:ring-1 focus:ring-ring"
+              className="w-full pl-11 pr-4 py-3 text-sm bg-white rounded-full border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
             />
           </div>
-          <button onClick={openCreate} className="w-full sm:w-auto inline-flex items-center justify-center gap-1 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90">
-            <Plus size={14} /> Nuevo
+          <button onClick={openCreate} className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 text-sm bg-gradient-to-br from-[#1a1a1a] to-black text-white hover:from-black hover:to-[#111] shadow-xl rounded-full transition-all">
+            <Plus size={16} /> Nuevo Producto
           </button>
         </div>
       </div>
 
       {loading ? (
-        <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-14 bg-secondary animate-pulse" />)}</div>
+        <div className="space-y-3">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-14 bg-white shadow-sm rounded-xl animate-pulse" />)}</div>
       ) : filteredProducts.length === 0 ? (
         <p className="text-sm text-muted-foreground">No se encontraron productos.</p>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-left">
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Producto</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium hidden md:table-cell">Precio</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium hidden lg:table-cell">Categoría</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Estado</th>
-                <th className="py-3 text-xs text-muted-foreground uppercase tracking-wider font-medium">Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProducts.map((p) => {
-                const cat = categories.find((c) => c.id === p.category_id);
-                return (
-                  <tr key={p.id} className="border-b border-border hover:bg-secondary/30 transition-colors">
-                    <td className="py-3 pr-4">
-                      <p className="font-medium text-foreground">{p.name}</p>
-                      <p className="text-xs text-muted-foreground">/{p.slug}</p>
-                    </td>
-                    <td className="py-3 pr-4 text-muted-foreground hidden md:table-cell">{formatCOP(p.price_cents)}</td>
-                    <td className="py-3 pr-4 text-muted-foreground hidden lg:table-cell">{cat?.name || "—"}</td>
-                    <td className="py-3 pr-4">
-                      <div className="flex gap-1">
-                        <span className={`text-xs px-2 py-0.5 rounded ${p.is_active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                          {p.is_active ? "Activo" : "Inactivo"}
-                        </span>
-                        {p.featured && <span className="text-xs px-2 py-0.5 rounded bg-yellow-100 text-yellow-800">★</span>}
-                      </div>
-                    </td>
-                    <td className="py-3">
-                      <div className="flex gap-2">
-                        <button onClick={() => openEdit(p)} className="text-muted-foreground hover:text-foreground"><Pencil size={14} /></button>
-                        <button onClick={() => handleDelete(p.id)} className="text-muted-foreground hover:text-destructive"><Trash2 size={14} /></button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 text-left bg-[#faf9f8]/50">
+                  <th className="py-4 px-6 font-serif text-[11px] tracking-widest text-muted-foreground uppercase font-medium">Producto</th>
+                  <th className="py-4 px-6 font-serif text-[11px] tracking-widest text-muted-foreground uppercase font-medium hidden md:table-cell">Precio</th>
+                  <th className="py-4 px-6 font-serif text-[11px] tracking-widest text-muted-foreground uppercase font-medium hidden lg:table-cell">Categoría</th>
+                  <th className="py-4 px-6 font-serif text-[11px] tracking-widest text-muted-foreground uppercase font-medium">Estado</th>
+                  <th className="py-4 px-6 font-serif text-[11px] tracking-widest text-muted-foreground uppercase font-medium">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredProducts.map((p) => {
+                  const cat = categories.find((c) => c.id === p.category_id);
+                  return (
+                    <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors group">
+                      <td className="py-4 px-6">
+                        <p className="font-serif font-medium text-charcoal">{p.name}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">/{p.slug}</p>
+                      </td>
+                      <td className="py-4 px-6 text-muted-foreground hidden md:table-cell">{formatCOP(p.price_cents)}</td>
+                      <td className="py-4 px-6 text-muted-foreground hidden lg:table-cell">{cat?.name || "—"}</td>
+                      <td className="py-4 px-6">
+                        <div className="flex gap-2">
+                          <span className={`text-[10px] font-medium tracking-wider uppercase px-2.5 py-1 rounded-full ${p.is_active ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"}`}>
+                            {p.is_active ? "Activo" : "Inactivo"}
+                          </span>
+                          {p.featured && <span className="text-[10px] font-medium tracking-wider uppercase px-2.5 py-1 rounded-full bg-gold/10 text-gold-dark">Destacado</span>}
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => openEdit(p)} className="text-muted-foreground hover:text-gold transition-colors"><Pencil size={16} /></button>
+                          <button onClick={() => handleDelete(p.id)} className="text-muted-foreground hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
