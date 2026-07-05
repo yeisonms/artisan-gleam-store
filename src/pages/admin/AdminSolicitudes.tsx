@@ -74,177 +74,187 @@ export default function AdminSolicitudes() {
   if (selected) {
     const s = statusLabels[selected.status];
     return (
-      <div className="p-6 md:p-8 max-w-3xl">
+      <div className="p-6 md:p-10 max-w-4xl mx-auto">
         <button
           onClick={() => setSelected(null)}
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
+          className="inline-flex items-center gap-2 text-[13px] font-medium text-muted-foreground hover:text-charcoal transition-colors mb-6"
         >
           <ChevronLeft size={16} /> Volver a solicitudes
         </button>
 
-        <div className="flex items-start justify-between mb-6">
-          <div>
-            <h1 className="font-display text-2xl text-foreground">{selected.full_name}</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {new Date(selected.created_at).toLocaleDateString("es-CO", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </p>
-          </div>
-          <span className={`px-3 py-1 text-xs font-medium rounded ${s.color}`}>
-            {s.label}
-          </span>
-        </div>
-
-        {/* Status update */}
-        <div className="mb-8">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Cambiar Estado</p>
-          <div className="flex flex-wrap gap-2">
-            {allStatuses.map((status) => {
-              const sl = statusLabels[status];
-              return (
-                <button
-                  key={status}
-                  onClick={() => handleStatusChange(selected.id, status)}
-                  disabled={updatingStatus || selected.status === status}
-                  className={`px-3 py-1.5 text-xs border transition-colors disabled:opacity-40 ${
-                    selected.status === status
-                      ? "border-gold bg-gold/10 text-foreground"
-                      : "border-border text-muted-foreground hover:text-foreground hover:border-foreground"
-                  }`}
-                >
-                  {sl.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          {/* Contact info */}
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Email</p>
-              <a href={`mailto:${selected.email}`} className="text-sm text-foreground hover:text-gold">
-                {selected.email}
-              </a>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Teléfono</p>
-              <a href={`tel:${selected.phone}`} className="text-sm text-foreground hover:text-gold">
-                {selected.phone}
-              </a>
-            </div>
-            {selected.category_hint && (
+        <div className="bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 overflow-hidden">
+          {/* Cabecera del detalle */}
+          <div className="p-8 border-b border-gray-100 bg-[#faf9f8]/30">
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-8">
               <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Tipo de Joya</p>
-                <p className="text-sm text-foreground">{selected.category_hint}</p>
+                <h1 className="font-serif text-3xl text-charcoal">{selected.full_name}</h1>
+                <p className="text-sm text-muted-foreground mt-2 font-mono">
+                  {new Date(selected.created_at).toLocaleDateString("es-CO", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </p>
+              </div>
+              <span className={`px-4 py-1.5 text-[11px] font-bold uppercase tracking-widest rounded-full ${s.color}`}>
+                {s.label}
+              </span>
+            </div>
+
+            {/* Status update */}
+            <div>
+              <p className="text-[10px] font-serif text-muted-foreground uppercase tracking-widest mb-3">Cambiar Estado</p>
+              <div className="flex flex-wrap gap-2">
+                {allStatuses.map((status) => {
+                  const sl = statusLabels[status];
+                  return (
+                    <button
+                      key={status}
+                      onClick={() => handleStatusChange(selected.id, status)}
+                      disabled={updatingStatus || selected.status === status}
+                      className={`px-5 py-2.5 text-[11px] uppercase tracking-widest font-medium rounded-full transition-all disabled:opacity-50 ${
+                        selected.status === status
+                          ? "bg-charcoal text-white shadow-md border border-charcoal"
+                          : "bg-white border border-gray-200 text-muted-foreground hover:border-gold hover:text-gold"
+                      }`}
+                    >
+                      {sl.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          <div className="p-8 space-y-8">
+            {/* Contact info */}
+            <div className="grid sm:grid-cols-2 gap-6 bg-[#faf9f8] p-6 rounded-xl border border-gray-50">
+              <div>
+                <p className="text-[10px] font-serif text-muted-foreground uppercase tracking-widest mb-1.5">Email</p>
+                <a href={`mailto:${selected.email}`} className="text-[15px] text-charcoal hover:text-gold transition-colors font-medium">
+                  {selected.email}
+                </a>
+              </div>
+              <div>
+                <p className="text-[10px] font-serif text-muted-foreground uppercase tracking-widest mb-1.5">Teléfono</p>
+                <a href={`tel:${selected.phone}`} className="text-[15px] text-charcoal hover:text-gold transition-colors font-medium">
+                  {selected.phone}
+                </a>
+              </div>
+              {selected.category_hint && (
+                <div>
+                  <p className="text-[10px] font-serif text-muted-foreground uppercase tracking-widest mb-1.5">Tipo de Joya</p>
+                  <p className="text-[15px] text-charcoal font-medium">{selected.category_hint}</p>
+                </div>
+              )}
+              {selected.budget_cents != null && (
+                <div>
+                  <p className="text-[10px] font-serif text-muted-foreground uppercase tracking-widest mb-1.5">Presupuesto</p>
+                  <p className="text-[15px] text-charcoal font-bold">{formatCOP(selected.budget_cents)}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Details */}
+            <div>
+              <p className="text-[10px] font-serif text-muted-foreground uppercase tracking-widest mb-3">Descripción / Requerimiento</p>
+              <div className="text-[14px] text-charcoal leading-relaxed whitespace-pre-wrap border border-gray-100 rounded-xl p-6 bg-white shadow-[0_2px_10px_rgb(0,0,0,0.01)]">
+                {selected.details}
+              </div>
+            </div>
+
+            {/* Reference links */}
+            {selected.reference_images && selected.reference_images.length > 0 && (
+              <div>
+                <p className="text-[10px] font-serif text-muted-foreground uppercase tracking-widest mb-3">Enlaces de Referencia</p>
+                <div className="flex flex-col gap-3">
+                  {selected.reference_images.map((url, i) => (
+                    <a
+                      key={i}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 text-[13px] text-gold hover:text-charcoal transition-colors bg-[#faf9f8] px-4 py-3 rounded-lg border border-gray-50 hover:border-gray-200"
+                    >
+                      <ExternalLink size={16} className="flex-shrink-0" />
+                      <span className="truncate">{url}</span>
+                    </a>
+                  ))}
+                </div>
               </div>
             )}
-            {selected.budget_cents != null && (
-              <div>
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Presupuesto</p>
-                <p className="text-sm text-foreground">{formatCOP(selected.budget_cents)}</p>
-              </div>
-            )}
           </div>
-
-          {/* Details */}
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Descripción</p>
-            <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap border border-border p-4 bg-background">
-              {selected.details}
-            </p>
-          </div>
-
-          {/* Reference links */}
-          {selected.reference_images && selected.reference_images.length > 0 && (
-            <div>
-              <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Enlaces de Referencia</p>
-              <div className="space-y-2">
-                {selected.reference_images.map((url, i) => (
-                  <a
-                    key={i}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm text-gold hover:underline truncate"
-                  >
-                    <ExternalLink size={14} className="flex-shrink-0" />
-                    {url}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     );
   }
 
   // List view
+  // List view
   return (
-    <div className="p-6 md:p-8">
-      <h1 className="font-display text-2xl text-foreground mb-6">Solicitudes Personalizadas</h1>
+    <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8">
+      <h1 className="font-serif text-3xl text-charcoal mb-6">Solicitudes Personalizadas</h1>
 
-      {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-16 bg-secondary animate-pulse" />
-          ))}
-        </div>
-      ) : requests.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No hay solicitudes aún.</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-border text-left">
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Cliente</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium hidden md:table-cell">Tipo</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium hidden lg:table-cell">Presupuesto</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium">Estado</th>
-                <th className="py-3 pr-4 text-xs text-muted-foreground uppercase tracking-wider font-medium hidden sm:table-cell">Fecha</th>
-              </tr>
-            </thead>
-            <tbody>
-              {requests.map((req) => {
-                const s = statusLabels[req.status];
-                return (
-                  <tr
-                    key={req.id}
-                    onClick={() => setSelected(req)}
-                    className="border-b border-border hover:bg-secondary/50 cursor-pointer transition-colors"
-                  >
-                    <td className="py-3 pr-4">
-                      <p className="text-foreground font-medium">{req.full_name}</p>
-                      <p className="text-xs text-muted-foreground">{req.email}</p>
-                    </td>
-                    <td className="py-3 pr-4 text-muted-foreground hidden md:table-cell">
-                      {req.category_hint || "—"}
-                    </td>
-                    <td className="py-3 pr-4 text-muted-foreground hidden lg:table-cell">
-                      {req.budget_cents != null ? formatCOP(req.budget_cents) : "—"}
-                    </td>
-                    <td className="py-3 pr-4">
-                      <span className={`px-2 py-0.5 text-xs font-medium rounded ${s.color}`}>
-                        {s.label}
-                      </span>
-                    </td>
-                    <td className="py-3 pr-4 text-muted-foreground text-xs hidden sm:table-cell">
-                      {new Date(req.created_at).toLocaleDateString("es-CO")}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <div className="bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden border border-gray-100">
+        {loading ? (
+          <div className="p-6 space-y-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="h-16 bg-[#faf9f8] rounded-lg animate-pulse border border-gray-50" />
+            ))}
+          </div>
+        ) : requests.length === 0 ? (
+          <div className="p-16 flex flex-col items-center justify-center text-muted-foreground space-y-4">
+            <p className="font-serif tracking-widest uppercase text-sm">No hay solicitudes aún.</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-gray-100 bg-[#faf9f8]/50 text-left">
+                  <th className="px-6 py-4 font-serif text-[11px] text-muted-foreground uppercase tracking-widest">Cliente</th>
+                  <th className="px-6 py-4 font-serif text-[11px] text-muted-foreground uppercase tracking-widest hidden md:table-cell">Tipo</th>
+                  <th className="px-6 py-4 font-serif text-[11px] text-muted-foreground uppercase tracking-widest hidden lg:table-cell">Presupuesto</th>
+                  <th className="px-6 py-4 font-serif text-[11px] text-muted-foreground uppercase tracking-widest">Estado</th>
+                  <th className="px-6 py-4 font-serif text-[11px] text-muted-foreground uppercase tracking-widest hidden sm:table-cell text-right">Fecha</th>
+                </tr>
+              </thead>
+              <tbody>
+                {requests.map((req) => {
+                  const s = statusLabels[req.status];
+                  return (
+                    <tr
+                      key={req.id}
+                      onClick={() => setSelected(req)}
+                      className="border-b border-gray-50 hover:bg-[#faf9f8] cursor-pointer transition-colors group"
+                    >
+                      <td className="px-6 py-4">
+                        <p className="text-charcoal font-serif font-medium group-hover:text-gold transition-colors">{req.full_name}</p>
+                        <p className="text-[13px] text-muted-foreground">{req.email}</p>
+                      </td>
+                      <td className="px-6 py-4 text-charcoal text-[13px] hidden md:table-cell">
+                        {req.category_hint || "—"}
+                      </td>
+                      <td className="px-6 py-4 text-charcoal text-[13px] font-medium hidden lg:table-cell">
+                        {req.budget_cents != null ? formatCOP(req.budget_cents) : "—"}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full ${s.color}`}>
+                          {s.label}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-muted-foreground text-[13px] hidden sm:table-cell text-right font-mono">
+                        {new Date(req.created_at).toLocaleDateString("es-CO")}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

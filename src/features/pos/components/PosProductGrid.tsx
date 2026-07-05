@@ -90,15 +90,15 @@ export function PosProductGrid({ onAddToCart }: PosProductGridProps) {
   }, [variants, searchTerm]);
 
   return (
-    <div className="flex flex-col h-full bg-background border-r border-border">
+    <div className="flex flex-col h-full bg-[#faf9f8] border-r border-gray-100">
       {/* Search Header */}
-      <div className="p-4 border-b border-border">
+      <div className="p-6 border-b border-gray-100 bg-[#faf9f8] shrink-0">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <input
             type="text"
             placeholder="Buscar por nombre o SKU..."
-            className="w-full pl-10 pr-4 py-2 border border-border bg-card text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+            className="w-full pl-12 pr-4 py-3 text-sm bg-white rounded-full border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)] text-charcoal focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -108,45 +108,47 @@ export function PosProductGrid({ onAddToCart }: PosProductGridProps) {
       {/* Grid */}
       <div className="flex-1 overflow-y-auto p-4">
         {loading ? (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="aspect-square bg-secondary animate-pulse rounded border border-border" />
+              <div key={i} className="aspect-square bg-white shadow-sm animate-pulse rounded-xl" />
             ))}
           </div>
         ) : filteredVariants.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-2">
-            <Search size={32} className="opacity-20" />
-            <p className="text-sm">No se encontraron productos en stock</p>
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground space-y-3">
+            <Search size={32} className="opacity-20 text-charcoal" />
+            <p className="text-sm font-serif tracking-widest uppercase">No se encontraron productos en stock</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-20">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-20">
             {filteredVariants.map((variant) => (
               <div
                 key={variant.id}
                 onClick={() => onAddToCart(variant)}
-                className="group cursor-pointer border border-border bg-card overflow-hidden hover:border-gold hover:shadow-sm transition-all"
+                className="group cursor-pointer bg-white rounded-xl shadow-[0_4px_20px_rgb(0,0,0,0.02)] border border-gray-50 overflow-hidden hover:shadow-[0_4px_20px_rgb(0,0,0,0.06)] transition-all"
               >
-                <div className="aspect-square bg-secondary relative">
-                  {variant.image_url ? (
-                    <img 
-                      src={variant.image_url} 
-                      alt={variant.name} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground/30">
-                      <ImageIcon size={32} />
-                    </div>
-                  )}
-                  <div className="absolute top-2 right-2 bg-background/90 px-1.5 py-0.5 text-[10px] font-medium border border-border">
+                <div className="aspect-square bg-[#faf9f8] relative overflow-hidden p-3 pb-0">
+                  <div className="w-full h-full rounded-t-lg overflow-hidden relative border border-gray-100 border-b-0">
+                    {variant.image_url ? (
+                      <img 
+                        src={variant.image_url} 
+                        alt={variant.name} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-muted-foreground/30 bg-white">
+                        <ImageIcon size={32} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="absolute top-5 right-5 bg-white/90 backdrop-blur-sm px-2.5 py-1 text-[10px] font-medium tracking-widest uppercase rounded-full shadow-sm text-charcoal border border-gray-100">
                     Stock: {variant.stock}
                   </div>
                 </div>
-                <div className="p-3">
-                  <p className="text-xs text-muted-foreground mb-0.5 truncate">{variant.name}</p>
-                  <p className="text-sm font-medium text-foreground truncate">{variant.variant_name}</p>
+                <div className="p-4 pt-3">
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground mb-1 truncate">{variant.name}</p>
+                  <p className="text-sm font-serif font-medium text-charcoal truncate">{variant.variant_name}</p>
                   {variant.sku && <p className="text-[10px] text-muted-foreground/70 uppercase tracking-wider mb-1 mt-0.5">SKU: {variant.sku}</p>}
-                  <p className="text-sm text-gold mt-1.5">{formatCOP(variant.price_cents)}</p>
+                  <p className="text-sm font-medium text-gold mt-1">{formatCOP(variant.price_cents)}</p>
                 </div>
               </div>
             ))}

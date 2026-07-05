@@ -24,43 +24,43 @@ export default function BalanceGeneralTab() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-primary text-primary-foreground p-6 border border-border flex flex-col justify-between h-32">
-          <div className="flex justify-between items-start">
-            <h3 className="font-display text-sm tracking-wider uppercase opacity-80">Patrimonio Total</h3>
-            <Building2 className="text-gold" size={20} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-gradient-to-br from-[#1a1a1a] to-black p-6 rounded-2xl shadow-xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:scale-110 transition-transform duration-500">
+            <Building2 className="text-white" size={80} />
           </div>
-          <p className="font-display text-2xl lg:text-3xl text-gold">{formatCOP(totalPatrimonio)}</p>
+          <p className="text-[11px] font-serif text-white/70 uppercase tracking-widest mb-2">Patrimonio Total</p>
+          <p className="text-3xl font-serif text-white">{formatCOP(totalPatrimonio)}</p>
         </div>
 
-        <div className="bg-card p-6 border border-border flex flex-col justify-between h-32">
-          <div className="flex justify-between items-start">
-            <h3 className="font-display text-sm tracking-wider uppercase text-muted-foreground">Caja General</h3>
-            <Wallet className="text-green-500" size={20} />
+        <div className="bg-white border border-gray-50 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.02)] relative overflow-hidden group hover:shadow-[0_4px_20px_rgb(0,0,0,0.06)] transition-shadow">
+          <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform duration-500">
+            <Wallet className="text-green-500" size={80} />
           </div>
-          <p className="font-display text-2xl text-foreground">{formatCOP(balance.caja_general)}</p>
+          <p className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2">Caja General</p>
+          <p className="text-3xl font-serif text-charcoal">{formatCOP(balance.caja_general)}</p>
         </div>
 
-        <div className="bg-card p-6 border border-border flex flex-col justify-between h-32">
-          <div className="flex justify-between items-start">
-            <h3 className="font-display text-sm tracking-wider uppercase text-muted-foreground">Valor Inventario</h3>
-            <Package className="text-yellow-500" size={20} />
+        <div className="bg-white border border-gray-50 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.02)] relative overflow-hidden group hover:shadow-[0_4px_20px_rgb(0,0,0,0.06)] transition-shadow">
+          <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform duration-500">
+            <Package className="text-yellow-500" size={80} />
           </div>
-          <p className="font-display text-2xl text-foreground">{formatCOP(balance.valor_inventario)}</p>
+          <p className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2">Valor Inventario</p>
+          <p className="text-3xl font-serif text-charcoal">{formatCOP(balance.valor_inventario)}</p>
         </div>
 
-        <div className="bg-card p-6 border border-border flex flex-col justify-between h-32">
-          <div className="flex justify-between items-start">
-            <h3 className="font-display text-sm tracking-wider uppercase text-muted-foreground">Cuentas por Cobrar</h3>
-            <HandCoins className="text-blue-500" size={20} />
+        <div className="bg-white border border-gray-50 p-6 rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.02)] relative overflow-hidden group hover:shadow-[0_4px_20px_rgb(0,0,0,0.06)] transition-shadow">
+          <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform duration-500">
+            <HandCoins className="text-blue-500" size={80} />
           </div>
-          <p className="font-display text-2xl text-foreground">{formatCOP(balance.cuentas_por_cobrar)}</p>
+          <p className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2">Cuentas por Cobrar</p>
+          <p className="text-3xl font-serif text-charcoal">{formatCOP(balance.cuentas_por_cobrar)}</p>
         </div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
-        <div className="bg-card border border-border p-6 h-[400px] flex flex-col">
-          <h3 className="font-display text-lg text-foreground mb-4">Distribución del Capital</h3>
+        <div className="bg-white rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.02)] border border-gray-50 p-8 h-[450px] flex flex-col">
+          <h3 className="font-serif text-xl text-charcoal mb-6">Distribución del Capital</h3>
           {totalPatrimonio === 0 ? (
             <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">No hay capital registrado.</div>
           ) : (
@@ -71,9 +71,9 @@ export default function BalanceGeneralTab() {
                     data={data}
                     cx="50%"
                     cy="50%"
-                    innerRadius={80}
-                    outerRadius={120}
-                    paddingAngle={2}
+                    innerRadius={90}
+                    outerRadius={140}
+                    paddingAngle={3}
                     dataKey="value"
                     stroke="transparent"
                   >
@@ -83,30 +83,39 @@ export default function BalanceGeneralTab() {
                   </Pie>
                   <Tooltip 
                     formatter={(value: number) => formatCOP(value)}
-                    contentStyle={{ backgroundColor: '#1a1a1a', border: '1px solid #333' }}
+                    contentStyle={{ backgroundColor: '#1a1a1a', border: 'none', borderRadius: '8px', color: '#fff', fontSize: '13px' }}
+                    itemStyle={{ color: '#fff' }}
                   />
-                  <Legend verticalAlign="bottom" height={36} />
+                  <Legend verticalAlign="bottom" height={36} wrapperStyle={{ fontSize: '12px', fontFamily: 'serif' }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           )}
         </div>
         
-        <div className="bg-card border border-border p-6">
-           <h3 className="font-display text-lg text-foreground mb-4">Análisis de Liquidez</h3>
-           <div className="space-y-4">
-             <p className="text-sm text-muted-foreground">
-               Tu negocio tiene un patrimonio total valorado en <strong className="text-foreground">{formatCOP(totalPatrimonio)}</strong>.
-             </p>
-             <p className="text-sm text-muted-foreground">
-               El <strong>{totalPatrimonio ? ((balance.caja_general / totalPatrimonio) * 100).toFixed(1) : 0}%</strong> de tu patrimonio es dinero líquido (Efectivo/Bancos), disponible para obligaciones inmediatas.
-             </p>
-             <p className="text-sm text-muted-foreground">
-               El <strong>{totalPatrimonio ? ((balance.valor_inventario / totalPatrimonio) * 100).toFixed(1) : 0}%</strong> de tu capital está inmovilizado en el inventario actual de joyas. Para liberar este capital, necesitas mover la mercancía.
-             </p>
-             <p className="text-sm text-muted-foreground">
-               El <strong>{totalPatrimonio ? ((balance.cuentas_por_cobrar / totalPatrimonio) * 100).toFixed(1) : 0}%</strong> de tu capital se encuentra "en la calle", financiado a tus clientes mediante Cartera. Un cobro efectivo convertirá esto en liquidez.
-             </p>
+        <div className="bg-white rounded-2xl shadow-[0_4px_20px_rgb(0,0,0,0.02)] border border-gray-50 p-8 flex flex-col">
+           <h3 className="font-serif text-xl text-charcoal mb-6">Análisis de Liquidez</h3>
+           <div className="space-y-6 flex-1 flex flex-col justify-center">
+             <div className="p-4 bg-[#faf9f8] rounded-xl border border-gray-100">
+               <p className="text-[13px] text-muted-foreground leading-relaxed">
+                 Tu negocio tiene un patrimonio total valorado en <strong className="text-charcoal font-semibold">{formatCOP(totalPatrimonio)}</strong>.
+               </p>
+             </div>
+             <div className="p-4 bg-[#faf9f8] rounded-xl border border-gray-100">
+               <p className="text-[13px] text-muted-foreground leading-relaxed">
+                 El <strong className="text-green-600 font-semibold">{totalPatrimonio ? ((balance.caja_general / totalPatrimonio) * 100).toFixed(1) : 0}%</strong> de tu patrimonio es dinero líquido (Efectivo/Bancos), disponible para obligaciones inmediatas.
+               </p>
+             </div>
+             <div className="p-4 bg-[#faf9f8] rounded-xl border border-gray-100">
+               <p className="text-[13px] text-muted-foreground leading-relaxed">
+                 El <strong className="text-yellow-600 font-semibold">{totalPatrimonio ? ((balance.valor_inventario / totalPatrimonio) * 100).toFixed(1) : 0}%</strong> de tu capital está inmovilizado en el inventario actual de joyas. Para liberar este capital, necesitas mover la mercancía.
+               </p>
+             </div>
+             <div className="p-4 bg-[#faf9f8] rounded-xl border border-gray-100">
+               <p className="text-[13px] text-muted-foreground leading-relaxed">
+                 El <strong className="text-blue-600 font-semibold">{totalPatrimonio ? ((balance.cuentas_por_cobrar / totalPatrimonio) * 100).toFixed(1) : 0}%</strong> de tu capital se encuentra "en la calle", financiado a tus clientes mediante Cartera. Un cobro efectivo convertirá esto en liquidez.
+               </p>
+             </div>
            </div>
         </div>
       </div>

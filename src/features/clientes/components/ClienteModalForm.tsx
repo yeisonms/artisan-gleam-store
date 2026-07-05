@@ -46,80 +46,82 @@ export function ClienteModalForm({ isOpen, onClose, clienteToEdit, onSave }: Cli
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-card border border-border w-full max-w-md shadow-xl flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-border">
-          <h2 className="font-display text-lg text-foreground">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 backdrop-blur-sm p-4">
+      <div className="bg-white border border-gray-100 w-full max-w-md shadow-2xl rounded-2xl flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-[#faf9f8]/50">
+          <h2 className="font-serif text-xl text-charcoal">
             {clienteToEdit ? 'Editar Cliente' : 'Nuevo Cliente'}
           </h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full text-muted-foreground hover:bg-gray-100 hover:text-charcoal transition-colors">
             <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
-          <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">
-              Nombre Completo *
-            </label>
-            <input
-              type="text"
-              required
-              className="w-full px-3 py-2 text-sm border border-border bg-background focus:outline-none focus:ring-1 focus:ring-ring"
-              value={form.nombre}
-              onChange={(e) => setForm({ ...form, nombre: e.target.value })}
-            />
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          <div className="p-6 flex flex-col gap-5">
+            <div>
+              <label className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2 block">
+                Nombre Completo *
+              </label>
+              <input
+                type="text"
+                required
+                className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
+                value={form.nombre}
+                onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2 block">
+                Email
+              </label>
+              <input
+                type="email"
+                className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2 block">
+                Teléfono
+              </label>
+              <input
+                type="tel"
+                className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
+                value={form.telefono}
+                onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2 block">
+                Dirección
+              </label>
+              <textarea
+                className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow resize-none"
+                rows={2}
+                value={form.direccion}
+                onChange={(e) => setForm({ ...form, direccion: e.target.value })}
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">
-              Email
-            </label>
-            <input
-              type="email"
-              className="w-full px-3 py-2 text-sm border border-border bg-background focus:outline-none focus:ring-1 focus:ring-ring"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">
-              Teléfono
-            </label>
-            <input
-              type="tel"
-              className="w-full px-3 py-2 text-sm border border-border bg-background focus:outline-none focus:ring-1 focus:ring-ring"
-              value={form.telefono}
-              onChange={(e) => setForm({ ...form, telefono: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">
-              Dirección
-            </label>
-            <textarea
-              className="w-full px-3 py-2 text-sm border border-border bg-background focus:outline-none focus:ring-1 focus:ring-ring"
-              rows={2}
-              value={form.direccion}
-              onChange={(e) => setForm({ ...form, direccion: e.target.value })}
-            />
-          </div>
-
-          <div className="flex justify-end gap-2 mt-2">
+          <div className="flex justify-end gap-3 p-6 border-t border-gray-100 bg-[#faf9f8]/50">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-4 py-2 text-sm border border-border text-muted-foreground hover:text-foreground"
+              className="px-6 py-3 text-sm font-medium text-muted-foreground hover:text-charcoal hover:bg-gray-100 rounded-full transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3 text-sm bg-gradient-to-br from-[#1a1a1a] to-black text-white rounded-full shadow-xl hover:from-black hover:to-[#111] transition-all disabled:opacity-50"
             >
               <Check size={16} />
               {saving ? 'Guardando...' : 'Guardar Cliente'}
