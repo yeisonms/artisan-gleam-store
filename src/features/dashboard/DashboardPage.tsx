@@ -16,9 +16,9 @@ import {
 const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-card border border-border p-3 shadow-lg rounded-sm">
-        <p className="text-sm text-muted-foreground mb-1">{label}</p>
-        <p className="text-base font-medium text-gold">
+      <div className="bg-white p-4 shadow-sm rounded-xl border border-gray-50">
+        <p className="text-xs text-muted-foreground mb-1 uppercase tracking-widest">{label}</p>
+        <p className="text-lg font-serif font-medium text-charcoal">
           {formatCOP(payload[0].value || 0)}
         </p>
       </div>
@@ -58,53 +58,53 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
+    <div className="p-6 md:p-10 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="font-display text-2xl text-foreground flex items-center gap-2">
-          <LineIcon size={24} /> Dashboard Analítico
+        <h1 className="font-serif text-3xl text-charcoal flex items-center gap-3">
+           Dashboard Analítico
         </h1>
       </div>
 
       {/* KPIs Superiores */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-card border border-border p-5 shadow-sm relative overflow-hidden group hover:border-gold transition-colors">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <Activity size={64} />
+        <div className="bg-white p-6 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300">
+          <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+            <Activity size={80} className="text-gold" />
           </div>
-          <p className="text-sm text-muted-foreground uppercase tracking-wider mb-1">Ventas del Día</p>
-          <p className="text-3xl font-display text-foreground">
+          <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-3">Ventas del Día</p>
+          <p className="text-4xl font-serif text-charcoal">
             {formatCOP(metrics.ventasDelDiaCents)}
           </p>
         </div>
 
-        <div className="bg-card border border-border p-5 shadow-sm relative overflow-hidden group hover:border-red-500 transition-colors">
-          <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-            <DollarSign size={64} className="text-red-500" />
+        <div className="bg-white p-6 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden group hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-all duration-300">
+          <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity">
+            <DollarSign size={80} className="text-red-500" />
           </div>
-          <p className="text-sm text-muted-foreground uppercase tracking-wider mb-1">Cartera Activa</p>
-          <p className="text-3xl font-display text-red-500">
+          <p className="text-xs text-muted-foreground uppercase tracking-widest font-medium mb-3">Cartera Activa</p>
+          <p className="text-4xl font-serif text-red-500">
             {formatCOP(metrics.carteraActivaCents)}
           </p>
         </div>
 
-        <div className="bg-primary text-primary-foreground p-5 shadow-md relative overflow-hidden">
-          <div className="absolute top-0 right-0 p-4 opacity-10">
-            <Box size={64} />
+        <div className="bg-gradient-to-br from-[#1a1a1a] to-black p-6 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-6 opacity-10">
+            <Box size={80} className="text-white" />
           </div>
-          <p className="text-sm text-primary-foreground/70 uppercase tracking-wider mb-1">Valor Total Inventario</p>
-          <p className="text-3xl font-display">
+          <p className="text-xs text-white/70 uppercase tracking-widest font-medium mb-3">Valor Total Inventario</p>
+          <p className="text-4xl font-serif text-white">
             {formatCOP(metrics.valorInventarioCents)}
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Gráfico de Tendencias */}
-        <div className="lg:col-span-2 bg-card border border-border p-5 shadow-sm">
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4">
+        <div className="lg:col-span-2 bg-white rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6">
+          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-6">
             Ingresos (Últimos 7 Días)
           </h2>
-          <div className="h-[300px] w-full">
+          <div className="h-[320px] w-full">
             {formattedChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={formattedChartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
@@ -142,8 +142,8 @@ export default function DashboardPage() {
         </div>
 
         {/* Panel Operativo - Alertas */}
-        <div className="bg-card border border-border p-5 shadow-sm flex flex-col">
-          <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wider mb-4 flex items-center gap-2">
+        <div className="bg-white p-6 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col">
+          <h2 className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-6 flex items-center gap-2">
             <AlertTriangle size={16} className="text-yellow-500" />
             Alertas de Stock
           </h2>
@@ -159,12 +159,12 @@ export default function DashboardPage() {
                 {criticalStock.map((item) => {
                   const imageUrl = item.products?.product_images?.[0]?.url;
                   return (
-                    <div key={item.id} className="flex items-center gap-3 p-3 border border-border bg-secondary/10 hover:bg-secondary/30 transition-colors">
+                    <div key={item.id} className="flex items-center gap-4 p-4 rounded-lg bg-[#faf9f8] hover:bg-gray-50 transition-colors">
                       {imageUrl ? (
-                        <img src={imageUrl} alt={item.products?.name || "Producto"} className="w-10 h-10 object-cover rounded-sm border border-border shrink-0" />
+                        <img src={imageUrl} alt={item.products?.name || "Producto"} className="w-12 h-12 object-cover rounded-md shrink-0" />
                       ) : (
-                        <div className="w-10 h-10 bg-secondary flex items-center justify-center rounded-sm border border-border shrink-0">
-                          <Box size={16} className="text-muted-foreground opacity-50" />
+                        <div className="w-12 h-12 bg-white flex items-center justify-center rounded-md border border-gray-100 shrink-0">
+                          <Box size={18} className="text-muted-foreground opacity-50" />
                         </div>
                       )}
                       <div className="overflow-hidden flex-1">
@@ -185,7 +185,7 @@ export default function DashboardPage() {
             )}
           </div>
           {criticalStock.length > 0 && (
-            <p className="text-xs text-muted-foreground text-center pt-4 border-t border-border mt-4">
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground text-center pt-5 border-t border-gray-100 mt-5">
               Mostrando los 5 productos con menor stock.
             </p>
           )}
