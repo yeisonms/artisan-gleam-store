@@ -5,12 +5,13 @@ import { EgresoModal } from './components/EgresoModal';
 import { IngresoModal } from './components/IngresoModal';
 import { formatCOP } from '@/lib/cart';
 import BalanceGeneralTab from './components/BalanceGeneralTab';
+import HistorialTab from './components/HistorialTab';
 
 export default function FinanzasPage() {
   const { transacciones, loading, kpis, registrarEgreso, registrarIngreso } = useFinanzas();
   const [isEgresoModalOpen, setIsEgresoModalOpen] = useState(false);
   const [isIngresoModalOpen, setIsIngresoModalOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'flujo'|'balance'>('balance');
+  const [activeTab, setActiveTab] = useState<'flujo'|'balance'|'historial'>('balance');
 
   // Helper para pintar de colores los tipos
   const isEgreso = (tipo: string) => ['Egreso', 'Reembolso'].includes(tipo);
@@ -34,10 +35,18 @@ export default function FinanzasPage() {
           >
             Flujo de Caja
           </button>
+          <button
+            onClick={() => setActiveTab('historial')}
+            className={`px-6 py-2.5 text-sm font-medium transition-all rounded-full ${activeTab === 'historial' ? 'bg-white text-charcoal shadow-sm border border-gray-50' : 'text-muted-foreground hover:text-charcoal hover:bg-gray-50/50'}`}
+          >
+            Historial
+          </button>
         </div>
       </div>
 
       {activeTab === 'balance' && <BalanceGeneralTab />}
+
+      {activeTab === 'historial' && <HistorialTab />}
 
       {activeTab === 'flujo' && (
         <div className="space-y-6 animate-fade-in">
