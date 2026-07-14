@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Instagram, MapPin, Mail, Phone, Heart } from "lucide-react";
 import logoTransparent from "@/assets/logo-memories.png";
+import { FooterAttribution } from "@/components/ui/FooterAttribution";
 
 export default function Footer() {
   return (
@@ -72,6 +73,9 @@ export default function Footer() {
               </svg>
             </a>
           </div>
+        </div>
+        <div className="mt-8">
+          <FooterAttribution />
         </div>
       </div>
     </footer>
