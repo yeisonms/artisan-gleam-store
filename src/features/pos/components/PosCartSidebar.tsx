@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Minus, Plus, Trash2, ShoppingBag, UserPlus, CreditCard, Wrench } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, UserPlus, CreditCard, Wrench, Search } from 'lucide-react';
 import { PosCartItem } from '../hooks/usePosCart';
 import { PosCustomerForm, CheckoutOptions } from '../hooks/usePosCheckout';
 import { formatCOP } from '@/lib/cart';
@@ -14,6 +14,8 @@ interface PosCartSidebarProps {
   loading: boolean;
 }
 
+import { useClientes, Cliente } from '@/features/clientes/hooks/useClientes';
+
 export function PosCartSidebar({
   items,
   totalCents,
@@ -26,6 +28,25 @@ export function PosCartSidebar({
   const [customer, setCustomer] = useState<PosCustomerForm>({ nombre: '', email: '', telefono: '' });
   const [options, setOptions] = useState<CheckoutOptions>({ canal: 'Fisico', estado_pago: 'Pagado' });
   const [montoAbonadoInput, setMontoAbonadoInput] = useState<string>('');
+  
+  const { clientes } = useClientes();
+  const [showClientDropdown, setShowClientDropdown] = useState(false);
+
+  const filteredClientes = clientes.filter(c => 
+    c.nombre.toLowerCase().includes(customer.nombre.toLowerCase()) ||
+    (c.email && c.email.toLowerCase().includes(customer.nombre.toLowerCase())) ||
+    (c.telefono && c.telefono.includes(customer.nombre))
+  ).slice(0, 5); // Limit to 5 results
+
+  const handleSelectClient = (c: Cliente) => {
+    setCustomer({
+      id: c.id,
+      nombre: c.nombre,
+      email: c.email || '',
+      telefono: c.telefono || ''
+    });
+    setShowClientDropdown(false);
+  };
 
   const handleCheckoutClick = async () => {
     const finalOptions = { ...options };
@@ -131,13 +152,45 @@ export function PosCartSidebar({
           <label className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest flex items-center gap-2">
             <UserPlus size={14} /> Datos del Cliente
           </label>
-          <input 
-            type="text" 
-            placeholder="Nombre del cliente *" 
-            className="w-full px-4 py-3 text-sm border border-gray-100 bg-[#faf9f8] rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
-            value={customer.nombre}
-            onChange={(e) => setCustomer({ ...customer, nombre: e.target.value })}
-          />
+          <div className="relative">
+            <input 
+              type="text" 
+              placeholder="Nombre del cliente o buscar *" 
+              className="w-full px-4 py-3 pl-10 text-sm border border-gray-100 bg-[#faf9f8] rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
+              value={customer.nombre}
+              onChange={(e) => {
+                setCustomer({ ...customer, id: undefined, nombre: e.target.value });
+                setShowClientDropdown(e.target.value.length > 0);
+              }}
+              onFocus={() => {
+                if (customer.nombre.length > 0) setShowClientDropdown(true);
+              }}
+              onBlur={() => setTimeout(() => setShowClientDropdown(false), 200)}
+            />
+            <Search size={16} className="absolute left-3 top-3.5 text-gray-400" />
+            
+            {showClientDropdown && filteredClientes.length > 0 && (
+              <div className="absolute z-10 w-full mt-1 bg-white border border-gray-100 rounded-lg shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2">
+                {filteredClientes.map(c => (
+                  <div 
+                    key={c.id} 
+                    className="px-4 py-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      handleSelectClient(c);
+                    }}
+                  >
+                    <div className="font-medium text-sm text-charcoal">{c.nombre}</div>
+                    <div className="text-xs text-gray-400 flex items-center gap-2 mt-1">
+                      {c.email && <span>{c.email}</span>}
+                      {c.email && c.telefono && <span>•</span>}
+                      {c.telefono && <span>{c.telefono}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <input 
               type="email" 
