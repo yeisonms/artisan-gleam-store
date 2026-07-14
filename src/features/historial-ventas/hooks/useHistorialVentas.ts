@@ -19,7 +19,8 @@ export function useHistorialVentas(filters: VentasFilters) {
         .select(`
           *,
           clientes!inner (
-            nombre
+            nombre,
+            telefono
           )
         `)
         .order('created_at', { ascending: false });

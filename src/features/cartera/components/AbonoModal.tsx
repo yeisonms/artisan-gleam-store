@@ -56,94 +56,96 @@ export function AbonoModal({ isOpen, onClose, deuda, onSave }: AbonoModalProps) 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-card border border-border w-full max-w-md shadow-xl flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-border bg-muted/20">
-          <h2 className="font-display text-lg text-foreground flex items-center gap-2">
-            <DollarSign size={18} /> Registrar Abono
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-charcoal/40 backdrop-blur-sm p-4">
+      <div className="bg-white border border-gray-100 w-full max-w-md shadow-2xl rounded-2xl flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between p-6 border-b border-gray-100 bg-[#faf9f8]/50">
+          <h2 className="font-serif text-xl text-charcoal flex items-center gap-3">
+            <DollarSign size={20} /> Registrar Abono
           </h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-full text-muted-foreground hover:bg-gray-100 hover:text-charcoal transition-colors">
             <X size={18} />
           </button>
         </div>
 
-        <div className="p-4 bg-secondary/10 border-b border-border space-y-1">
-          <p className="text-sm font-medium">Cliente: {deuda.cliente?.nombre || 'Desconocido'}</p>
-          <div className="flex justify-between text-sm">
+        <div className="p-6 bg-white border-b border-gray-100 space-y-3">
+          <p className="text-[13px] font-medium text-charcoal">Cliente: {deuda.cliente?.nombre || 'Desconocido'}</p>
+          <div className="flex justify-between text-[13px]">
             <span className="text-muted-foreground">Total Deuda:</span>
-            <span className="font-medium">{formatCOP(deuda.total_cents)}</span>
+            <span className="font-medium text-charcoal">{formatCOP(deuda.total_cents)}</span>
           </div>
-          <div className="flex justify-between text-sm">
+          <div className="flex justify-between text-[13px]">
             <span className="text-muted-foreground">Abonado hasta ahora:</span>
             <span className="font-medium text-green-600">{formatCOP(deuda.total_abonado_cents)}</span>
           </div>
-          <div className="flex justify-between text-sm pt-1 border-t border-border mt-1">
-            <span className="font-medium">Saldo Pendiente:</span>
-            <span className="font-medium text-red-500">{formatCOP(deuda.saldo_pendiente_cents)}</span>
+          <div className="flex justify-between text-[13px] pt-3 border-t border-gray-100 mt-2">
+            <span className="font-medium text-charcoal">Saldo Pendiente:</span>
+            <span className="font-bold text-red-500">{formatCOP(deuda.saldo_pendiente_cents)}</span>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-4">
-          <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">
-              Monto a Abonar (COP) *
-            </label>
-            <input
-              type="number"
-              required
-              min="1"
-              max={Math.round(deuda.saldo_pendiente_cents / 100)}
-              className="w-full px-3 py-2 text-sm border border-border bg-background font-mono focus:outline-none focus:ring-1 focus:ring-ring"
-              value={montoIngresado}
-              onChange={(e) => setMontoIngresado(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground mt-1 text-right">
-              Monto a registrar: <strong className="text-foreground">{formatCOP((parseInt(montoIngresado) || 0) * 100)}</strong>
-            </p>
+        <form onSubmit={handleSubmit} className="flex flex-col">
+          <div className="p-6 flex flex-col gap-5">
+            <div>
+              <label className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2 block">
+                Monto a Abonar (COP) *
+              </label>
+              <input
+                type="number"
+                required
+                min="1"
+                max={Math.round(deuda.saldo_pendiente_cents / 100)}
+                className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg font-mono focus:outline-none focus:ring-1 focus:ring-gold transition-shadow"
+                value={montoIngresado}
+                onChange={(e) => setMontoIngresado(e.target.value)}
+              />
+              <p className="text-[11px] font-serif text-muted-foreground mt-2 text-right uppercase tracking-widest">
+                Monto a registrar: <strong className="text-charcoal font-bold">{formatCOP((parseInt(montoIngresado) || 0) * 100)}</strong>
+              </p>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2 block">
+                Método de Pago
+              </label>
+              <select
+                className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow appearance-none"
+                value={metodoPago}
+                onChange={(e) => setMetodoPago(e.target.value)}
+              >
+                <option value="Efectivo">Efectivo</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2 block">
+                Notas (Opcional)
+              </label>
+              <textarea
+                className="w-full px-4 py-3 text-sm bg-[#faf9f8] border border-gray-100 rounded-lg focus:outline-none focus:ring-1 focus:ring-gold transition-shadow resize-none"
+                rows={2}
+                placeholder="Ref de transferencia, etc."
+                value={notas}
+                onChange={(e) => setNotas(e.target.value)}
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">
-              Método de Pago
-            </label>
-            <select
-              className="w-full px-3 py-2 text-sm border border-border bg-background focus:outline-none focus:ring-1 focus:ring-ring"
-              value={metodoPago}
-              onChange={(e) => setMetodoPago(e.target.value)}
-            >
-              <option value="Efectivo">Efectivo</option>
-              <option value="Transferencia">Transferencia</option>
-              <option value="Tarjeta">Tarjeta de Crédito/Débito</option>
-              <option value="Otro">Otro</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="text-xs text-muted-foreground uppercase tracking-wider mb-1 block">
-              Notas (Opcional)
-            </label>
-            <textarea
-              className="w-full px-3 py-2 text-sm border border-border bg-background focus:outline-none focus:ring-1 focus:ring-ring"
-              rows={2}
-              placeholder="Ref de transferencia, etc."
-              value={notas}
-              onChange={(e) => setNotas(e.target.value)}
-            />
-          </div>
-
-          <div className="flex justify-end gap-2 mt-2 pt-4 border-t border-border">
+          <div className="flex justify-end gap-3 p-6 border-t border-gray-100 bg-[#faf9f8]/50">
             <button
               type="button"
               onClick={onClose}
               disabled={saving}
-              className="px-4 py-2 text-sm border border-border text-muted-foreground hover:text-foreground"
+              className="px-6 py-3 text-sm font-medium text-muted-foreground hover:text-charcoal hover:bg-gray-100 rounded-full transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 px-8 py-3 text-sm bg-gradient-to-br from-[#1a1a1a] to-black text-white rounded-full shadow-xl hover:from-black hover:to-[#111] transition-all disabled:opacity-50"
             >
               <Check size={16} />
               {saving ? 'Registrando...' : 'Confirmar Abono'}
