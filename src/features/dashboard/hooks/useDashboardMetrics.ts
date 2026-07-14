@@ -37,16 +37,19 @@ export function useDashboardMetrics() {
   const fetchMetrics = useCallback(async () => {
     setLoading(true);
     try {
-      // 1. Ejecutar las RPCs en paralelo (SARGable operations en la BD)
+      // 1. Ejecutar consultas en paralelo
       const [
         { data: ventasDia, error: error1 },
-        { data: cartera, error: error2 },
+        { data: ventasCartera, error: error2 },
         { data: ingresosChart, error: error4 },
         { data: criticalItems, error: error5 },
         { data: variantsRes, error: error6 },
       ] = await Promise.all([
         supabase.rpc('get_ventas_del_dia'),
-        supabase.rpc('get_cartera_activa'),
+        supabase
+          .from('ventas')
+          .select('total_cents, transacciones_financieras(monto_cents)')
+          .in('estado_pago', ['Credito', 'Abonado']),
         supabase.rpc('get_ingresos_7_dias'),
         supabase
           .from('product_variants')
@@ -62,6 +65,17 @@ export function useDashboardMetrics() {
         toast.error('Error al cargar algunas métricas del panel');
       }
 
+      let realCartera = 0;
+      if (ventasCartera) {
+        realCartera = ventasCartera.reduce((sum: number, venta: any) => {
+          const totalVenta = venta.total_cents || 0;
+          const abonos = venta.transacciones_financieras 
+            ? venta.transacciones_financieras.reduce((a: number, t: any) => a + (t.monto_cents || 0), 0)
+            : 0;
+          return sum + Math.max(0, totalVenta - abonos);
+        }, 0);
+      }
+
       let realInventoryValue = 0;
       if (variantsRes) {
         realInventoryValue = variantsRes.reduce((sum: number, variant: any) => {
@@ -73,7 +87,7 @@ export function useDashboardMetrics() {
 
       setMetrics({
         ventasDelDiaCents: ventasDia || 0,
-        carteraActivaCents: cartera || 0,
+        carteraActivaCents: realCartera,
         valorInventarioCents: realInventoryValue,
       });
 

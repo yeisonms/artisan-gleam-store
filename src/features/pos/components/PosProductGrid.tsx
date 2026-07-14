@@ -1,14 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Search, Image as ImageIcon } from 'lucide-react';
+import { Search, Image as ImageIcon, Wrench } from 'lucide-react';
 import { PosProductVariant } from '../hooks/usePosCart';
 import { formatCOP } from '@/lib/cart';
 
 interface PosProductGridProps {
   onAddToCart: (variant: PosProductVariant) => void;
+  onOpenServiceModal: () => void;
 }
 
-export function PosProductGrid({ onAddToCart }: PosProductGridProps) {
+export function PosProductGrid({ onAddToCart, onOpenServiceModal }: PosProductGridProps) {
   const [variants, setVariants] = useState<PosProductVariant[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -93,6 +94,16 @@ export function PosProductGrid({ onAddToCart }: PosProductGridProps) {
     <div className="flex flex-col h-full bg-[#faf9f8] border-r border-gray-100">
       {/* Search Header */}
       <div className="p-6 border-b border-gray-100 bg-[#faf9f8] shrink-0">
+        <div className="flex justify-between items-center mb-4 gap-4">
+          <h2 className="font-serif text-xl text-charcoal">Catálogo POS</h2>
+          <button
+            onClick={onOpenServiceModal}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-white text-charcoal hover:bg-gray-50 border border-gray-200 rounded-full transition-all shadow-sm"
+          >
+            <Wrench size={16} />
+            <span className="hidden sm:inline">Agregar Servicio Manual</span>
+          </button>
+        </div>
         <div className="relative">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
           <input
