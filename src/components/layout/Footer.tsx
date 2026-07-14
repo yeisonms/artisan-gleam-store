@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import logoTransparent from "@/assets/logo-transparent.png";
+import { FooterAttribution } from "@/components/ui/FooterAttribution";
 
 export default function Footer() {
   return (
@@ -71,6 +72,9 @@ export default function Footer() {
               </svg>
             </a>
           </div>
+        </div>
+        <div className="mt-8">
+          <FooterAttribution />
         </div>
       </div>
     </footer>

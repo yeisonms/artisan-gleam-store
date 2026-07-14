@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { LayoutDashboard, Package, FolderOpen, ShoppingCart, Sparkles, LogOut, Users, BookOpen, PieChart, Truck, History } from "lucide-react";
+import { FooterAttribution } from "@/components/ui/FooterAttribution";
 
 const sidebarLinks = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
@@ -93,8 +94,11 @@ export default function AdminLayout() {
 
       <main className="flex-1 overflow-auto relative">
         <div className="absolute inset-0 bg-marble-texture opacity-30 mix-blend-multiply pointer-events-none" />
-        <div className="relative z-10 h-full">
-          <Outlet />
+        <div className="relative z-10 min-h-full flex flex-col">
+          <div className="flex-1">
+            <Outlet />
+          </div>
+          <FooterAttribution />
         </div>
       </main>
     </div>
