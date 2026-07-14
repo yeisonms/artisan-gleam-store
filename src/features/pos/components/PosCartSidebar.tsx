@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Minus, Plus, Trash2, ShoppingBag, UserPlus, CreditCard } from 'lucide-react';
+import { Minus, Plus, Trash2, ShoppingBag, UserPlus, CreditCard, Wrench } from 'lucide-react';
 import { PosCartItem } from '../hooks/usePosCart';
 import { PosCustomerForm, CheckoutOptions } from '../hooks/usePosCheckout';
 import { formatCOP } from '@/lib/cart';
@@ -25,13 +25,26 @@ export function PosCartSidebar({
 }: PosCartSidebarProps) {
   const [customer, setCustomer] = useState<PosCustomerForm>({ nombre: '', email: '', telefono: '' });
   const [options, setOptions] = useState<CheckoutOptions>({ canal: 'Fisico', estado_pago: 'Pagado' });
+  const [montoAbonadoInput, setMontoAbonadoInput] = useState<string>('');
 
   const handleCheckoutClick = async () => {
-    const success = await onProcessCheckout(customer, options);
+    const finalOptions = { ...options };
+    if (options.estado_pago === 'Abonado') {
+      const parsedAbono = parseInt(montoAbonadoInput.replace(/\D/g, ''), 10);
+      const abonoCents = parsedAbono * 100;
+      if (!parsedAbono || abonoCents <= 0 || abonoCents > totalCents) {
+        alert('Por favor, ingrese un monto de abono válido (mayor a 0 y menor o igual al total).');
+        return;
+      }
+      finalOptions.monto_abonado_cents = abonoCents;
+    }
+
+    const success = await onProcessCheckout(customer, finalOptions);
     if (success) {
       clearCart();
       setCustomer({ nombre: '', email: '', telefono: '' });
       setOptions({ canal: 'Fisico', estado_pago: 'Pagado' });
+      setMontoAbonadoInput('');
     }
   };
 
@@ -61,16 +74,25 @@ export function PosCartSidebar({
           </div>
         ) : (
           items.map((item) => (
-            <div key={item.variant.id} className="flex flex-col gap-3 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
+            <div key={item.id} className="flex flex-col gap-3 p-4 border border-gray-100 rounded-xl bg-white shadow-sm">
               <div className="flex justify-between items-start">
-                <div className="flex-1 pr-3">
-                  <p className="text-sm font-serif font-medium text-charcoal leading-tight">{item.variant.name}</p>
-                  <p className="text-[10px] tracking-widest uppercase text-muted-foreground mt-1">{item.variant.variant_name}</p>
-                  <p className="text-sm font-medium text-gold mt-1.5">{formatCOP(item.variant.price_cents)} <span className="text-[10px] text-muted-foreground">c/u</span></p>
+                <div className="flex-1 pr-3 flex items-start gap-3">
+                  {item.type === 'custom_service' && (
+                    <div className="mt-1 p-2 bg-charcoal/5 rounded-lg shrink-0">
+                      <Wrench size={14} className="text-charcoal" />
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm font-serif font-medium text-charcoal leading-tight">{item.title}</p>
+                    {item.type === 'product' && item.variant && (
+                      <p className="text-[10px] tracking-widest uppercase text-muted-foreground mt-1">{item.variant.variant_name}</p>
+                    )}
+                    <p className="text-sm font-medium text-gold mt-1.5">{formatCOP(item.price_cents)} {item.type === 'product' && <span className="text-[10px] text-muted-foreground">c/u</span>}</p>
+                  </div>
                 </div>
                 <button 
-                  onClick={() => removeItem(item.variant.id)}
-                  className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                  onClick={() => removeItem(item.id)}
+                  className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded-full transition-colors shrink-0"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -78,7 +100,7 @@ export function PosCartSidebar({
               <div className="flex items-center justify-between mt-1 pt-3 border-t border-gray-50">
                 <div className="flex items-center bg-[#faf9f8] rounded-full border border-gray-100 p-0.5">
                   <button 
-                    onClick={() => updateQuantity(item.variant.id, -1)}
+                    onClick={() => updateQuantity(item.id, -1)}
                     className="p-1.5 text-charcoal hover:bg-white rounded-full transition-colors shadow-sm disabled:opacity-30 disabled:shadow-none"
                     disabled={item.quantity <= 1}
                   >
@@ -86,9 +108,9 @@ export function PosCartSidebar({
                   </button>
                   <span className="w-8 text-center text-sm font-medium text-charcoal">{item.quantity}</span>
                   <button 
-                    onClick={() => updateQuantity(item.variant.id, 1)}
+                    onClick={() => updateQuantity(item.id, 1)}
                     className="p-1.5 text-charcoal hover:bg-white rounded-full transition-colors shadow-sm disabled:opacity-30 disabled:shadow-none"
-                    disabled={item.quantity >= item.variant.stock}
+                    disabled={item.type === 'product' && item.variant ? item.quantity >= item.variant.stock : false}
                   >
                     <Plus size={14} />
                   </button>
@@ -160,6 +182,22 @@ export function PosCartSidebar({
             </select>
           </div>
         </div>
+
+        {options.estado_pago === 'Abonado' && (
+          <div className="animate-fade-in">
+            <label className="text-[11px] font-serif text-muted-foreground uppercase tracking-widest mb-2 block text-blue-600">Monto del Abono Inicial</label>
+            <input 
+              type="text" 
+              placeholder="$ 0" 
+              className="w-full px-4 py-3 text-sm border border-blue-100 bg-blue-50/30 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-400 transition-shadow text-charcoal font-medium"
+              value={montoAbonadoInput}
+              onChange={(e) => {
+                const num = e.target.value.replace(/\D/g, '');
+                setMontoAbonadoInput(num ? `$ ${parseInt(num).toLocaleString('es-CO')}` : '');
+              }}
+            />
+          </div>
+        )}
 
         {/* Totals & Submit */}
         <div className="pt-6 border-t border-gray-100">

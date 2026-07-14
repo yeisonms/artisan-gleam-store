@@ -13,6 +13,7 @@ export interface PosCustomerForm {
 export interface CheckoutOptions {
   canal: 'Fisico' | 'Digital';
   estado_pago: 'Pagado' | 'Credito' | 'Abonado';
+  monto_abonado_cents?: number;
 }
 
 export function usePosCheckout() {
@@ -55,23 +56,112 @@ export function usePosCheckout() {
       }
 
       // 2. Transacción Omnicanal ACID
-      const detallesJSON = items.map((item) => ({
-        variante_id: item.variant.id,
+      const productItems = items.filter(i => i.type === 'product' && i.variant);
+      const serviceItems = items.filter(i => i.type === 'custom_service');
+
+      const detallesJSON = productItems.map((item) => ({
+        variante_id: item.variant!.id,
         cantidad: item.quantity,
-        precio_unitario_cents: item.variant.price_cents,
+        precio_unitario_cents: item.price_cents,
         subtotal_cents: item.subtotal_cents,
       }));
 
-      const { error: rpcError } = await supabase.rpc('procesar_venta_omnicanal', {
-        p_cliente_id: finalCustomerId,
-        p_canal: options.canal,
-        p_estado_pago: options.estado_pago,
-        p_total_cents: totalCents,
-        p_detalles: detallesJSON,
-      });
+      if (detallesJSON.length > 0) {
+        // Usar RPC si hay productos
+        const { error: rpcError } = await supabase.rpc('procesar_venta_omnicanal', {
+          p_cliente_id: finalCustomerId,
+          p_canal: options.canal,
+          p_estado_pago: options.estado_pago,
+          p_total_cents: totalCents, // Incluye el costo de servicios
+          p_detalles: detallesJSON,
+        });
 
-      if (rpcError) {
-        throw new Error(rpcError.message || 'Error procesando la transacción omnicanal');
+        if (rpcError) {
+          throw new Error(rpcError.message || 'Error procesando la transacción omnicanal');
+        }
+
+        // FIX: El RPC asienta una transacción por el 100% del valor. 
+        // Si la venta es a crédito o con abono, debemos corregir ese registro.
+        if (options.estado_pago !== 'Pagado') {
+          const { data: latestVenta } = await supabase.from('ventas')
+            .select('id')
+            .eq('cliente_id', finalCustomerId)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+            
+          if (latestVenta) {
+            if (options.estado_pago === 'Credito') {
+              // Si es crédito, no ha pagado nada, eliminamos el ingreso fantasma
+              await supabase.from('transacciones_financieras')
+                .delete()
+                .eq('venta_id', latestVenta.id);
+            } else if (options.estado_pago === 'Abonado') {
+              // Borramos lo que haya hecho el RPC para estar seguros
+              await supabase.from('transacciones_financieras')
+                .delete()
+                .eq('venta_id', latestVenta.id);
+
+              const abono = options.monto_abonado_cents || 0;
+              if (abono > 0) {
+                // E insertamos el abono correcto
+                await supabase.from('transacciones_financieras')
+                  .insert({
+                    venta_id: latestVenta.id,
+                    tipo: 'Ingreso',
+                    monto_cents: abono,
+                    metodo_pago: 'Efectivo',
+                    notas: 'Abono Inicial de Venta POS'
+                  });
+              }
+            }
+          }
+        }
+      } else {
+        // Solo hay servicios: Inserción directa (bypass del RPC)
+        const serviceNotes = serviceItems.map(s => `${s.title}`).join(", ");
+        const { data: ventaData, error: ventaError } = await supabase
+          .from('ventas')
+          .insert({
+            cliente_id: finalCustomerId,
+            canal: options.canal,
+            estado_pago: options.estado_pago,
+            total_cents: totalCents,
+            estado_entrega: 'Entregado'
+          })
+          .select('id')
+          .single();
+          
+        if (ventaError) throw new Error(ventaError.message);
+
+        // Registro financiero
+        if (options.estado_pago === 'Pagado') {
+          const { error: finError } = await supabase
+            .from('transacciones_financieras')
+            .insert({
+              venta_id: ventaData.id,
+              tipo: 'Ingreso',
+              monto_cents: totalCents,
+              metodo_pago: 'Efectivo', // Default
+              notas: `Venta de Servicios POS (Pagado): ${serviceNotes}`
+            });
+          if (finError) throw new Error(finError.message);
+        } else if (options.estado_pago === 'Abonado') {
+          const abono = options.monto_abonado_cents || 0;
+          if (abono > 0) {
+            const { error: finError } = await supabase
+              .from('transacciones_financieras')
+              .insert({
+                venta_id: ventaData.id,
+                tipo: 'Ingreso',
+                monto_cents: abono,
+                metodo_pago: 'Efectivo',
+                notas: `Abono Inicial de Servicios POS: ${serviceNotes}`
+              });
+            if (finError) throw new Error(finError.message);
+          }
+        }
+        // Si es Credito, no registramos ingreso porque no ha pagado nada.
       }
 
       toast.success('¡Venta procesada con éxito!');
