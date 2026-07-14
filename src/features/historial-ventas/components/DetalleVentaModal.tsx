@@ -82,6 +82,10 @@ export function DetalleVentaModal({ venta, isOpen, onClose }: DetalleVentaModalP
                   <p className="font-medium text-gray-900">{venta.clientes?.nombre || 'N/A'}</p>
                 </div>
                 <div>
+                  <p className="text-gray-500">Teléfono</p>
+                  <p className="font-medium text-gray-900">{venta.clientes?.telefono || 'No registrado'}</p>
+                </div>
+                <div>
                   <p className="text-gray-500">Canal</p>
                   <p className="font-medium text-gray-900">{venta.canal || 'Digital'}</p>
                 </div>
