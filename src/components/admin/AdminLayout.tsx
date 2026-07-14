@@ -58,7 +58,7 @@ export default function AdminLayout() {
       <aside className="w-[260px] bg-white flex-shrink-0 hidden md:flex flex-col shadow-[4px_0_24px_rgb(0,0,0,0.02)] z-10">
         <div className="p-8 border-b border-gray-100 flex flex-col items-center">
           <Link to="/" className="font-serif text-2xl tracking-widest text-charcoal uppercase mb-1">
-            MEMORIES
+            Magna
           </Link>
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-medium">Menú Principal</p>
         </div>
