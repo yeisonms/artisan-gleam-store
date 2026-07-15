@@ -52,17 +52,17 @@ export default function Footer() {
             © {new Date().getFullYear()} MEMORIES. TODOS LOS DERECHOS RESERVADOS.
           </p>
           <div className="flex flex-row items-center gap-6 relative z-50 isolate">
-            <a href="https://www.instagram.com/tu_usuario" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en Instagram" className="block relative z-50 pointer-events-auto cursor-pointer text-gray-400 hover:text-gold transition-all duration-300 hover:scale-110">
+            <a href="https://www.instagram.com/memories_colombia_/" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en Instagram" className="block relative z-50 pointer-events-auto cursor-pointer text-gray-400 hover:text-gold transition-all duration-300 hover:scale-110">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
               </svg>
             </a>
-            <a href="https://www.facebook.com/tu_pagina" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en Facebook" className="block relative z-50 pointer-events-auto cursor-pointer text-gray-400 hover:text-gold transition-all duration-300 hover:scale-110">
+            <a href="https://www.facebook.com/share/1NAxWAR9ug/" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en Facebook" className="block relative z-50 pointer-events-auto cursor-pointer text-gray-400 hover:text-gold transition-all duration-300 hover:scale-110">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
               </svg>
             </a>
-            <a href="https://www.tiktok.com/@tu_usuario" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en TikTok" className="block relative z-50 pointer-events-auto cursor-pointer text-gray-400 hover:text-gold transition-all duration-300 hover:scale-110">
+            <a href="https://www.tiktok.com/@tmemories_colombia_" target="_blank" rel="noopener noreferrer" aria-label="Síguenos en TikTok" className="block relative z-50 pointer-events-auto cursor-pointer text-gray-400 hover:text-gold transition-all duration-300 hover:scale-110">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 2.23-.9 4.45-2.38 6.08-1.55 1.71-3.77 2.72-6.07 2.89-2.3.16-4.66-.4-6.42-1.84-1.76-1.45-2.8-3.63-2.92-5.91-.12-2.28.66-4.57 2.19-6.22 1.54-1.65 3.76-2.62 6.06-2.69v4.06c-1.37.07-2.73.7-3.62 1.79-.89 1.1-1.28 2.58-1.07 4.02.21 1.45 1.05 2.75 2.27 3.49 1.23.75 2.76.92 4.13.5 1.37-.42 2.51-1.38 3.16-2.66.65-1.29.83-2.81.5-4.21-.06-3.83-.02-7.66-.02-11.49z" />
               </svg>
