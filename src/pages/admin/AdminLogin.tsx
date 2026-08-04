@@ -52,8 +52,8 @@ export default function AdminLogin() {
       </div>
 
       <div className="w-full max-w-md p-10 bg-[#131313]/80 backdrop-blur-xl border border-white/10 shadow-2xl relative z-10 rounded-sm">
-        <h1 className="font-serif text-3xl text-center text-white mb-2 tracking-widest">
-          MAGNA <span className="text-gold italic">ARTE</span>
+        <h1 className="font-serif text-3xl text-center text-white mb-2 tracking-widest uppercase">
+          MEMORIES
         </h1>
         <p className="text-center text-white/50 text-sm mb-10 font-sans tracking-wide uppercase text-[10px]">
           Panel de Administración Exclusivo
@@ -95,7 +95,7 @@ export default function AdminLogin() {
               onClick={installPwa}
               className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-sm border border-gold/30 text-gold font-medium text-sm hover:bg-gold/10 transition-colors backdrop-blur-sm"
             >
-              <Download size={16} /> Instalar Magna Admin App
+              <Download size={16} /> Instalar Memories Admin App
             </button>
           </div>
         )}

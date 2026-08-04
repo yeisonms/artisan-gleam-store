@@ -61,7 +61,7 @@ export default function AdminLayout() {
       <aside className="w-[260px] bg-white flex-shrink-0 hidden md:flex flex-col shadow-[4px_0_24px_rgb(0,0,0,0.02)] z-10">
         <div className="p-8 border-b border-gray-100 flex flex-col items-center">
           <Link to="/" className="font-serif text-2xl tracking-widest text-charcoal uppercase mb-1">
-            Magna
+            Memories
           </Link>
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground/60 font-medium">Menú Principal</p>
         </div>
@@ -99,7 +99,7 @@ export default function AdminLayout() {
         <div className="relative z-10 min-h-full flex flex-col">
           {/* Mobile Header */}
           <div className="md:hidden flex items-center justify-between p-4 bg-white border-b border-gray-100 sticky top-0 z-20 shadow-sm">
-            <span className="font-serif text-xl tracking-widest text-charcoal uppercase">Magna Admin</span>
+            <span className="font-serif text-xl tracking-widest text-charcoal uppercase">Memories Admin</span>
             <button onClick={() => setMobileMenuOpen(true)} className="p-2 text-charcoal">
               <Menu size={24} strokeWidth={1.5} />
             </button>
@@ -132,7 +132,7 @@ export default function AdminLayout() {
             >
               <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                 <span className="font-serif text-xl tracking-widest text-charcoal uppercase mb-1">
-                  Magna
+                  Memories
                 </span>
                 <button onClick={() => setMobileMenuOpen(false)} className="text-muted-foreground p-2 -mr-2">
                   <X size={24} strokeWidth={1.5} />

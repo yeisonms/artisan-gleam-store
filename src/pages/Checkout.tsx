@@ -63,7 +63,7 @@ export default function Checkout() {
   const { items, totalCents, clearCart } = useCart();
   const navigate = useNavigate();
   const [form, setForm] = useState<CheckoutForm>(() => {
-    const saved = localStorage.getItem("magna_checkout_form");
+    const saved = localStorage.getItem("memories_checkout_form");
     if (saved) {
       try {
         return JSON.parse(saved);
@@ -83,7 +83,7 @@ export default function Checkout() {
   });
 
   useEffect(() => {
-    localStorage.setItem("magna_checkout_form", JSON.stringify(form));
+    localStorage.setItem("memories_checkout_form", JSON.stringify(form));
   }, [form]);
   const [errors, setErrors] = useState<Partial<Record<keyof CheckoutForm, string>>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -158,7 +158,7 @@ export default function Checkout() {
 
             toast.success("¡Pago exitoso y pedido registrado!");
             clearCart();
-            localStorage.removeItem("magna_checkout_form");
+            localStorage.removeItem("memories_checkout_form");
             navigate(`/checkout/success?ref=${reference}`);
           } catch (err) {
             console.error(err);

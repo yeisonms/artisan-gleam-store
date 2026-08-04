@@ -28,7 +28,7 @@ interface CartState {
 
 function loadCartFromStorage(): CartItem[] {
   try {
-    const stored = localStorage.getItem('magna-cart');
+    const stored = localStorage.getItem('memories-cart');
     if (!stored) return [];
     const parsed = JSON.parse(stored);
     const validated = CartSchema.safeParse(parsed);
@@ -52,7 +52,7 @@ export const useCart = create<CartState>((set, get) => ({
       } else {
         newItems = [...state.items, { ...item, quantity: 1 }];
       }
-      localStorage.setItem('magna-cart', JSON.stringify(newItems));
+      localStorage.setItem('memories-cart', JSON.stringify(newItems));
       return { items: newItems };
     });
   },
@@ -60,7 +60,7 @@ export const useCart = create<CartState>((set, get) => ({
   removeItem: (variantId) => {
     set((state) => {
       const newItems = state.items.filter((i) => i.variantId !== variantId);
-      localStorage.setItem('magna-cart', JSON.stringify(newItems));
+      localStorage.setItem('memories-cart', JSON.stringify(newItems));
       return { items: newItems };
     });
   },
@@ -70,13 +70,13 @@ export const useCart = create<CartState>((set, get) => ({
       const newItems = quantity <= 0
         ? state.items.filter((i) => i.variantId !== variantId)
         : state.items.map((i) => (i.variantId === variantId ? { ...i, quantity } : i));
-      localStorage.setItem('magna-cart', JSON.stringify(newItems));
+      localStorage.setItem('memories-cart', JSON.stringify(newItems));
       return { items: newItems };
     });
   },
 
   clearCart: () => {
-    localStorage.removeItem('magna-cart');
+    localStorage.removeItem('memories-cart');
     set({ items: [] });
   },
 

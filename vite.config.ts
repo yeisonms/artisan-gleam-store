@@ -20,8 +20,8 @@ export default defineConfig(({ mode }) => ({
       registerType: "autoUpdate",
       includeAssets: ["icon-192x192.png", "icon-512x512.png"],
       manifest: {
-        name: "Magna Arte",
-        short_name: "Magna Arte",
+        name: "Memories",
+        short_name: "Memories",
         description: "Joyería artesanal de alta calidad",
         theme_color: "#0f172a",
         background_color: "#ffffff",

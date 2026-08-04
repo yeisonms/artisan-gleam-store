@@ -123,7 +123,7 @@ export default function Header() {
               className="md:hidden fixed top-0 left-0 bottom-0 w-3/4 max-w-sm z-50 bg-[#FDFCF6] shadow-2xl flex flex-col"
             >
               <div className="p-6 border-b border-gold/20 flex items-center justify-between">
-                <img src={logoHeader} alt="Magna Arte" className="h-8 w-auto object-contain" />
+                <img src={logoHeader} alt="Memories" className="h-8 w-auto object-contain" />
                 <button onClick={() => setMobileOpen(false)} className="text-gold hover:text-gold-dark p-2 -mr-2">
                   <X size={24} strokeWidth={1.5} />
                 </button>
