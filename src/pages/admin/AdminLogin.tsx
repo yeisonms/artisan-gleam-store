@@ -41,16 +41,22 @@ export default function AdminLogin() {
   };
 
   const inputClass =
-    "w-full px-4 py-3 bg-background border border-border text-foreground text-sm focus:outline-none focus:border-gold transition-colors placeholder:text-muted-foreground";
+    "w-full px-4 py-3 bg-white/5 border border-white/10 text-white text-sm focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all placeholder:text-white/40 rounded-sm";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-primary">
-      <div className="w-full max-w-sm p-8 bg-card border border-border">
-        <h1 className="font-display text-2xl text-center text-foreground mb-2">
-          MAGNA <span className="text-gold">ARTE</span>
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-[#0a0a0a]">
+      {/* Fondo elegante con blur */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-gold/20 via-[#0a0a0a] to-[#0a0a0a]"></div>
+        <div className="absolute inset-0 bg-marble-texture opacity-20 mix-blend-overlay"></div>
+      </div>
+
+      <div className="w-full max-w-md p-10 bg-[#131313]/80 backdrop-blur-xl border border-white/10 shadow-2xl relative z-10 rounded-sm">
+        <h1 className="font-serif text-3xl text-center text-white mb-2 tracking-widest">
+          MAGNA <span className="text-gold italic">ARTE</span>
         </h1>
-        <p className="text-center text-muted-foreground text-sm mb-8">
-          Panel de Administración
+        <p className="text-center text-white/50 text-sm mb-10 font-sans tracking-wide uppercase text-[10px]">
+          Panel de Administración Exclusivo
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -74,26 +80,20 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-gold text-accent-foreground text-sm tracking-widest uppercase hover:bg-gold-dark transition-colors disabled:opacity-50"
+            className="w-full py-3.5 bg-gradient-to-r from-gold to-[#b38b22] text-black font-semibold text-sm hover:opacity-90 transition-opacity disabled:opacity-50 mt-6 shadow-[0_0_20px_rgba(212,175,55,0.3)] rounded-sm uppercase tracking-wider"
           >
-            {loading
-              ? isSignUp
-                ? "Registrando..."
-                : "Ingresando..."
-              : isSignUp
-                ? "Crear cuenta"
-                : "Ingresar"}
+            {loading ? "Procesando..." : isSignUp ? "Crear Cuenta" : "Acceder al Panel"}
           </button>
         </form>
 
         {isInstallable && (
-          <div className="mt-8 pt-6 border-t border-border flex flex-col items-center">
-            <p className="text-xs text-muted-foreground mb-3 text-center">
-              También puedes instalar esta herramienta en tu dispositivo para un acceso más rápido.
+          <div className="mt-10 pt-8 border-t border-white/10 flex flex-col items-center">
+            <p className="text-[11px] text-white/40 mb-4 text-center uppercase tracking-widest">
+              Acceso Rápido
             </p>
             <button
               onClick={installPwa}
-              className="flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-md border border-gold text-gold font-medium text-sm hover:bg-gold/10 transition-colors"
+              className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-sm border border-gold/30 text-gold font-medium text-sm hover:bg-gold/10 transition-colors backdrop-blur-sm"
             >
               <Download size={16} /> Instalar Magna Admin App
             </button>
@@ -102,11 +102,9 @@ export default function AdminLogin() {
 
         <button
           onClick={() => setIsSignUp(!isSignUp)}
-          className="w-full mt-4 text-center text-xs text-muted-foreground hover:text-foreground transition-colors"
+          className="w-full mt-6 text-center text-xs text-white/40 hover:text-gold transition-colors"
         >
-          {isSignUp
-            ? "¿Ya tienes cuenta? Inicia sesión"
-            : "¿No tienes cuenta? Regístrate"}
+          {isSignUp ? "¿Ya tienes acceso? Inicia sesión" : "¿Necesitas acceso? Solicitar cuenta"}
         </button>
       </div>
     </div>
