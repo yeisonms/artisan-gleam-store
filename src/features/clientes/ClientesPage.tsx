@@ -112,7 +112,7 @@ export default function ClientesPage() {
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => handleOpenEdit(c)}
-                        className="w-8 h-8 inline-flex items-center justify-center text-muted-foreground hover:text-gold hover:bg-gold/10 rounded-full transition-colors opacity-0 group-hover:opacity-100"
+                        className="w-8 h-8 inline-flex items-center justify-center text-muted-foreground hover:text-gold hover:bg-gold/10 rounded-full transition-colors md:opacity-0 md:group-hover:opacity-100"
                         title="Editar"
                       >
                         <Pencil size={16} />

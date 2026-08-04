@@ -41,7 +41,7 @@ const FloatingInput = ({ label, id, error, isTextArea, ...props }: any) => {
             id={id}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            className={`w-full bg-transparent px-4 pb-3 pt-7 text-sm text-foreground focus:outline-none resize-none h-24 relative z-0`}
+            className={`w-full bg-transparent px-4 pb-3 pt-7 text-base text-foreground focus:outline-none resize-none h-24 relative z-0`}
             {...props}
           />
         ) : (
@@ -49,7 +49,7 @@ const FloatingInput = ({ label, id, error, isTextArea, ...props }: any) => {
             id={id}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
-            className={`w-full bg-transparent px-4 pb-2 pt-6 text-sm text-foreground focus:outline-none relative z-0`}
+            className={`w-full bg-transparent px-4 pb-2 pt-6 text-base text-foreground focus:outline-none relative z-0`}
             {...props}
           />
         )}

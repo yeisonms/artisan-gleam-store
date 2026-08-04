@@ -82,7 +82,7 @@ export default function CarteraPage() {
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => handleOpenAbono(d)}
-                        className="inline-flex items-center gap-2 px-4 py-2 text-[12px] font-medium bg-charcoal text-white hover:bg-black rounded-full shadow-md transition-all opacity-0 group-hover:opacity-100"
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2 text-[12px] font-medium bg-charcoal text-white hover:bg-black rounded-full shadow-md transition-all md:opacity-0 md:group-hover:opacity-100 w-full md:w-auto"
                       >
                         <DollarSign size={14} /> Registrar Abono
                       </button>

@@ -11,9 +11,9 @@ export default function PosPage() {
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
 
   return (
-    <div className="flex flex-col lg:flex-row h-[calc(100vh-64px)] overflow-hidden bg-secondary/10 relative">
+    <div className="flex flex-col lg:flex-row min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] overflow-y-auto lg:overflow-hidden bg-secondary/10 relative">
       {/* Columna Izquierda: Grilla de Productos */}
-      <div className="flex-1 overflow-hidden h-full flex flex-col">
+      <div className="flex-1 lg:overflow-hidden h-[600px] lg:h-full flex flex-col">
         <PosProductGrid 
           onAddToCart={addItem} 
           onOpenServiceModal={() => setIsServiceModalOpen(true)}

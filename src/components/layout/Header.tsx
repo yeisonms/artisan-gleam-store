@@ -104,28 +104,44 @@ export default function Header() {
         </nav>
       </div>
 
-      {/* Mobile nav */}
+      {/* Mobile nav Drawer */}
       <AnimatePresence>
         {mobileOpen && (
-          <motion.nav
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="md:hidden overflow-hidden border-t border-gold/20 bg-[#FDFCF6] absolute top-full w-full shadow-lg"
-          >
-            <div className="container py-6 flex flex-col gap-6">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  to={link.href}
-                  className="text-sm tracking-[0.2em] text-gold hover:text-gold-dark uppercase py-2 border-b border-gold/10"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </motion.nav>
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setMobileOpen(false)}
+              className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+            />
+            <motion.nav
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+              className="md:hidden fixed top-0 left-0 bottom-0 w-3/4 max-w-sm z-50 bg-[#FDFCF6] shadow-2xl flex flex-col"
+            >
+              <div className="p-6 border-b border-gold/20 flex items-center justify-between">
+                <img src={logoHeader} alt="Magna Arte" className="h-8 w-auto object-contain" />
+                <button onClick={() => setMobileOpen(false)} className="text-gold hover:text-gold-dark p-2 -mr-2">
+                  <X size={24} strokeWidth={1.5} />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-6">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className="text-sm tracking-[0.2em] font-medium text-gold hover:text-gold-dark uppercase py-2 border-b border-gold/10"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </motion.nav>
+          </>
         )}
       </AnimatePresence>
     </header>
