@@ -50,7 +50,7 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
 
       {/* Imagen Principal con Zoom */}
       <div 
-        className="flex-1 aspect-[4/5] md:aspect-auto md:h-full min-h-[500px] bg-[#F5F5F5] overflow-hidden relative group cursor-crosshair"
+        className="flex-1 aspect-[4/5] md:aspect-auto md:h-full min-h-[500px] bg-[#F5F5F5] overflow-hidden relative group md:cursor-crosshair"
         ref={figureRef}
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsHovering(true)}
@@ -63,9 +63,9 @@ export default function ProductGallery({ images, productName }: ProductGalleryPr
               alt={productName} 
               className={`w-full h-full object-cover transition-opacity duration-300 ${isHovering ? 'opacity-0' : 'opacity-100'}`} 
             />
-            {/* Capa del Zoom */}
+            {/* Capa del Zoom (solo desktop) */}
             <div 
-              className={`absolute inset-0 transition-opacity duration-300 bg-white ${isHovering ? 'opacity-100' : 'opacity-0'}`}
+              className={`hidden md:block absolute inset-0 transition-opacity duration-300 bg-white ${isHovering ? 'opacity-100' : 'opacity-0'}`}
               style={{
                 backgroundImage: `url(${currentImg})`,
                 backgroundPosition: backgroundPosition,

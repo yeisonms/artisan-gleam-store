@@ -51,7 +51,33 @@ export function TablaVentas({ ventas, isLoading, onRowClick }: TablaVentasProps)
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <>
+      {/* Vista Móvil (Tarjetas) */}
+      <div className="grid gap-4 md:hidden">
+        {ventas.map((venta) => (
+          <div 
+            key={venta.id} 
+            className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col gap-3 cursor-pointer active:scale-[0.98] transition-transform"
+            onClick={() => onRowClick(venta)}
+          >
+            <div className="flex justify-between items-start">
+              <span className="font-medium text-gray-900 text-sm">#{venta.id.slice(0, 8)}</span>
+              {getStatusBadge(venta.estado_pago)}
+            </div>
+            <div>
+              <p className="text-gray-900 font-medium">{venta.clientes?.nombre || "Cliente Final"}</p>
+              <p className="text-gray-500 text-xs">{format(new Date(venta.created_at), "dd MMM yyyy, HH:mm", { locale: es })}</p>
+            </div>
+            <div className="flex justify-between items-center mt-1 pt-3 border-t border-gray-50">
+              <span className="text-gray-500 text-sm">{venta.canal || "Digital"}</span>
+              <span className="font-medium text-gray-900">{formatCOP(venta.total_cents)}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Vista Desktop (Tabla) */}
+      <div className="hidden md:block bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
       <Table>
         <TableHeader className="bg-gray-50">
           <TableRow>
@@ -92,6 +118,7 @@ export function TablaVentas({ ventas, isLoading, onRowClick }: TablaVentasProps)
           ))}
         </TableBody>
       </Table>
-    </div>
+      </div>
+    </>
   );
 }
