@@ -26,6 +26,7 @@ export default defineConfig(({ mode }) => ({
         theme_color: "#0f172a",
         background_color: "#ffffff",
         display: "standalone",
+        start_url: "/admin/login",
         icons: [
           {
             src: "/icon-192x192.png",
@@ -42,7 +43,7 @@ export default defineConfig(({ mode }) => ({
       devOptions: {
         enabled: true
       }
-    })
+    }),
   ].filter(Boolean),
   resolve: {
     alias: {
